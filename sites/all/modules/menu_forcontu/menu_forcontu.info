@@ -1,0 +1,5 @@
+name = "Menu forcontu"
+description = "Menu Example"
+core = 7.x
+files[] = menu_forcontu.module
+package = ofertas configuracion

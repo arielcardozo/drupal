@@ -1,0 +1,137 @@
+<?php
+/**
+* @file
+* Menu Forcontu
+* Forcontu - Ejemplos de menú
+*/
+/**
+* Implements hook_menu().
+*/
+function menu_forcontu_menu(){
+	$items['url1'] = array(
+	'title' => 'Example URL 1',
+	'page callback' => 'menu_forcontu_url1',
+	'access callback' => TRUE,
+	'type' => MENU_CALLBACK,
+	);
+	
+
+	// Código ejemplo anterior
+	// Ejemplo de ruta con parámetros
+	$items['url2/%/%'] = array(
+	'title' => 'Example URL 2',
+	'page callback' => 'menu_forcontu_url2',
+	'page arguments' => array(1,2),
+	'access callback' => TRUE,
+	'type' => MENU_CALLBACK,
+	);
+
+	// Código ejemplo anterior
+	// Ejemplo de ruta con parámetros pasados internamente
+	$items['url3'] = array(
+	'title' => 'Example URL 3',
+	'page callback' => 'menu_forcontu_url2',
+	'page arguments' => array('Fran','Gil'),
+	'access callback' => TRUE,
+	'type' => MENU_CALLBACK,
+	);
+
+	// Código ejemplo anterior
+	// Ejemplo de ruta con parámetros intercalados
+	$items['url4/nombre/%/apellido/%'] = array(
+	'title' => 'Example URL 4',
+	'page callback' => 'menu_forcontu_url2',
+	'page arguments' => array(2,4),
+	'access callback' => TRUE,
+	'type' => MENU_CALLBACK,
+	);
+
+	// Código ejemplo anterior
+	// Ejemplo de elemento de menú
+	$items['admin/config/development/url5'] = array(
+	'title' => 'Nuevo elemento de menú',
+	'page callback' => 'menu_forcontu_url5',
+	'description' => 'Descripción del enlace.',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	'weight' => 0,
+	);
+	// Código ejemplo anterior
+	// Ejemplo de elemento en Menú Principal
+	$items['url6'] = array(
+	'title' => 'Elemento de menú en Menú Principal',
+	'page callback' => 'menu_forcontu_url5',
+	'access callback' => TRUE,
+	'type' => MENU_NORMAL_ITEM,
+	'menu_name' => 'main-menu',
+	'weight' => 1,
+	);
+
+
+	// Código ejemplos anteriores
+	// Ejemplo de URL con control de acceso
+	$items['intranet'] = array(
+	'title' => 'Intranet',
+	'page callback' => 'menu_forcontu_intranet',
+	'access callback' => 'user_access',
+	'access arguments' => array('access to menu forcontu'),
+	'type' => MENU_CALLBACK,
+	'menu_name' => 'main-menu',
+	);
+
+
+	return $items;
+}
+/**
+* Page callback
+* Función que se invocará al cargar la página www.example.com/url1
+*/
+function menu_forcontu_url1(){
+	$output = t('Example Menu Module!');
+	return $output;
+	}
+
+/**
+* Page callback url2/%/%
+* Función que se invocará al cargar la página
+* www.example.com/url2/%/%
+*/
+function menu_forcontu_url2($nombre='', $apellido=''){
+	$output = t('Welcome, @nombre @apellido!',
+	array('@nombre' => $nombre, '@apellido' => $apellido));
+	return $output;
+}
+
+/**
+* Page callback url5
+* Función que se invocará al cargar la página
+* www.example.com/admin/config/development/url5
+*/
+function menu_forcontu_url5(){
+	$output = t('Aquí se podrá implementar el código de
+	configuración del módulo');
+	return $output;
+}
+
+
+/**
+* Implements hook_permission().
+*/
+function menu_forcontu_permission() {
+	return array(
+	'access to menu forcontu' => array(
+	'title' => t('Access to Menu Forcontu restricted pages'),
+	'description' => t(' Allows access to restricted pages of
+	the menu items defined in Menu Forcontu'),
+	),
+	);
+}
+
+/**
+* Page callback - Intranet
+*/
+function menu_forcontu_intranet(){
+$output = t('Página restringida para los usuarios con el permiso
+adecuado');
+return $output;
+}

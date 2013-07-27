@@ -1,0 +1,280 @@
+<?php
+
+/**
+ * Implements hook_install().
+ *
+ * In Drupal 7, there is no need to install schema using this hook, the schema
+ * is already installed before this hook is called.
+ *
+ * We will create a default entry in the database.
+ *
+ * @see hook_install()
+ * @ingroup forms_forcontu
+ */
+
+function forms_forcontu_install() {
+  // Outside of the .install file we would use drupal_write_record() to
+  // populate the database, but it cannot be used here, so we'll use
+  // db_insert().
+
+  // Add a default entry.
+  $fields = array(
+    'name_instrument'    => 'Trompeta',
+    'description_instrument' => 'Instrumento de viento',
+
+  );
+  db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
+  // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Flauta travesera',
+    'description_instrument' => 'Instrumento de viento',
+
+  );
+  db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
+  // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Violín',
+    'description_instrument' => 'Instrumento de cuerda',
+
+  );
+  db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
+
+  // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Viola',
+    'description_instrument' => 'Instrumento de cuerda',
+
+  );
+  db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
+  // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Oboe',
+    'description_instrument' => 'Instrumento de viento',
+
+  );
+  db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();    
+}
+/**
+ * Implements hook_uninstall().
+ *
+ * As in hook_install, there is no need to uninstall schema, Drupal will do it
+ * for us.
+ *
+ * @see hook_uninstall()
+ * @ingroup forms_forcontu
+ */
+/*
+function forms_forcontu_uninstall() {
+  // nothing.
+}
+
+
+
+/**
+* Implements hook_schema()
+*/
+
+function forms_forcontu_schema() {
+$schema['pym_instrumentos'] = array(
+'description' => t('Table to store the instruments available'),
+'fields' => array('nid_instrument' => array(
+											'type' => 'serial',
+											'unsigned' => TRUE,
+											'not null' => TRUE, 
+											'description' => t('The instrument identification'),),
+				  'name_instrument' => array(
+				  							'type' => 'varchar', 
+				  							'length' => 255,
+				  							'not null' => TRUE,
+				  							'description' => t('Instruments name'),),
+				  'description_instrument' => array(
+				  							'type' => 'varchar', 
+				  							'length' => 255,
+				  							'not null' => FALSE,
+				  							'description' => t('Instruments description'),),
+				  ),
+'primary key' => array('nid_instrument'),
+'unique key' => array('name_instrument'),
+);
+
+$schema['pym_ofertas'] = array(
+'description' => t('Tabla para almacenar las ofertas de los usuarios'),
+'fields' => array('nid_oferta' => array(
+                      'type' => 'serial',
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador'),),
+                  'uid' => array(
+                        'type' => 'int', 
+                        'length' => 10,
+                        'not null' => TRUE,
+                        'description' => t('Identificador del usuario'),),
+                  'fecha_creacion' => array(
+                        'type' => 'int', 
+                        'length' => 11,
+                        'not null' => FALSE,
+                        'description' => t('Timestamp de creacion'),),
+                  'obra_musical' => array(
+                        'type' => 'varchar', 
+                        'length' => 255,
+                        'not null' => FALSE,
+                        'description' => t('Nombre de la obra musical'),),
+                  'autor_obra' => array(
+                        'type' => 'varchar', 
+                        'length' => 255,
+                        'not null' => TRUE,
+                        'description' => t('Autor de la obra musical a tocar'),),
+                  'autor_obra' => array(
+                        'type' => 'varchar', 
+                        'length' => 255,
+                        'not null' => TRUE,
+                        'description' => t('Autor de la obra musical a tocar'),),
+                  'Salon' => array(
+                        'type' => 'int', 
+                        'length' => 1,
+                        'not null' => TRUE,
+                        'description' => t('Se necesita Salon para tocar'),),
+                  'Piano' => array(
+                        'type' => 'int', 
+                        'length' => 1,
+                        'not null' => FALSE,
+                        'description' => t('Se necesita Piano para tocar'),),
+                  'Ciudad' => array(
+                        'type' => 'varchar', 
+                        'length' => 150,
+                        'not null' => FALSE,
+                        'description' => t('Ciudad de realizacion'),),
+                  'Disponibilidad_manana' => array(
+                        'type' => 'int', 
+                        'length' => 1,
+                        'not null' => FALSE,
+                        'description' => t('Disponibilidad por las mañanas'),),
+                   'Disponibilidad_tardes' => array(
+                        'type' => 'int', 
+                        'length' => 1,
+                        'not null' => FALSE,
+                        'description' => t('Disponibilidad por las tardes'),),
+                    'Disponibilidad_finde' => array(
+                        'type' => 'int', 
+                        'length' => 1,
+                        'not null' => FALSE,
+                        'description' => t('Disponibilidad los fines de semana'),),
+                  'Activo' => array(
+                        'type' => 'int', 
+                        'length' => 1,
+                        'not null' => FALSE,
+                        'description' => t('Indica si la oferta esta activa'),),
+
+          ),
+'primary key' => array('nid_oferta'),
+'foreign keys' => array(
+                    'fk_ofertas_usuarios' => array('table' => 'users',
+                                              'columns' => array('uid'=>'uid'),
+                                              ),
+                    ),
+);
+
+$schema['pym_instrumentos_ofertas'] = array(
+'description' => t('Tabla para almacenar la relación entre las ofertas y sus instrumentos'),
+'fields' => array('nid_oferta' => array(
+                      'type' => 'int',
+                      'length' => 10,
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador de la oferta'),),
+                  'nid_instrument' => array(
+                      'type' => 'int',
+                      'length' => 10,
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador del instrumentos'),),
+                  'uid' => array(
+                      'type' => 'int',
+                      'length' => 10,
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador de la persona inscrita'),),
+                  'activo' => array(
+                      'type' => 'int',
+                      'length' => 1,
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador si este instrumento está activo actualmente'),),
+                        ),
+//'primary key' => array('nid_oferta', 'nid_instrument'),
+'foreign keys' => array(
+                    'fk_io_ofertas' => array(
+                                              'table' => 'pym_ofertas',
+                                              'columns' => array('nid_oferta' => 'nid_oferta'),
+                                              ),
+                    'fk_io_intrumentos' => array(
+                                              'table' => 'pym_instrumentos',
+                                              'columns' => array('nid_instrument' => 'nid_instrument'),
+                                              ),
+                    'fk_io_usuarios' => array(
+                                  'table' => 'users',
+                                  'columns' => array('uid' => 'uid'),
+                                  
+                            ),),
+
+);
+/*
+$schema['pym_ofertas_inscritos'] = array(
+'description' => t('Tabla para almacenar la relación entre las ofertas y sus inscritos'),
+'fields' => array('nid_oferta' => array(
+                      'type' => 'int',
+                      'length' => 10,
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador de la oferta'),),
+                  'uid' => array(
+                      'type' => 'int',
+                      'length' => 10,
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador de la persona inscrita'),),
+                  'nid_instrument' => array(
+                      'type' => 'int',
+                      'length' => 10,
+                      'unsigned' => TRUE,
+                      'not null' => TRUE, 
+                      'description' => t('Identificador del instrumentos'),),
+                        ),
+'primary key' => array('nid_oferta', 'uid','nid_instrument'),
+'foreign keys' => array(
+                      'fk_oins_ofertas' => array(
+                                  'table' => 'pym_ofertas',
+                                  'columns' => array('nid_oferta' => 'nid_oferta'),
+                                    ),
+                      'fk_oins_intrumentos' => array(
+                                  'table' => 'pym_instrumentos',
+                                  'columns' => array('nid_instrument' => 'nid_instrument'),
+                                  ),
+                      'fk_oins_usuarios' => array(
+                                  'table' => 'users',
+                                  'columns' => array('uid' => 'uid'),
+                        ),),
+
+);
+
+*/
+// Se devuelve el esquema definido.
+return $schema;
+}
+
+
+

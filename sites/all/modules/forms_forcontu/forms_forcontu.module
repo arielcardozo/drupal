@@ -1,0 +1,551 @@
+<?php
+
+global $user;
+/**
+* @file
+* Menu Forcontu
+* Forcontu - Ejemplos de formulario
+*/
+
+
+/**
+* Implements hook_menu().
+*/
+function forms_forcontu_menu() {
+	/*$items['participantes'] = array(
+		'title' => t('Listado de participantes'),
+		'type' => MENU_CALLBACK,
+		'access callback' => TRUE,
+		'page callback' => 'forms_participantes',
+		
+	);
+*/
+	$items['ofertas/formulario'] = array(
+	'title' => t('Example Form 1'),
+	'page callback' => 'drupal_get_form',
+	'page arguments' => array('forms_forcontu_form1'),
+	'access callback' => TRUE,
+	'description' => t('Example Form 1'),
+	'type' => MENU_CALLBACK,
+
+	);
+
+	$items['ofertas/listado'] = array(
+		'title' => t('Listado de ofertas'),
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('forms_ofertas_listado'),
+		'access callback' => TRUE,
+		'description' => t('Example Form 1'),
+		'type' => MENU_CALLBACK,
+
+	);
+
+	$items['ofertas/ver/integrantes/%'] = array(
+		'title' => t('Listado de Integrantes de la oferta'),
+		'page callback' => 'forms_ofertas_integrantes',
+		'access callback' => TRUE,
+		'description' => t('Integrantes de la oferta'),
+		'type' => MENU_CALLBACK,
+		'page arguments' => array(3),
+
+	);
+
+	$items['ofertas/ver/detalle/%'] = array(
+		'title' => t('Detalle de la oferta'),
+		'type' => MENU_CALLBACK,
+		'access callback' => TRUE,
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('forms_ofertas_detalle',3),
+	);
+
+return $items;
+}
+
+
+
+/**
+* Función de retorno para la página forms_forcontu/form1.
+*/
+function forms_forcontu_form1($form_state) {
+	$form['description'] = array(
+	'#type' => 'item',
+	'#title' => t('Registra tu oferta'),
+	);
+	$form['to_play'] = array(
+	'#type' => 'fieldset',
+	'#title' => t('What do you want to play?'),
+	'#collapsible' => TRUE,
+	'#collapsed' => FALSE,
+	);
+	$form['to_play']['musical_piece'] = array(
+	'#type' => 'textfield',
+	'#title' => t('Musical piece'),
+	'#required' => TRUE,
+	'#default_value' => "",
+	'#description' => "Write the musical piece",
+	'#size' => 75,
+	'#maxlength' => 75,
+	);
+	$form['to_play']['author'] = array(
+	'#type' => 'textfield',
+	'#title' => t('Author'),
+	'#required' => TRUE,
+	'#default_value' => "",
+	'#description' => "Write the author",
+	'#size' => 75,
+	'#maxlength' => 75,
+	);
+
+//Músicos
+	$form['performers'] = array(
+	'#type' => 'fieldset',
+	'#title' => t('How many performers do you need?'),
+	'#collapsible' => TRUE,
+	'#collapsed' => FALSE,
+	);
+
+
+	//botones
+	$form['actions'] = array('#type' => 'actions');
+	$form['actions']['submit'] = array(
+	'#type' => 'submit',
+	'#value' => t('Save'),
+	);
+	$form['actions']['delete'] = array(
+	'#type' => 'button',
+	'#value' => t('Delete'),
+	);
+	$form['actions']['cancel'] = array(
+	'#markup' => l(t('Cancel'), 'foo/bar'),
+	);
+
+	$form['rehearsal'] = array(
+		'#type' => 'checkboxes',
+		'#title' => t('Rehearsal'),
+		//'#default_value' => array('red','green'),
+		'#options' => array(
+		'1' => t('Do you need a rehearsal?'),
+	),
+	'#description' => t('Select your preferences.'),
+	);
+
+	$form['piano'] = array(
+		'#type' => 'checkboxes',
+		'#title' => t('Piano'),
+		'#options' => array(
+		'1' => t('Do you need piano?'),
+	),
+	'#description' => t('Select if you need piano.'),
+	);
+
+
+	$form['city'] = array(
+		'#type' => 'textfield',
+		'#title' => t('City'),
+		'#required' => TRUE,
+		'#default_value' => "",
+		'#description' => "Write where do you want to play.",
+		'#size' => 40,
+		'#maxlength' => 40,
+	);
+
+
+	$form['time_availability'] = array(
+		'#type' => 'checkboxes',
+		'#title' => t('Time availability'),
+		//'#default_value' => array('red','green'),
+		'#options' => array(
+		'1' => t('Morning'),
+		'2' => t('Afternoon'),
+		'3' => t('Weekend'),
+		),
+		'#description' => t('Wich is your hour availability'),
+		
+	);
+	
+	// Construye el encabezado de la tabla (#header).
+	$header = array(
+	'name' => array('data' => t('Instrument'), 'field' => 'n.name_instrument'),
+	'description' => array('data' => t('Description'), 'field' => 'n.description_instrument'),
+	);
+
+	$query = db_select('pym_instrumentos', 'n');
+	// Obtiene los datos de la base de datos (tabla node).
+	$instruments = $query->
+		fields('n',array('nid_instrument','name_instrument'))->execute();
+	$options = array();
+	$options[0] = 'Select an instrument';
+	foreach ($instruments as $result) {
+    	$options[$result->nid_instrument] = $result->name_instrument;
+	}
+		
+	//Construye el elemento de formulario select.
+	$form['uid_usuario'] = array(
+		'#type' => 'hidden',
+		'#value' => $GLOBALS["user"]->uid,
+	);
+	
+
+
+ 
+    $no_of_fields = 9;     // The number of fields you wish to have in the form
+
+    // Start adding the fields to the form
+    for ($i=1; $i<=$no_of_fields; $i++)
+    {
+        $form['performers']['performers'.$i] = array(
+            '#title' => t('Instrument no. '.$i),
+            '#type' => 'select',
+            '#options' => $options,
+            '#empty' => t('No content available.'),
+            
+        );      
+    }
+
+
+	
+
+ 	$form['performers']['persons'] = array(
+    '#type' => 'checkboxes',
+    '#options' => drupal_map_assoc(array(t('Other'))),
+    '#title' => t('Another instrument/s?'),
+ 	 );
+  	$form['performers']['country_writein'] = array(
+    '#type' => 'textfield',
+    '#size' => 75,
+    '#title' => t('Please enter the name of the instruments wich are needs separated by "|".'),
+
+    // Only show this field if school_country is set to 'Other'.
+    '#states' => array(
+      'visible' => array(  // Action to take: Make visible.
+        ':input[name="persons[Other]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+
+
+return $form;
+}
+
+
+/**
+* Función de envío del formulario forms_forcontu_form2
+*/
+function forms_forcontu_form1_submit($form, &$form_state){
+	// Función de inserción de datos
+
+	//recojo los datos de los instrumentos
+	/*
+	foreach ($form_state['values']['performers'] as $field_name => $field) {
+		print_r('hola');
+	}
+*/
+	 $no_of_fields = 9;     // The number of fields you wish to have in the form
+
+
+
+
+	$id_oferta = db_insert('pym_ofertas')
+		->fields(array(
+		'uid' => $form_state['values']['uid_usuario'],
+		'fecha_creacion' =>time(),
+		'obra_musical' => $form_state['values']['musical_piece'],
+		'autor_obra' => $form_state['values']['author'],
+		'Salon' => $form_state['values']['rehearsal'],
+		'Piano' => $form_state['values']['piano'],
+		'Ciudad' => $form_state['values']['city'],
+		'Disponibilidad_manana' => ($form_state['values']['time_availability'][1]==1) ? 1 : 0,
+		'Disponibilidad_tardes' => ($form_state['values']['time_availability'][2]==2) ? 1 : 0,
+		'Disponibilidad_finde' => ($form_state['values']['time_availability'][3]==3) ? 1 : 0,
+
+		'Activo' => 1,
+	
+		))
+		->execute();
+		
+
+		 $array_instruments = array();
+	 	for ($i=1; $i<=$no_of_fields; $i++)
+    	{
+	        if($form_state['values']['performers'.$i]!=0){
+	        	$result = db_insert('pym_instrumentos_ofertas')
+				->fields(array(
+				'nid_instrument' => $form_state['values']['performers'.$i],
+				'nid_oferta' => $id_oferta,
+				'uid'=>0,
+				'activo'=>1,
+				))
+			->execute();
+					
+	        }
+    
+    	}
+
+
+		drupal_set_message ("<strong>Su oferta ha sido registrada correctamente.</strong> ");
+		drupal_goto("");
+}
+
+
+
+function forms_ofertas_detalle($url, $nid) {
+
+	$id = array('id' => $nid);
+	$oferta = db_select('pym_ofertas', 'n')
+		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad_manana','Disponibilidad_tardes',
+							'Disponibilidad_finde'))
+		->condition('nid_oferta', 7,'=')
+		->condition('Activo', 1,'=')
+		->execute();
+	$record = $oferta->fetchObject();
+
+	$autor_oferta = db_select('users', 'n')
+		->fields('n', array('name'))
+		->condition('uid', $record->uid,'=')
+		->execute();
+
+	$autor_of = $autor_oferta->fetchObject();	
+	
+	$form['personal_data'] = array(
+	'#type' => 'fieldset',
+	'#title' => t('Datos de la oferta'),
+	'#collapsible' => TRUE,
+	'#collapsed' => FALSE,
+	);
+	$form['personal_data']['obra_musical'] = array(
+		'#type' => 'item',
+		'#title' => t('Obra a tocar'),
+		'#markup' => $nid,
+	);
+	$form['personal_data']['autor_obra'] = array(
+		'#type' => 'item',
+		'#title' => t('Autor de la Obra'),
+		'#markup' => $record->autor_obra,
+	);
+	$form['personal_data']['Salon'] = array(
+		'#type' => 'item',
+		'#title' => t('Se necesita Salon'),
+		'#markup' => ($record->Salon==0)?'No':'Si',
+	);
+	$form['personal_data']['Piano'] = array(
+		'#type' => 'item',
+		'#title' => t('Se necesita Piano'),
+		'#markup' => ($record->Piano==0)?'No':'Si',
+	);
+	$form['personal_data']['Ciudad'] = array(
+		'#type' => 'item',
+		'#title' => t('City to play'),
+		'#markup' => ($record->Piano==0)?'No':'Si',
+	);
+	$form['personal_data']['Disponibilidad'] = array(
+		'#type' => 'fieldset',
+		'#title'=> t('Availability'),
+		'#collapsible' => TRUE,
+		'#collapsed' => FALSE,
+	);
+		$form['personal_data']['Disponibilidad']['manana'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Morning'),
+		'#markup' => 'checked',
+		);
+		$form['personal_data']['Disponibilidad']['tarde'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Afternoon'),
+		'#markup' => 'checked',
+		);
+		$form['personal_data']['Disponibilidad']['finde'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Weekend'),
+		'#markup' => 'checked',
+		);
+
+	$form['personal_data']['autor'] = array(
+		'#type' => 'link',
+		'#title' => t('Author de la obra: '),
+		'#href' => 'autor/'.$record->uid,
+		'#suffix' =>theme('username', array('account' => $autor_of)),
+	);
+
+
+	$form['instruments']= array(
+		'#type' => 'fieldset',
+		'#title'=> t('Instruments'),
+		'#collapsible' => TRUE,
+		'#collapsed' => FALSE,
+	);
+
+
+	$header = array(
+	'Instrumento' => array('data' => t('Instrumento'), 'field' => 'io.nid_oferta'),
+	'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'io.nid_instrument'),
+	'Activo' => array('data' => t('Activo'), 'field' => 'io.activo'),
+	
+	);
+	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
+			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','activo'))
+			->condition('nid_oferta', 7,'=')
+			->condition('activo', 1,'=');
+	$instrumentos->addField('u', 'name', 'name');
+	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
+	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
+	$instrumentos->leftJoin('pym_instrumentos', 'i', 'io.nid_instrument = i.nid_instrument ');
+
+	//defino una línea de instrumento 
+	//$header = array( t('Instrumento'), t('Suscriptor'), t('Activo'));
+
+	$entries = $instrumentos->execute();
+	 $rows = array();
+	 
+	   
+	    foreach ($entries as $entry) {
+	      // Sanitize the data before handing it off to the theme layer.
+	      $rows[$entry->nid_oferta] = array(
+						'Instrumento' => array(
+									'data' => array(
+									'#type' => 'link',
+									'#title' => $entry->name_instrument,
+									'#href' => 'oferta/subscribe/' . $entry->nid_oferta,
+									),
+						),
+						'Suscriptor' => check_plain($entry->name),
+						'Activo' => $entry->activo,
+						);
+	    }
+	    // Make a table for them.
+	   
+	   // $form['instruments']['instrumento'] .= theme('table', array('header' => $header, 'rows' => $rows));
+	 
+	
+  	//Construye el elemento de formulario tableselect.
+	$form['instruments']['instrumento'] = array(
+		'#type' => 'tableselect',
+		'#header' => $header,
+		'#options' => $rows,
+		'#empty' => t('No content available.'),
+	);
+
+	
+
+	return $form;
+}
+/**
+* Función de retorno para la página forms_forcontu/form1.
+*/
+function forms_ofertas_listado($form_state) {
+	
+
+	// Construye el encabezado de la tabla (#header).
+	$header = array(
+	'created' => array('data' => t('Created'), 'field' => 'n.fecha_creacion'),
+	'Music_piece' => array('data' => t('Music piece'), 'field' => 'n.obra_musical'),
+	'Author' => array('data' => t('Author'), 'field' => 'n.autor_obra'),
+	
+	);
+	$query = db_select('pym_ofertas', 'n');
+	// Obtiene los datos de la base de datos (tabla node).
+	$offers = $query->
+		fields('n',array('nid_oferta','fecha_creacion','autor_obra','obra_musical'))->execute();
+	$options = array();
+
+	foreach ($offers as $offer) {
+		$options[$offer->nid_oferta] = array(
+			'created' => date('d-M-Y', $offer->fecha_creacion),
+			'Music_piece' => array(
+							'data' => array(
+										'#type' => 'link',
+										'#title' => $offer->obra_musical,
+										'#href' => 'ofertas/ver/detalle/' . $offer->nid_oferta,
+										'#options' => $options,
+							
+											),
+									),
+			
+			'Author' => $offer->autor_obra,
+
+		);
+	}
+	$form['nodes'] = array(
+		'#type' => 'tableselect',
+		'#header' => $header,
+		'#options' => $options,
+		'#empty' => t('No content available.'),
+	);
+
+
+
+
+
+	$header = array(
+	'Instrumento' => array('data' => t('Instrumento'), 'field' => 'io.nid_oferta'),
+	'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'io.nid_instrument'),
+	'Activo' => array('data' => t('Activo'), 'field' => 'io.activo'),
+	
+	);
+	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
+			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','activo'))
+			->condition('nid_oferta', 7,'=')
+			->condition('activo', 1,'=');
+	$instrumentos->addField('u', 'name', 'name');
+	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
+	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
+	$instrumentos->leftJoin('pym_instrumentos', 'i', 'io.nid_instrument = i.nid_instrument ');
+
+	//defino una línea de instrumento 
+	//$header = array( t('Instrumento'), t('Suscriptor'), t('Activo'));
+
+	$entries = $instrumentos->execute();
+	 $rows = array();
+	 if (!empty($entries)) {
+	   
+	    foreach ($entries as $entry) {
+	      // Sanitize the data before handing it off to the theme layer.
+	      $rows[$entry->nid_oferta] = array(
+						'Instrumento' => array(
+									'data' => array(
+									'#type' => 'link',
+									'#title' => $entry->name_instrument,
+									'#href' => 'oferta/subscribe/' . $entry->nid_oferta,
+									),
+						),
+						'Suscriptor' => check_plain($entry->name),
+						'Activo' => $entry->activo,
+						);
+	    }
+	    // Make a table for them.
+	   
+	   // $form['instruments']['instrumento'] .= theme('table', array('header' => $header, 'rows' => $rows));
+	  }
+	 else {
+    	drupal_set_message(t('No entries meet the filter criteria (Name = "John" and Age > 18).'));
+  	}
+	
+  	//Construye el elemento de formulario tableselect.
+	$form['instrumento'] = array(
+		'#type' => 'tableselect',
+		'#header' => $header,
+		'#options' => $rows,
+		'#empty' => t('No content available.'),
+	);
+
+
+
+
+
+
+
+return $form;
+}
+
+/**
+ * Implements hook_help().
+ *
+ * Show a bit of information about this module on the example page
+ */
+function forms_forcontu_help($path, $arg) {
+  switch ($path) {
+    case 'ofertas/listado':
+      return '<p>' . t('Offers list You can click on each one to acces to its details .') . '</p>';
+  }
+}
+

@@ -1,0 +1,6 @@
+name = "Customized fields"
+description = "Campos personalizados"
+core = 7.x
+files[] = fields_module.module
+
+package = Fields customized
