@@ -208,14 +208,14 @@ $schema['pym_instrumentos_ofertas'] = array(
                       'unsigned' => TRUE,
                       'not null' => TRUE, 
                       'description' => t('Identificador de la persona inscrita'),),
-                  'activo' => array(
+                  'position' => array(
                       'type' => 'int',
                       'length' => 1,
                       'unsigned' => TRUE,
                       'not null' => TRUE, 
                       'description' => t('Identificador si este instrumento está activo actualmente'),),
                         ),
-//'primary key' => array('nid_oferta', 'nid_instrument'),
+'primary key' => array('nid_oferta', 'nid_instrument','position'),
 'foreign keys' => array(
                     'fk_io_ofertas' => array(
                                               'table' => 'pym_ofertas',

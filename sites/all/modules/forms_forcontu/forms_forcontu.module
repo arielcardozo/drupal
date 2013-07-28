@@ -54,8 +54,8 @@ function forms_forcontu_menu() {
 		'title' => t('Detalle de la oferta'),
 		'type' => MENU_CALLBACK,
 		'access callback' => TRUE,
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('forms_ofertas_detalle',3),
+		'page callback' => 'forms_ofertas_detalle',
+		'page arguments' => array(3),
 	);
 
 return $items;
@@ -274,7 +274,7 @@ function forms_forcontu_form1_submit($form, &$form_state){
 				'nid_instrument' => $form_state['values']['performers'.$i],
 				'nid_oferta' => $id_oferta,
 				'uid'=>0,
-				'activo'=>1,
+				'position'=>$i,
 				))
 			->execute();
 					
@@ -289,13 +289,13 @@ function forms_forcontu_form1_submit($form, &$form_state){
 
 
 
-function forms_ofertas_detalle($url, $nid) {
+function forms_ofertas_detalle($nid) {
 
 	$id = array('id' => $nid);
 	$oferta = db_select('pym_ofertas', 'n')
 		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad_manana','Disponibilidad_tardes',
 							'Disponibilidad_finde'))
-		->condition('nid_oferta', 7,'=')
+		->condition('nid_oferta', $id,'=')
 		->condition('Activo', 1,'=')
 		->execute();
 	$record = $oferta->fetchObject();
@@ -307,6 +307,10 @@ function forms_ofertas_detalle($url, $nid) {
 
 	$autor_of = $autor_oferta->fetchObject();	
 	
+
+	
+
+
 	$form['personal_data'] = array(
 	'#type' => 'fieldset',
 	'#title' => t('Datos de la oferta'),
@@ -316,7 +320,7 @@ function forms_ofertas_detalle($url, $nid) {
 	$form['personal_data']['obra_musical'] = array(
 		'#type' => 'item',
 		'#title' => t('Obra a tocar'),
-		'#markup' => $nid,
+		'#markup' => $record->obra_musical,
 	);
 	$form['personal_data']['autor_obra'] = array(
 		'#type' => 'item',
@@ -375,32 +379,36 @@ function forms_ofertas_detalle($url, $nid) {
 		'#collapsed' => FALSE,
 	);
 
-
+	
 	$header = array(
-	'Instrumento' => array('data' => t('Instrumento'), 'field' => 'io.nid_oferta'),
-	'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'io.nid_instrument'),
-	'Activo' => array('data' => t('Activo'), 'field' => 'io.activo'),
+	'Instrumento' => array('data' => t('Instrumento'), 'field' => 'i.name_instrument'),
+	'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'u.name'),
+	'Activo' => array('data' => t('Activo'), 'field' => 'io.position'),
 	
 	);
 	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
-			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','activo'))
-			->condition('nid_oferta', 7,'=')
-			->condition('activo', 1,'=');
+			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','position'))
+			->condition('nid_oferta', $nid,'=');
+			//->condition('activo', 1,'=');
 	$instrumentos->addField('u', 'name', 'name');
 	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
 	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
 	$instrumentos->leftJoin('pym_instrumentos', 'i', 'io.nid_instrument = i.nid_instrument ');
 
 	//defino una línea de instrumento 
-	//$header = array( t('Instrumento'), t('Suscriptor'), t('Activo'));
 
-	$entries = $instrumentos->execute();
-	 $rows = array();
+  	$entries = $instrumentos->execute()->fetchAll();;
+	//dpq($instrumentos); // Display the query. 
+	//dpr($entries); // Display the query result.
+	//dpm((string)$instrumentos);
+	//dpm($instrumentos->arguments());
+	 $options = array();
 	 
 	   
 	    foreach ($entries as $entry) {
-	      // Sanitize the data before handing it off to the theme layer.
-	      $rows[$entry->nid_oferta] = array(
+	      $key = $entry->nid_oferta.$entry->nid_instrument.$entry->position;
+	    	dpm("hola: ".$key);
+	      $options[$key] = array(
 						'Instrumento' => array(
 									'data' => array(
 									'#type' => 'link',
@@ -409,23 +417,16 @@ function forms_ofertas_detalle($url, $nid) {
 									),
 						),
 						'Suscriptor' => check_plain($entry->name),
-						'Activo' => $entry->activo,
+						'Activo' => $entry->position,
 						);
 	    }
-	    // Make a table for them.
-	   
-	   // $form['instruments']['instrumento'] .= theme('table', array('header' => $header, 'rows' => $rows));
-	 
-	
-  	//Construye el elemento de formulario tableselect.
-	$form['instruments']['instrumento'] = array(
+	  dpm("hola: ".$options->data['attributes']['size']);
+	$form['instruments']['instruments'] = array(
 		'#type' => 'tableselect',
 		'#header' => $header,
-		'#options' => $rows,
+		'#options' => $options,
 		'#empty' => t('No content available.'),
 	);
-
-	
 
 	return $form;
 }
@@ -476,58 +477,7 @@ function forms_ofertas_listado($form_state) {
 
 
 
-	$header = array(
-	'Instrumento' => array('data' => t('Instrumento'), 'field' => 'io.nid_oferta'),
-	'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'io.nid_instrument'),
-	'Activo' => array('data' => t('Activo'), 'field' => 'io.activo'),
 	
-	);
-	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
-			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','activo'))
-			->condition('nid_oferta', 7,'=')
-			->condition('activo', 1,'=');
-	$instrumentos->addField('u', 'name', 'name');
-	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
-	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
-	$instrumentos->leftJoin('pym_instrumentos', 'i', 'io.nid_instrument = i.nid_instrument ');
-
-	//defino una línea de instrumento 
-	//$header = array( t('Instrumento'), t('Suscriptor'), t('Activo'));
-
-	$entries = $instrumentos->execute();
-	 $rows = array();
-	 if (!empty($entries)) {
-	   
-	    foreach ($entries as $entry) {
-	      // Sanitize the data before handing it off to the theme layer.
-	      $rows[$entry->nid_oferta] = array(
-						'Instrumento' => array(
-									'data' => array(
-									'#type' => 'link',
-									'#title' => $entry->name_instrument,
-									'#href' => 'oferta/subscribe/' . $entry->nid_oferta,
-									),
-						),
-						'Suscriptor' => check_plain($entry->name),
-						'Activo' => $entry->activo,
-						);
-	    }
-	    // Make a table for them.
-	   
-	   // $form['instruments']['instrumento'] .= theme('table', array('header' => $header, 'rows' => $rows));
-	  }
-	 else {
-    	drupal_set_message(t('No entries meet the filter criteria (Name = "John" and Age > 18).'));
-  	}
-	
-  	//Construye el elemento de formulario tableselect.
-	$form['instrumento'] = array(
-		'#type' => 'tableselect',
-		'#header' => $header,
-		'#options' => $rows,
-		'#empty' => t('No content available.'),
-	);
-
 
 
 
