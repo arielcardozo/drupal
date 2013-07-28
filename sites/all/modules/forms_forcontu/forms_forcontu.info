@@ -2,5 +2,5 @@ name = "Formulario forcontu"
 description = "Formulario Example"
 core = 7.x
 files[] = forms_forcontu.module
-files[] = forms_forcontu_lista.module
+files[] = forms_forcontu.admin.inc
 package = formulario de ofertas

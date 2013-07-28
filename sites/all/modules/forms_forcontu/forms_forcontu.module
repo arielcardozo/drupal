@@ -30,6 +30,17 @@ function forms_forcontu_menu() {
 
 	);
 
+
+	$items['admin/config/workflow/ofertas_formulario'] = array(
+		'title' => 'Node Offers Form settings',
+		'description' => 'Settings for module Offers form ',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('offers_form_admin_settings'),
+		'access arguments' => array('administer site configuration'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'forms_forcontu.admin.inc',
+	);
+
 	$items['ofertas/listado'] = array(
 		'title' => t('Listado de ofertas'),
 		'page callback' => 'drupal_get_form',
@@ -40,7 +51,7 @@ function forms_forcontu_menu() {
 
 	);
 
-	$items['ofertas/ver/integrantes/%'] = array(
+	$items['ofertas/ver/integrantes'] = array(
 		'title' => t('Listado de Integrantes de la oferta'),
 		'page callback' => 'forms_ofertas_integrantes',
 		'access callback' => TRUE,
@@ -50,12 +61,13 @@ function forms_forcontu_menu() {
 
 	);
 
-	$items['ofertas/ver/detalle/%'] = array(
+	$items['ofertas/ver/detalle'] = array(
 		'title' => t('Detalle de la oferta'),
 		'type' => MENU_CALLBACK,
 		'access callback' => TRUE,
-		'page callback' => 'forms_ofertas_detalle',
-		'page arguments' => array(3),
+		'page callback' => 'drupal_get_form',
+		//'page callback' => 'forms_ofertas_detalle',
+		'page arguments' => array('forms_ofertas_detalle'),
 	);
 
 return $items;
@@ -230,7 +242,7 @@ return $form;
 
 
 /**
-* Función de envío del formulario forms_forcontu_form2
+* Función de envío del formulario forms_forcontu_form1
 */
 function forms_forcontu_form1_submit($form, &$form_state){
 	// Función de inserción de datos
@@ -289,9 +301,14 @@ function forms_forcontu_form1_submit($form, &$form_state){
 
 
 
-function forms_ofertas_detalle($nid) {
+function forms_ofertas_detalle($form,&$form_state) {
 
-	$id = array('id' => $nid);
+
+if(!isset($form_state['storage']['confirm'])) {
+
+
+	//dpm($form_state['build_info']['args'][0]);
+	$id = $form_state['build_info']['args'][0];
 	$oferta = db_select('pym_ofertas', 'n')
 		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad_manana','Disponibilidad_tardes',
 							'Disponibilidad_finde'))
@@ -377,6 +394,7 @@ function forms_ofertas_detalle($nid) {
 		'#title'=> t('Instruments'),
 		'#collapsible' => TRUE,
 		'#collapsed' => FALSE,
+		'#description' => t('Select the instrument wich you want to suscribe to.'),
 	);
 
 	
@@ -388,7 +406,7 @@ function forms_ofertas_detalle($nid) {
 	);
 	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
 			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','position'))
-			->condition('nid_oferta', $nid,'=');
+			->condition('nid_oferta', $id,'=');
 			//->condition('activo', 1,'=');
 	$instrumentos->addField('u', 'name', 'name');
 	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
@@ -407,7 +425,7 @@ function forms_ofertas_detalle($nid) {
 	   
 	    foreach ($entries as $entry) {
 	      $key = $entry->nid_oferta.$entry->nid_instrument.$entry->position;
-	    	dpm("hola: ".$key);
+	    	
 	      $options[$key] = array(
 						'Instrumento' => array(
 									'data' => array(
@@ -420,16 +438,55 @@ function forms_ofertas_detalle($nid) {
 						'Activo' => $entry->position,
 						);
 	    }
-	  dpm("hola: ".$options->data['attributes']['size']);
+	 
 	$form['instruments']['instruments'] = array(
 		'#type' => 'tableselect',
 		'#header' => $header,
 		'#options' => $options,
-		'#empty' => t('No content available.'),
+		'#empty' => t('No tiene contenido.'),
+		'#multiple' => FALSE,
+		'#required' => TRUE,
+	);
+ 	//dpm("hola: ".count($options));
+ 
+ 	//botones
+	$form['actions'] = array('#type' => 'actions');
+	$form['actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
 	);
 
+	$form['actions']['cancel'] = array(
+	'#markup' => l(t('Cancel'), 'foo/bar'),
+	);
+
+
 	return $form;
+	} else {
+  		drupal_set_message('hello');
+ 	 return confirm_form($form);
+ }
 }
+
+function forms_ofertas_detalle_confirm(){
+
+}
+
+
+function forms_ofertas_detalle_validate($form, &$form_state) {
+ if(!isset($form_state['storage']['confirm'])) {  
+ }
+} 
+
+function forms_ofertas_detalle_submit($form, &$form_state) {
+ if(!isset($form_state['storage']['confirm'])) {
+  $form_state['storage']['confirm'] = TRUE;
+  $form_state['rebuild'] = TRUE;
+ } else {
+  drupal_set_message('You are already subsribed');
+ }
+}
+
 /**
 * Función de retorno para la página forms_forcontu/form1.
 */
