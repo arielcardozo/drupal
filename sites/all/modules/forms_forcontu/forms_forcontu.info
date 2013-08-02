@@ -1,5 +1,5 @@
-name = "Formulario forcontu"
-description = "Formulario Example"
+name = "Formulario de Ofertas"
+description = "Ofertas musicales"
 core = 7.x
 files[] = forms_forcontu.module
 files[] = forms_forcontu.admin.inc
