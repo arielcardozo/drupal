@@ -36,7 +36,7 @@
  * Our module sets up a formatter in field_example_field_formatter_info() and
  * field_example_field_formatter_view(). These are the API hooks that present
  * formatted and themed output to the user.
-
+*
  * And finally, our module defines the widet in
  * field_example_field_widget_info() and field_example_field_widget_form().
  * The widget is the form element used to receive input from the user

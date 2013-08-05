@@ -533,22 +533,25 @@ function forms_ofertas_detalle($form,&$form_state) {
 		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad_manana','Disponibilidad_tardes',
 							'Disponibilidad_finde'))
 		->condition('nid_oferta', $id,'=')
-		->condition('Activo', 1,'=')
-		->execute();
-	$record = $oferta->fetchObject();
+		->condition('Activo', 1,'=');
+		
+	
+	$oferta->addField('u', 'name','name');
+	$oferta->leftJoin('users', 'u', 'u.uid = n.uid ');
 
-	$autor_oferta = db_select('users', 'n')
+	$record = $oferta->execute()->fetchObject();
+	/*$autor_oferta = db_select('users', 'n')
 		->fields('n', array('name'))
 		->condition('uid', $record->uid,'=')
-		->execute();
+		->execute();*/
 
-	$autor_of = $autor_oferta->fetchObject();	
+	//$autor_of = $autor_oferta->fetchObject();	
 	//opciones que estarán checkeadas a TRUE
 	$options_checked = array('11','21','31');
 
 	$form['personal_data'] = array(
 	'#type' => 'fieldset',
-	'#title' => t('Datos de la oferta'),
+	'#title' => t('Datos de la oferta. Author: <strong>'.$record->name.'</strong>'),
 	'#collapsible' => TRUE,
 	'#collapsed' => FALSE,
 	);
@@ -603,7 +606,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 		'#type' => 'link',
 		'#title' => t('Author de la obra: '),
 		'#href' => 'autor/'.$record->uid,
-		'#suffix' =>theme('username', array('account' => $autor_of)),
+		'#suffix' =>theme('username', array('account' => $record->name)),
 	);
 
 
@@ -630,16 +633,36 @@ function forms_ofertas_detalle($form,&$form_state) {
 	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
 	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
 	$instrumentos->leftJoin('pym_instrumentos', 'i', 'io.nid_instrument = i.nid_instrument ');
-
 	//defino una línea de instrumento 
-  	$entries = $instrumentos->execute()->fetchAll();;
-	 $options = array();
-	 $optout = array();
-	   
+  	$entries = $instrumentos->execute()->fetchAll();
+
+	//Instrumentos seleccionados por el usuario actual
+	$instrumentos_usuario = db_select('pym_instrumentos_ofertas', 'io')
+			//->fields('io', array('uid'))
+			->condition('nid_oferta', $id,'=')
+			->condition('uid', $user->uid,'=');
+
+	$instrumentos_usuario->addExpression('COUNT(uid)', 'uid_count');
+	
+	$ii = $instrumentos_usuario->execute()->fetchObject();
+	//Se activa con la primera aparición del nombre en la lista de suscriptos
+	if($ii->uid_count>0) {
+		$booleanSuscripcion = TRUE;
+		drupal_set_message('You are already subscribed to this offer. You havent got permission to select another one');
+	}
+	else
+	{
+		$booleanSuscripcion = FALSE;
+	}
+
+	$options = array();
+	$optout = array();
+
+	
 	    foreach ($entries as $entry) {
 	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
-	      if (!empty($entry->name)) $optout[$key] = TRUE;
-	      if ($record->uid == $user->uid) $optout[$key] = TRUE;
+        
+	      if(evaluaCondiciones($entry,$user,$record) || $booleanSuscripcion)$optout[$key] = TRUE;
 	      $options[$key] = array(
 
 						'Instrumento' => check_plain($entry->name_instrument),
@@ -671,14 +694,15 @@ function forms_ofertas_detalle($form,&$form_state) {
  	
 
 
- 
- 	//botones
-	$form['actions'] = array('#type' => 'actions');
-	$form['actions']['submit'] = array(
-		'#type' => 'submit',
-		'#value' => t('Continue'),
-		//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
-	);
+ 	if(empty($optout)){
+	 	//botones
+		$form['actions'] = array('#type' => 'actions');
+		$form['actions']['submit'] = array(
+			'#type' => 'submit',
+			'#value' => t('Continue'),
+			//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
+		);
+	}
 
   	$form['#multistep'] = TRUE;
   	$form['#action'] = url('ofertas/ver/detalle/confirm');
@@ -686,7 +710,14 @@ function forms_ofertas_detalle($form,&$form_state) {
 
 }
 
+function evaluaCondiciones($entry,$user,$record){
+	if (!empty($entry->name))return true;
 
+	if ($record->uid == $user->uid) return true;
+
+	//if($user->name == )
+	return false;
+}
 
 /**
 * Función de validación del formulario forms_ofertas_detalle
