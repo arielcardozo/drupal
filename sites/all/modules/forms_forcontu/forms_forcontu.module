@@ -333,7 +333,9 @@ function offers_form($form_state) {
             
         );      
     }
+
 /*
+
 $form['people'] = array(
   '#prefix' => '<div id="people">',
   '#suffix' => '</div>',
@@ -341,7 +343,9 @@ $form['people'] = array(
   '#theme' => 'table',
   '#header' => array(t('instrumento')),
   '#rows' => $options,
+<<<<<<< HEAD
 );*/
+
  	$form['performers']['persons'] = array(
     '#type' => 'checkboxes',
     '#options' => drupal_map_assoc(array(t('Other'))),
@@ -898,7 +902,9 @@ function forms_ofertas_detalle($form,&$form_state) {
 		
 	
 	$oferta->addField('u', 'name','name');
+
 	$oferta->addField('u', 'mail','mail');
+
 	$oferta->leftJoin('users', 'u', 'u.uid = n.uid ');
 
 	$record = $oferta->execute()->fetchObject();
@@ -953,10 +959,12 @@ function forms_ofertas_detalle($form,&$form_state) {
 		'#type' => 'item',
 		'#title' => t('City to play'),
 		'#markup' => ($record->Ciudad),
+
 	);
 	$form['personal_data']['city'] = array(
 		'#type' => 'hidden',
 		'#default_value' => $record->Ciudad,
+
 	);
 	$form['personal_data']['Disponibilidad'] = array(
 		'#type' => 'fieldset',
@@ -1066,8 +1074,10 @@ function forms_ofertas_detalle($form,&$form_state) {
 	}
  	
 
+
 //drupal_set_message($optout[0]);
  	//if(empty($optout)){
+
 	 	//botones
 		$form['actions'] = array('#type' => 'actions');
 		$form['actions']['submit'] = array(
@@ -1075,7 +1085,9 @@ function forms_ofertas_detalle($form,&$form_state) {
 			'#value' => t('Continue'),
 			//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
 		);
+
 	//}
+
 
   	$form['#multistep'] = TRUE;
   	$form['#action'] = url('ofertas/ver/detalle/confirm');
@@ -1087,6 +1099,7 @@ function evaluaCondiciones($entry,$user,$record){
 	if (!empty($entry->name))return true;
 
 	if ($record->uid == $user->uid) return true;
+
 
 	//if($user->name == )
 	return false;
@@ -1107,6 +1120,7 @@ form_set_error('lista', t('You must enter a valid e-mail address.'));
 }*/
 }
 
+
 function forms_ofertas_detalle_submit($form, &$form_state) {
 	drupal_set_message(t('Verify submission.'));
 }
@@ -1114,10 +1128,13 @@ function forms_ofertas_detalle_submit($form, &$form_state) {
 function forms_ofertas_detalle_confirm(){
 	// Get the post values (what user entered)
   $edit = $_POST;
+
 	//drupal_set_message($_POST['mail']);	
+
 
   $form = array();
    $num = preg_split("/\/|-/",$edit['instruments']);
+
 
 $form['author'] = array(
     '#type' => 'hidden',
@@ -1140,6 +1157,7 @@ $form['author'] = array(
     '#value' => $edit['mail'] 
   );
    
+
 
 
   $form['instruments'] = 
@@ -1165,12 +1183,14 @@ $form['author'] = array(
   return $form;
 }
 
+
 //Se envía la suscripción a una oferta
 function forms_ofertas_detalle_confirm_submit($form, &$form_state) {
 	global $user; 
 	$transaction = db_transaction();
 	try{
 		db_update('pym_instrumentos_ofertas')
+
 				->fields(array( 'uid'=>$user->uid,))
 				->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
 				->condition('nid_instrument', $form_state['values']['instruments'],'=')
@@ -1199,6 +1219,7 @@ function forms_ofertas_detalle_confirm_submit($form, &$form_state) {
 	 
 
 
+
 }
 
 //comprobamos si es la ultima suscripción para esa oferta
@@ -1219,6 +1240,7 @@ function is_complete($id){
 	}
 	return true;
 }
+
 /**
 * Se expone el listado de ofertas realizadas por el usuario
 *
