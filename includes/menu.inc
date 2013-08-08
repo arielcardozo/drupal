@@ -630,6 +630,7 @@ function _menu_check_access(&$item, $map) {
     $arguments = menu_unserialize($item['access_arguments'], $map);
     // As call_user_func_array is quite slow and user_access is a very common
     // callback, it is worth making a special case for it.
+    //dpm($arguments);
     if ($callback == 'user_access') {
       $item['access'] = (count($arguments) == 1) ? user_access($arguments[0]) : user_access($arguments[0], $arguments[1]);
     }
