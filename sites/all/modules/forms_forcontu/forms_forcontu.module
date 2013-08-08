@@ -631,8 +631,7 @@ function offers_form_mail_send($id_oferta, $form_values, $operation) {
 	if( $operation != 'close_offer'){
  		drupal_set_message(t('Your message has been sent.'));
 	}
-	
-   
+  
   }
   else {
     drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');

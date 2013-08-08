@@ -36,7 +36,6 @@ function forms_forcontu_install() {
   db_insert('pym_instrumentos')
     ->fields($fields)
     ->execute();
-
   // Add another entry.
   $fields = array(
     'name_instrument'    => 'Violín',
