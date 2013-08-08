@@ -54,6 +54,67 @@ function forms_forcontu_install() {
     'description_instrument' => 'Instrumento de cuerda',
 
   );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Clarinete La y Sib',
+    'description_instrument' => 'Instrumento Aeróforos',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => ' Corno ingles y frances',
+    'description_instrument' => 'Instrumento Aeróforos',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Tuba',
+    'description_instrument' => 'Instrumento Aeróforos',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Timbales',
+    'description_instrument' => 'Instrumento de percusión',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Redoblante',
+    'description_instrument' => 'Instrumento de percusión',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Bombo',
+    'description_instrument' => 'Instrumento de percusión',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'platillos',
+    'description_instrument' => 'Instrumento de percusión',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'xilófono',
+    'description_instrument' => 'Instrumento de percusión',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'celesta',
+    'description_instrument' => 'Instrumento de percusión',
+
+  );
+   // Add another entry.
+  $fields = array(
+    'name_instrument'    => 'Triángulo',
+    'description_instrument' => 'Instrumento de percusión',
+
+  );
+
   db_insert('pym_instrumentos')
     ->fields($fields)
     ->execute();
@@ -95,17 +156,17 @@ $schema['pym_instrumentos'] = array(
 											'type' => 'serial',
 											'unsigned' => TRUE,
 											'not null' => TRUE, 
-											'description' => t('The instrument identification'),),
+											'description' => 'The instrument identification',),
 				  'name_instrument' => array(
 				  							'type' => 'varchar', 
 				  							'length' => 255,
 				  							'not null' => TRUE,
-				  							'description' => t('Instruments name'),),
+				  							'description' => 'Instruments name',),
 				  'description_instrument' => array(
 				  							'type' => 'varchar', 
 				  							'length' => 255,
 				  							'not null' => FALSE,
-				  							'description' => t('Instruments description'),),
+				  							'description' => 'Instruments description',),
 				  ),
 'primary key' => array('nid_instrument'),
 'unique key' => array('name_instrument'),
@@ -117,67 +178,74 @@ $schema['pym_ofertas'] = array(
                       'type' => 'serial',
                       'unsigned' => TRUE,
                       'not null' => TRUE, 
-                      'description' => t('Identificador'),),
+                      'description' => 'Identificador',),
                   'uid' => array(
                         'type' => 'int', 
-                        'length' => 10,
+                        
                         'not null' => TRUE,
-                        'description' => t('Identificador del usuario'),),
+                        'description' => 'Identificador del usuario',),
                   'fecha_creacion' => array(
                         'type' => 'int', 
-                        'length' => 11,
+                        
                         'not null' => FALSE,
-                        'description' => t('Timestamp de creacion'),),
+                        'default' => 0,
+                        'description' => 'Timestamp de creacion',),
                   'obra_musical' => array(
                         'type' => 'varchar', 
                         'length' => 255,
                         'not null' => FALSE,
-                        'description' => t('Nombre de la obra musical'),),
+                        'description' => 'Nombre de la obra musical',),
                   'autor_obra' => array(
                         'type' => 'varchar', 
                         'length' => 255,
                         'not null' => TRUE,
-                        'description' => t('Autor de la obra musical a tocar'),),
+                        'description' => 'Autor de la obra musical a tocar',),
                   'autor_obra' => array(
                         'type' => 'varchar', 
                         'length' => 255,
                         'not null' => TRUE,
-                        'description' => t('Autor de la obra musical a tocar'),),
+                        'description' => 'Autor de la obra musical a tocar',),
                   'Salon' => array(
                         'type' => 'int', 
-                        'length' => 1,
+                        'size' => 'tiny',
                         'not null' => TRUE,
-                        'description' => t('Se necesita Salon para tocar'),),
+                        'default' => 0,
+                        'description' => 'Se necesita Salon para tocar',),
                   'Piano' => array(
                         'type' => 'int', 
-                        'length' => 1,
+                        'size' => 'tiny',
                         'not null' => FALSE,
-                        'description' => t('Se necesita Piano para tocar'),),
+                        'default' => 0,
+                        'description' => 'Se necesita Piano para tocar',),
                   'Ciudad' => array(
                         'type' => 'varchar', 
                         'length' => 150,
                         'not null' => FALSE,
-                        'description' => t('Ciudad de realizacion'),),
+                        'description' => 'Ciudad de realizacion',),
                   'Disponibilidad_manana' => array(
                         'type' => 'int', 
-                        'length' => 1,
+                        'size' => 'tiny',
                         'not null' => FALSE,
-                        'description' => t('Disponibilidad por las mañanas'),),
+                        'default' => 0,
+                        'description' => 'Disponibilidad por las mañanas',),
                    'Disponibilidad_tardes' => array(
                         'type' => 'int', 
-                        'length' => 1,
+                        'size' => 'tiny',
                         'not null' => FALSE,
-                        'description' => t('Disponibilidad por las tardes'),),
+                        'default' => 0,
+                        'description' => 'Disponibilidad por las tardes',),
                     'Disponibilidad_finde' => array(
                         'type' => 'int', 
-                        'length' => 1,
+                        'size' => 'tiny',
                         'not null' => FALSE,
-                        'description' => t('Disponibilidad los fines de semana'),),
+                        'default' => 0,
+                        'description' => 'Disponibilidad los fines de semana',),
                   'Activo' => array(
                         'type' => 'int', 
-                        'length' => 1,
+                        'size' => 'tiny',
                         'not null' => FALSE,
-                        'description' => t('Indica si la oferta esta activa'),),
+                        'default' => 1,
+                        'description' => 'Indica si la oferta esta activa',),
 
           ),
 'primary key' => array('nid_oferta'),
@@ -192,30 +260,31 @@ $schema['pym_instrumentos_ofertas'] = array(
 'description' => t('Tabla para almacenar la relación entre las ofertas y sus instrumentos'),
 'fields' => array('nid_oferta' => array(
                       'type' => 'int',
-                      'length' => 10,
+                      
                       'unsigned' => TRUE,
                       'not null' => TRUE, 
-                      'description' => t('Identificador de la oferta'),),
+                      'description' => 'Identificador de la oferta',),
                   'nid_instrument' => array(
                       'type' => 'int',
-                      'length' => 10,
+                      
                       'unsigned' => TRUE,
                       'not null' => TRUE, 
-                      'description' => t('Identificador del instrumentos'),),
+                      'description' => 'Identificador del instrumentos',),
                   'uid' => array(
                       'type' => 'int',
-                      'length' => 10,
+                     
                       'unsigned' => TRUE,
                       'not null' => TRUE, 
-                      'description' => t('Identificador de la persona inscrita'),),
+                      'description' => 'Identificador de la persona inscrita',),
                   'position' => array(
                       'type' => 'int',
-                      'length' => 1,
+                      'size' => 'tiny',
                       'unsigned' => TRUE,
                       'not null' => TRUE, 
-                      'description' => t('Identificador si este instrumento está activo actualmente'),),
+                      'default' => 0,
+                      'description' => 'Identificador si este instrumento está activo actualmente',),
                         ),
-'primary key' => array('nid_oferta', 'nid_instrument','position'),
+'primary key' => array('nid_oferta', 'nid_instrument','position', 'uid'),
 'foreign keys' => array(
                     'fk_io_ofertas' => array(
                                               'table' => 'pym_ofertas',

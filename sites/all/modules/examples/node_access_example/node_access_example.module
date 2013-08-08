@@ -211,8 +211,7 @@ function node_access_example_permission() {
  * @see hook_node_access()
  */
 function node_access_example_node_access($node, $op, $account) {
-    dpm($op);
-  dpm($node);
+ 
   // If $node is a string, the node has not yet been created. We don't care
   // about that case.
   if (is_string($node)) {
