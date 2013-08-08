@@ -1329,13 +1329,14 @@ function forms_ofertas_listado_suscripciones_usuario($form_state) {
 	);
 
 	$suscripciones = db_select('pym_instrumentos_ofertas', 'pym_io');
-	$suscripciones->fields('pym',array('nid_oferta'))
-     ->condition('pym_io.uid', $id,'=');
+	$suscripciones->fields('pym',array('nid_oferta', 'uid'))
+					->condition('pym_io.uid', $id,'=');
     $suscripciones->addField('pym', 'nid_oferta');
     $suscripciones->addField('pym', 'fecha_creacion');
     $suscripciones->addField('pym', 'autor_obra');
+    $suscripciones->addField('pym', 'obra_musical');
     $suscripciones->addField('pym', 'activo');
-	$suscripciones->leftJoin('pym_ofertas', 'pym', 'pym_io.uid = pym.uid');
+	$suscripciones->leftJoin('pym_ofertas', 'pym', 'pym_io.nid_oferta = pym.nid_oferta');
 
 
 	$suscripciones = $suscripciones->extend('PagerDefault')->limit(20); // line1
