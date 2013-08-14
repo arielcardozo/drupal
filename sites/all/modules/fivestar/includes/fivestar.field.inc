@@ -169,8 +169,6 @@ function fivestar_field_is_empty($item, $field) {
   return empty($item['rating']) || $item['rating'] == '-';
 }
 
-
-
 /**
  * Implementation of hook_field_widget_info().
  */
