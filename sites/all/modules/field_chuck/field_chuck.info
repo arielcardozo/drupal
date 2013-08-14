@@ -1,0 +1,5 @@
+name = Chuck Norris jokes field
+description = Field for Chuck Norris jokes from "The Internet Chuck Norris Database"
+package = Fields
+core = 7.x
+

@@ -1,0 +1,203 @@
+<?php
+/**
+ * @file
+ * Custom field for Chuck Norris jokes.
+ */
+
+/**
+ * Implements hook_field_info().
+ * Provides the description of the field.
+ */
+function field_chuck_field_info() {
+  return array(
+    'field_chuck' => array(
+      'label' => t('Chuck Norris Joke'),
+      'description' => t('Creates a field for Chuck Norris jokes.'),
+      'default_widget' => 'field_chuck',
+      'default_formatter' => 'chuck_norris_joke',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_load().
+ * Format the data before handling to the widget.
+ */
+function field_chuck_field_load($entity_type, $entities, $field, $instance, $langcode, &$items, $age) {
+  foreach ($entities as $id => $entity) {
+    foreach ($items[$id] as $delta => $item) {
+      $items[$id][$delta]['joke'] = decode_entities($item['joke']);
+    }
+  }
+}
+
+/**
+ * Implements hook_field_validate().
+ * Provides a validation function for each item.
+ */
+function field_chuck_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
+  foreach ($items as $delta => $item) {
+    if (!is_numeric($item['id'])) {
+      $errors[$field['field_name']][$langcode][$delta][] = array(
+        'error' => 'id_not_numeric',
+        'message' => t("%name: The joke id must be numeric. Don't cheat Chuck Norris!", array('%name' => $instance['label'])),
+      );
+    }
+    if (empty($item['joke'])) {
+      $errors[$field['field_name']][$langcode][$delta][] = array(
+        'error' => 'joke_empty',
+        'message' => t("%name: What happened? Empty jokes makes Chuck Norris angry!", array('%name' => $instance['label'])),
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_field_is_empty().
+ * Define what constitutes an empty item for a fielt type.
+ */
+function field_chuck_field_is_empty($item, $field) {
+  return (empty($item['id']) && empty($item['joke']));
+}
+
+/**
+ * Implements hook_field_presave().
+ * Define custom presave behavior for this module's field.
+ */
+function field_chuck_field_presave($entity_type, $entity, $field, $instance, $langcode, &$items) {
+  foreach ($items as $delta => $value) {
+    $items[$delta] = array(
+      'id' => $value['id'],
+      'joke' => strip_tags($value['joke']),
+    );
+  }
+}
+
+/**
+ * Implements hook_field_widget_info().
+ * Expose Field API widget types.
+ */
+function field_chuck_field_widget_info() {
+  return array(
+    'field_chuck' => array(
+      'label' => t('Chuck Norris Joke'),
+      'field types' => array('field_chuck'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ * Return the form for a single field widget.
+ */
+function field_chuck_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $element += array(
+    '#type' => $instance['widget']['type'],
+    '#default_value' => isset($items[$delta]) ? $items[$delta] : '',
+  );
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_error().
+ */
+function field_chuck_field_widget_error($element, $error, $form, &$form_state) {
+  switch ($error['error']) {
+    case 'id_not_numeric':
+      $target = $element['id'];
+      break;
+    case 'joke_empty':
+      $target = $element['joke'];
+      break;
+  }
+
+  form_error($target, $error['message']);
+}
+
+/**
+ * Implements hook_element_info().
+ * Declare the field Form API element types and specify their default values.
+ * @see field_chuck_field_process().
+ */
+function field_chuck_element_info() {
+  $elements = array();
+  $elements['field_chuck'] = array(
+    '#input' => TRUE,
+    '#process' => array('field_chuck_field_process'),
+  );
+  return $elements;
+}
+
+/**
+ * Build the form element. When creating a form using FAPI #process,
+ * note that $element['#value'] is already set.
+ *
+ * The $fields array is in $complete_form['#field_info'][$element['#field_name']].
+ */
+function field_chuck_field_process($element, $form_state, $complete_form) {
+  $element['submit'] = array(
+    '#type' => 'markup',
+    '#markup' => t('Go!'),
+    '#prefix' => '<div id="field-chuck-submit"><h2>',
+    '#suffix' => '</h2></div>',
+    '#attached' => array(
+      'js' => array(drupal_get_path('module', 'field_chuck') . '/field_chuck.js'),
+    ),
+  );
+
+  $element['joke'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Chuck Norris Joke'),
+    '#default_value' => isset($element['#value']['joke']) ? $element['#value']['joke'] : '',
+    '#prefix' => '<div id="field-chuck-joke">',
+    '#suffix' => '</div>',
+    '#maxlength' => 2048,
+    '#size' => 100,
+  );
+
+  $element['id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Joke ID'),
+    '#default_value' => isset($element['#value']['id']) ? $element['#value']['id'] : '',
+    '#prefix' => '<div id="field-chuck-id">',
+    '#suffix' => '</div>',
+    '#size' => 4,
+  );
+
+  // To prevent an extra required indicator, disable the required flag on the
+  // base element since all the sub-fields are already required if desired.
+  $element['#required'] = FALSE;
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function field_chuck_field_formatter_info() {
+  return array(
+    'chuck_norris_joke' => array(
+      'label' => t('Chuck Norris Joke'),
+      'field types' => array('field_chuck'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function field_chuck_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  $settings = $display['settings'];
+
+  switch ($display['type']) {
+    case 'chuck_norris_joke':
+      foreach ($items as $delta => $item) {
+        $element[$delta] = array('#markup' => '<div class="chucknorris-joke"><span class="joke-id">Joke #' . $item['id'] . ': </span><span class="joke-text">' . $item['joke'] . '</span></div>');
+      }
+      break;
+  }
+  
+  return $element;
+}
+

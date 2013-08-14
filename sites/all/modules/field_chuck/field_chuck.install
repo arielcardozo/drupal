@@ -1,0 +1,27 @@
+<?php
+/**
+ * @file
+ * Install, update, and uninstall functions for the field_chuck module.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function field_chuck_field_schema($field) {
+  $columns = array(
+    'id' => array(
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE
+    ),
+    'joke' => array(
+      'type' => 'varchar',
+      'length' => 2048,
+      'not null' => FALSE
+    ),
+  );
+  return array(
+    'columns' => $columns,
+  );
+}
+

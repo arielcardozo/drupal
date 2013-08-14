@@ -1,0 +1,17 @@
+name = Instruments
+description = A module that provides a FAPI / Field instrument element and a simple wrapper module to store / update instruments data.
+package = Formulario de Ofertas
+core = 7.x
+files[] = offers_instruments.install
+files[] = offers_instruments.module
+files[] = offers_instruments.admin.inc
+
+
+configure = admin/config/development
+dependencies[] = entity
+
+; Information added by drupal.org packaging script on 2012-11-14
+version = "1.0 beta"
+core = "7.x"
+project = "Instruments"
+datestamp = "1352904057"
