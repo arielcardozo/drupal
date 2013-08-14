@@ -53,6 +53,10 @@ function forms_forcontu_install() {
     'description_instrument' => 'Instrumento de cuerda',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'Clarinete La y Sib',
@@ -65,48 +69,80 @@ function forms_forcontu_install() {
     'description_instrument' => 'Instrumento Aeróforos',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'Tuba',
     'description_instrument' => 'Instrumento Aeróforos',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'Timbales',
     'description_instrument' => 'Instrumento de percusión',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'Redoblante',
     'description_instrument' => 'Instrumento de percusión',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'Bombo',
     'description_instrument' => 'Instrumento de percusión',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'platillos',
     'description_instrument' => 'Instrumento de percusión',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'xilófono',
     'description_instrument' => 'Instrumento de percusión',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'celesta',
     'description_instrument' => 'Instrumento de percusión',
 
   );
+   db_insert('pym_instrumentos')
+    ->fields($fields)
+    ->execute();
+
    // Add another entry.
   $fields = array(
     'name_instrument'    => 'Triángulo',
