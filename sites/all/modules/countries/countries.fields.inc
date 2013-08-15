@@ -389,7 +389,7 @@ function _ajax_countries_continent_widget_callback($form, $form_state) {
  */
 function countries_options_list($field) {
   $function = !empty($field['settings']['options_list_callback']) ? $field['settings']['options_list_callback'] : 'countries_allowed_values';
-  dpm($field);
+  
   $field['settings'] += array('countries' => array());
 
   if (!isset($field['#filters'])) {
@@ -400,7 +400,7 @@ function countries_options_list($field) {
     );
     $field['#filters'] = $filters;
   }
-  dpm($function($field));
+  
   return $function($field);
 }
 

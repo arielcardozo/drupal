@@ -280,6 +280,7 @@ function profile2_create(array $values) {
  * Deprecated. Use profile2_create().
  */
 function profile_create(array $values) {
+
   return new Profile($values);
 }
 
@@ -290,6 +291,7 @@ function profile_create(array $values) {
  *   The profile object.
  */
 function profile2_save(Profile $profile) {
+  dpm($profile);
   return $profile->save();
 }
 
@@ -297,6 +299,7 @@ function profile2_save(Profile $profile) {
  * Saves a profile type to the db.
  */
 function profile2_type_save(ProfileType $type) {
+  dpm($type);
   $type->save();
 }
 
