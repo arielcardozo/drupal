@@ -72,7 +72,7 @@ function options_field_widget_form(&$form, &$form_state, $field, $instance, $lan
   // Abstract over the actual field columns, to allow different field types to
   // reuse those widgets.
   $value_key = key($field['columns']);
-
+  
   $type = str_replace('options_', '', $instance['widget']['type']);
   $multiple = $field['cardinality'] > 1 || $field['cardinality'] == FIELD_CARDINALITY_UNLIMITED;
   $required = $element['#required'];
@@ -81,13 +81,14 @@ function options_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 
   $entity_type = $element['#entity_type'];
   $entity = $element['#entity'];
-
+ 
   // Prepare the list of options.
   $options = _options_get_options($field, $instance, $properties, $entity_type, $entity);
 
   // Put current field values in shape.
   $default_value = _options_storage_to_form($items, $options, $value_key, $properties);
 
+  //dpm($options);
   switch ($type) {
     case 'select':
       $element += array(

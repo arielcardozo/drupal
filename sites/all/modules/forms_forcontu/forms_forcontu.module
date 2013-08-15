@@ -311,7 +311,7 @@ function offers_form($form_state) {
 	'description' => array('data' => t('Description'), 'field' => 'n.description_instrument'),
 	);
 
-	$query = db_select('pym_instrumentos', 'n');
+	$query = db_select('instruments', 'n');
 	// Obtiene los datos de la base de datos (tabla node).
 	$instruments = $query->
 		fields('n',array('nid_instrument','name_instrument'))->execute();
@@ -801,7 +801,7 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 	$instrumentos->addField('u', 'name', 'name');
 	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
 	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
-	$instrumentos->leftJoin('pym_instrumentos', 'i', 'io.nid_instrument = i.nid_instrument ');
+	$instrumentos->leftJoin('instruments', 'i', 'io.nid_instrument = i.nid_instrument ');
 	//defino una línea de instrumento 
   	$entries = $instrumentos->execute()->fetchAll();
 
@@ -1019,7 +1019,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 	$instrumentos->addField('u', 'name', 'name');
 	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
 	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
-	$instrumentos->leftJoin('pym_instrumentos', 'i', 'io.nid_instrument = i.nid_instrument ');
+	$instrumentos->leftJoin('instruments', 'i', 'io.nid_instrument = i.nid_instrument ');
 	//defino una línea de instrumento 
   	$entries = $instrumentos->execute()->fetchAll();
 
