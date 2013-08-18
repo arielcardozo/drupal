@@ -60,6 +60,7 @@ function hook_profile2_insert($profile) {
 * @see hook_entity_presave()
 */
 function hook_profile2_presave($profile) {
+  dpm($profile);
   $profile->extra = 'foo';
 }
 

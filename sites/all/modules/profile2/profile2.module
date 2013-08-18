@@ -291,7 +291,6 @@ function profile_create(array $values) {
  *   The profile object.
  */
 function profile2_save(Profile $profile) {
-  dpm($profile);
   return $profile->save();
 }
 
@@ -299,7 +298,7 @@ function profile2_save(Profile $profile) {
  * Saves a profile type to the db.
  */
 function profile2_type_save(ProfileType $type) {
-  dpm($type);
+
   $type->save();
 }
 
@@ -348,10 +347,13 @@ function profile2_user_view($account, $view_mode, $langcode) {
  * @see profile2_form_submit_handler
  */
 function profile2_form_user_profile_form_alter(&$form, &$form_state) {
+
   if (($type = profile2_get_types($form['#user_category'])) && $type->userCategory) {
+
     if (empty($form_state['profiles'])) {
       $profile = profile2_load_by_user($form['#user'], $form['#user_category']);
       if (empty($profile)) {
+
         $profile = profile2_create(array('type' => $form['#user_category'], 'uid' => $form['#user']->uid));
       }
       $form_state['profiles'][$profile->type] = $profile;
@@ -447,13 +449,17 @@ function profile2_form_submit_handler(&$form, &$form_state) {
   profile2_form_submit_build_profile($form, $form_state);
   // This is needed as some submit callbacks like user_register_submit() rely on
   // clean form values.
+   
   profile2_form_submit_cleanup($form, $form_state);
 
-  foreach ($form_state['profiles'] as $type => $profile) {
+  foreach ($form_state['profiles'] as $type => $profile) { 
     // During registration set the uid field of the newly created user.
     if (empty($profile->uid) && isset($form_state['user']->uid)) {
+      
       $profile->uid = $form_state['user']->uid;
     }
+
+    
     profile2_save($profile);
   }
 }
@@ -473,6 +479,7 @@ function profile2_form_submit_build_profile(&$form, &$form_state) {
     }
     field_attach_submit('profile2', $profile, $form['profile_' . $type], $form_state);
   }
+
 }
 
 /**
@@ -725,10 +732,10 @@ class Profile extends Entity {
     // Care about setting created and changed values. But do not automatically
     // set a created values for already existing profiles.
     if (empty($this->created) && (!empty($this->is_new) || !$this->pid)) {
+
       $this->created = REQUEST_TIME;
     }
     $this->changed = REQUEST_TIME;
-
     parent::save();
     // Update the static cache from profile2_load_by_user().
     $cache = &drupal_static('profile2_load_by_user', array());
@@ -879,6 +886,6 @@ function profile2_field_extra_fields() {
 function profile2_user_get_properties($account, array $options, $name) {
   // Remove the leading 'profile_' from the property name to get the type name.
   $profile = profile2_load_by_user($account, substr($name, 8));
-  return $profile ? $profile : NULL;
+    return $profile ? $profile : NULL;
 }
 

@@ -1,0 +1,13 @@
+name = Field Instruments
+description = An implementation of a field to show the Field API
+package = Formulario de Ofertas
+core = 7.x
+
+
+; Information added by drupal.org packaging script on 2013-08-14
+version = "1.0 beta"
+core = "7.x"
+project = "instruments"
+datestamp = "1376524800"
+dependencies[] = offers_instruments
+
