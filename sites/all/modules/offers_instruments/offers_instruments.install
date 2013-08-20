@@ -21,6 +21,12 @@ function offers_instruments_schema() {
                             'length' => 255,
                             'not null' => FALSE,
                             'description' => 'Instruments description',),
+              'general_list' => array(
+                            'type' => 'int', 
+                             'size' => 'tiny',
+                            'not null' => TRUE,
+                            'default' => 0,
+                            'description' => 'Below to general list',),
               ),
     'primary key' => array('nid_instrument'),
     'unique key' => array('name_instrument'),
@@ -69,13 +75,16 @@ function offers_instruments_import_csv() {
   while (($row = fgetcsv($handle, 1024, ",")) !== FALSE) {
     // The name data.
     $row[0] = empty($row[0]) || $row[0] == 'NULL' ? '' : trim($row[0]);
-    // The official name data.
+    // The description  data.
     $row[1] = empty($row[1]) || $row[1] == 'NULL' ? '' : trim($row[1]);
+     // The general list data.
+    $row[2] = empty($row[2]) || $row[2] == '0' ? '' : trim($row[2]);
    
     if (!empty($row[0]) && $row[0] != 'NULL') {
       $instruments[$row[0]] = array(
         'name_instrument' => $row[0],
         'description_instrument' => $row[1],
+        'general_list' => $row[2],
         
       );
     }
@@ -101,6 +110,7 @@ function offers_instruments_import_csv() {
   $insert = db_insert('instruments')->fields(array(
     'name_instrument',
     'description_instrument',
+    'general_list',
 
   ));
   foreach ($instruments as $instrument) {

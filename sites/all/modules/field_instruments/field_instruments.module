@@ -246,7 +246,8 @@ function field_instruments_options_list($field) {
   $list = array();
   //$list[0] = "-- Select an instrument--";
   $instruments = db_select('instruments', 'i')
-                 ->fields('i', array('nid_instrument', 'name_instrument'));
+                 ->fields('i', array('nid_instrument', 'name_instrument'))
+                 ->condition('general_list', 1,'=');
     
   $result = $instruments->execute()->fetchAll();
   foreach ($result as $record) {

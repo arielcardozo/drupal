@@ -54,6 +54,7 @@ function instruments_form($form, &$form_state, $operation = 'add', $instrument_i
       $instrument = $db->get($instrument_id);
       $form_state['storage']['name_instrument'] = $instrument->getName_instrument();
       $form_state['storage']['description_instrument'] = $instrument->getDescription_instrument();
+      $form_state['storage']['general_list'] = $instrument->getGeneral_list();
      
     }
     $form['id'] = array(
@@ -206,7 +207,7 @@ function _handler_step_00($form, &$form_state, $submit_value) {
       '#type' => 'textfield',
       '#size' => 10,
       '#maxlength' => 10,
-      '#title' => t('First Name'),
+      '#title' => t('Instrument\' Name'),
       '#weight' => $weight++,
       '#prefix' => '<table border=0 cellspacing=3 celladding=3><tr><td>',
       '#suffix' => '</td>',
@@ -218,12 +219,23 @@ function _handler_step_00($form, &$form_state, $submit_value) {
       '#type' => 'textfield',
       '#size' => 30,
       '#maxlength' => 255,
-      '#title' => t('Last Name'),
+      '#title' => t('Insturment\' Description'),
       '#weight' => $weight++,
       '#prefix' => '<td>',
       '#suffix' => '</td>',
       '#default_value' => isset($form_state['storage']['description_instrument']) 
                                           ? $form_state['storage']['description_instrument'] : '',
+  );
+   $form['record_fieldset']['general_list'] = array(
+      '#type' => 'textfield',
+      '#size' => 2,
+      '#maxlength' => 2,
+      '#title' => t('General List'),
+      '#weight' => $weight++,
+      '#prefix' => '<td>',
+      '#suffix' => '</td>',
+      '#default_value' => isset($form_state['storage']['general_list']) 
+                                          ? $form_state['storage']['general_list'] : '',
   );
  
   $form['record_fieldset']['reset'] = array(
@@ -316,12 +328,14 @@ function _process_instruments_submit($form, $form_state) {
             $form_state['rebuild'] = TRUE;
             $form_state['storage']['name_instrument'] = $form_state['values']['name_instrument'];
             $form_state['storage']['description_instrument'] = $form_state['values']['description_instrument'];
+            $form_state['storage']['general_list'] = $form_state['values']['general_list'];
             $form_state['storage']['record_operation'] = $form_state['values']['record_operation'];
           }
           if ($form_state['values']['record_operation'] == 'modify') {
             $form_state['rebuild'] = TRUE;
             $form_state['storage']['name_instrument'] = $form_state['values']['name_instrument'];
             $form_state['storage']['description_instrument'] = $form_state['values']['description_instrument'];
+            $form_state['storage']['general_list'] = $form_state['values']['general_list'];
             $form_state['storage']['record_operation'] = $form_state['values']['record_operation'];
           }
           $form_state['storage']['step'] = 1;
@@ -343,7 +357,8 @@ function _process_instruments_submit($form, $form_state) {
         case 'Submit - Complete Form' :
           $db = new DbInstrument();
           $db->add($form_state['storage']['name_instrument'], 
-                         $form_state['storage']['description_instrument']);
+                         $form_state['storage']['description_instrument'],
+                         $form_state['storage']['general_list']);
           drupal_goto('admin/config/development/instruments', array(
               'query' => array('sort' => 'desc', 'order' => 'Id')));
           break;
@@ -352,6 +367,7 @@ function _process_instruments_submit($form, $form_state) {
           $instrument = new Instrument();
           $instrument->setName_instrument($form_state['storage']['name_instrument']);
           $instrument->setDescription_instrument($form_state['storage']['description_instrument']);
+          $instrument->setGeneral_list($form_state['storage']['general_list']);
           $instrument->setKey($form_state['values']['id']);
           $db->set($instrument);
           drupal_goto('admin/config/development/instruments');
@@ -372,6 +388,7 @@ function instruments_db_report() {
       'id' => array('data' => t('Id'), 'field' => 'i.nid_instrument'),
       'name_instrument' => array('data' => t('Name'), 'field' => 'i.name_instrument'),
       'description_instrument' => array('data' => t('Description'), 'field' => 'i.description_instrument'),
+      'general_list' => array('data' => t('Lista General'), 'field' => 'i.general_list'),
       'operations' => array('data' => t('Operations'), 'colspan' => 2),
   );
  
@@ -383,7 +400,7 @@ function instruments_db_report() {
   $query = $query->extend('PagerDefault')->extend('TableSort');
  
   $query
-          ->fields('i', array('nid_instrument', 'name_instrument', 'description_instrument'))
+          ->fields('i', array('nid_instrument', 'name_instrument', 'description_instrument','general_list'))
           ->limit(20)
           ->orderByHeader($header)
           ->setCountQuery($count_query);
@@ -398,6 +415,7 @@ function instruments_db_report() {
         'nid_instrument' => get_html('span', $instrument->nid_instrument),
         'name_instrument' => get_html('span', $instrument->name_instrument),
         'description_instrument' => get_html('span', $instrument->description_instrument),
+        'general_list' => get_html('span', $instrument->general_list),
         'modify' => l(t('Modify'), 'admin/config/development/instruments/modify/' . $instrument->nid_instrument, array('html' => TRUE)),
                      
         'delete' => l(t('Delete'), 'admin/config/development/instruments/delete/' . $instrument->nid_instrument, array('html' => TRUE)),

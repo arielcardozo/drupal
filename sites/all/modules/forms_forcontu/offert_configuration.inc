@@ -26,9 +26,7 @@ class OfferEntity implements InstrumentEntityInterface {
   protected $salon;
   protected $piano;
   protected $ciudad;
-  protected $disponibilidad_manana;
-  protected $disponibilidad_tardes;
-  protected $disponibilidad_finde;
+  protected $disponibilidad;
   protected $activo;
   protected $key;
  
@@ -40,14 +38,61 @@ class OfferEntity implements InstrumentEntityInterface {
     $this->fecha_creacion = $fecha_creacion;
   }
 
-   public function getDescription() {
-    return $this->description;
+   public function getObraMusical() {
+    return $this->obra_musical;
   }
  
-  public function setDescription($description) {
-    $this->description = $description;
+  public function setObraMusical($obra_musical) {
+    $this->obra_musical = $obra_musical;
+  }
+
+   public function getAutorObra() {
+    return $this->autor_obra;
   }
  
+  public function setAutorObra($autor_obra) {
+    $this->autor_obra = $autor_obra;
+  }
+
+  public function getSalon() {
+    return $this->salon;
+  }
+ 
+  public function setSalon($salon) {
+    $this->salon = $salon;
+  }
+
+  public function getPiano() {
+    return $this->piano;
+  }
+ 
+  public function setPiano($piano) {
+    $this->piano = $piano;
+  }
+
+  public function getCiudad() {
+    return $this->ciudad;
+  }
+ 
+  public function setCiudad($ciudad) {
+    $this->ciudad = $ciudad;
+  }
+
+  public function getDisponibilidad() {
+    return $this->disponibilidad;
+  }
+ 
+  public function setDisponibilidad($disponibilidad) {
+    $this->disponibilidad = $disponibilidad;
+  } 
+
+  public function getActivo() {
+    return $this->activo;
+  }
+ 
+  public function setActivo($activo) {
+    $this->activo = $activo;
+  }  
   public function getKey() {
     return $this->key;
   }
@@ -61,29 +106,74 @@ class OfferEntity implements InstrumentEntityInterface {
  
 interface OfferInterface {
  
-  public function getName_instrument();
+  public function getAutor_obra();
  
-  public function setName_instrument($name_instrument);
+  public function setAutor_obra($autor_obra);
+
+  public function getFecha_creacion();
+
+  public function setFecha_creacion($fecha_creacion);
+
+  public function setObra_musical($obra_musical);
+
+  public function getObra_musical();
+
+  public function getSalon();
+
+  public function setSalon($salon);
+
+  public function getPiano();
+
+  public function setPiano($piano);
+
+  public function getCiudad();
+
+  public function setCiudad($ciudad);
+      
+  public function getActivo();
  
-  public function getDescription_instrument();
+  public function setActivo($activo);
+
+  public function getDisponibilidad();
  
-  public function setDescription_instrument($description_instrument);
+  public function setDisponibilidad($disponibilidad);
  
 }
  
 class Offer extends OfferEntity implements OfferInterface {
  
-  const NAME_INSTRUMENT = 'name_instrument';
-  const DESCRIPTION_INSTRUMENT = 'description_instrument';
-  const ID = 'nid_instrument';
-  const INSTRUMENTS_TABLE_NAME = 'instruments';
+  const AUTOR_OBRA = 'autor_obra';
+  
+  const OBRA_MUSICAL = 'obra_musical';
+  
+  const FECHA_CREACION = 'fecha_creacion';
+
+  const DISPONIBILIDAD = 'disponibilidad';
+
+  const SALON = 'salon';
+
+  const PIANO = 'piano';
+
+  const CIUDAD = 'ciudad';
+
+  const ACTIVO = 'activo';
+
+  const ID = 'nid_oferta';
+
+  const INSTRUMENTS_TABLE_NAME = 'pym_ofertas';
  
  
-  protected $name_instrument;
-  protected $description_instrument;
+  protected $obra_musical;
+  protected $autor_obra;
+  protected $fecha_creacion;
+  protected $disponibilidad;
+  protected $salon;
+  protected $piano;
+  protected $ciudad;
+  protected $activo;
  
   public static function create() {
-    return new Instrument();
+    return new Offer();
   }
  
   public function getName_instrument() {
@@ -106,8 +196,14 @@ class Offer extends OfferEntity implements OfferInterface {
  
  
   public function toArray() {
-    return array('name_instrument' => $this->name_instrument,
-        'description_instrument' => $this->description_instrument);
+    return array('obra_musical' => $this->obra_musical,
+        'autor_obra' => $this->autor_obra,
+        'disponibilidad' =>$this->disponibilidad,
+        'salon' =>$this->salon,
+        'piano' =>$this->piano,
+        'ciudad' =>$this->ciudad,
+        'activo' =>$this->activo,
+        'fecha_creacion' =>$this->fecha_creacion,);
   }
  
 }
@@ -117,31 +213,42 @@ class DbOffer {
   //Obtiene un instrumento
   function get($id) {
     try {
-      $fields = array(Instrument::ID,
-          Instrument::NAME_INSTRUMENT,
-          Instrument::DESCRIPTION_INSTRUMENT);
+      $fields = array(Offer::ID,
+          Offer::AUTOR_OBRA,
+          Offer::OBRA_MUSICAL,
+          Offer::FECHA_CREACION,
+          Offer::SALON,
+          Offer::PIANO,
+          Offer::CIUDAD,
+          Offer::DISPONIBILIDAD,
+          Offer::ACTIVO);
  
-      $result = db_select(Instrument::INSTRUMENTS_TABLE_NAME, 'n')
+      $result = db_select(Offer::INSTRUMENTS_TABLE_NAME, 'n')
                       ->fields('n', $fields)
-                      ->condition(Instrument::ID, $id)->execute()->fetch();
-      $instrument = new Instrument();
-      $instrument->setKey($result->nid_instrument);
-      $instrument->setName_instrument($result->name_instrument);
-      $instrument->setDescription_instrument($result->description_instrument);
+                      ->condition(Offer::ID, $id)->execute()->fetch();
+      $offer = new Offer();
+      $offer->setKey($result->nid_oferta);
+      $offer->setObra_musical($result->obra_musical);
+      $offer->setAutor_obra($result->autor_obra);
+      $offer->setAutor_obra($result->autor_obra);
+      $offer->setAutor_obra($result->autor_obra);
+      $offer->setAutor_obra($result->autor_obra);
+      $offer->setAutor_obra($result->autor_obra);
+      $offer->setAutor_obra($result->autor_obra);
     } catch (Exception $e) {
       $databaseException = new InstrumentDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);
       $databaseException->handle();
     }
-    return $instrument;
+    return $offer;
   }
  
   //Añade un instrumento
   function add($name_instrument, $description_instrument) {
     try {
-      $fields = array(Instrument::NAME_INSTRUMENT, Instrument::DESCRIPTION_INSTRUMENT);
+      $fields = array(Offer::NAME_INSTRUMENT, Offer::DESCRIPTION_INSTRUMENT);
  
-      $insert = db_insert(Instrument::INSTRUMENTS_TABLE_NAME)->fields($fields);
+      $insert = db_insert(Offer::INSTRUMENTS_TABLE_NAME)->fields($fields);
       $insert->values(array($name_instrument, $description_instrument));
       $insert->execute();
     } catch (Exception $e) {
@@ -156,7 +263,7 @@ class DbOffer {
   //Establece valores o actualiza
   function set(InstrumentInterface $instrument) {
     try {
-      $query = db_update('Instruments');
+      $query = db_update('pym_ofertas');
       $query->condition('nid_instrument', $instrument->getKey(), '=');
       $query->fields(array(
           'name_instrument' => $instrument->getName_instrument(),
@@ -173,7 +280,7 @@ class DbOffer {
   //Elimina una entrada de instrumento
   function delete($id) {
     try {
-      $query = db_delete('instruments');
+      $query = db_delete('pym_ofertas');
       $query->condition('nid_instrument', $id, '=');
       $query->execute();
     } catch (Exception $e) {

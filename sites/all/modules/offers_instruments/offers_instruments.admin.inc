@@ -20,6 +20,7 @@ class InstrumentEntity implements InstrumentEntityInterface {
  
   protected $name;
   protected $description;
+  protected $generalList;
   protected $key;
  
   public function getName() {
@@ -45,6 +46,14 @@ class InstrumentEntity implements InstrumentEntityInterface {
   public function setKey($index) {
     $this->key = $index;
   }
+
+  public function getGeneralList() {
+    return $this->generalList;
+  }
+ 
+  public function setGeneralList($generalList) {
+    $this->generalList = $generalList;
+  }
  
 }
  
@@ -58,6 +67,10 @@ interface InstrumentInterface {
   public function getDescription_instrument();
  
   public function setDescription_instrument($description_instrument);
+
+  public function getGeneral_list();
+ 
+  public function setGeneral_list($general_list);
  
 }
  
@@ -65,12 +78,14 @@ class Instrument extends InstrumentEntity implements InstrumentInterface {
  
   const NAME_INSTRUMENT = 'name_instrument';
   const DESCRIPTION_INSTRUMENT = 'description_instrument';
+  const GENERAL_LIST = 'general_list';
   const ID = 'nid_instrument';
   const INSTRUMENTS_TABLE_NAME = 'instruments';
  
  
   protected $name_instrument;
   protected $description_instrument;
+  protected $general_list;
  
   public static function create() {
     return new Instrument();
@@ -93,11 +108,20 @@ class Instrument extends InstrumentEntity implements InstrumentInterface {
     $this->description_instrument = $description_instrument;
     return $this;
   }
+
+  public function getGeneral_list() {
+    return $this->general_list;
+  }
+ 
+  public function setGeneral_list($general_list) {
+    $this->general_list = $general_list;
+    return $this;
+  }
  
  
   public function toArray() {
     return array('name_instrument' => $this->name_instrument,
-        'description_instrument' => $this->description_instrument);
+        'description_instrument' => $this->description_instrument,'general_list' => $this->general_list );
   }
  
 }
@@ -109,7 +133,8 @@ class DbInstrument {
     try {
       $fields = array(Instrument::ID,
           Instrument::NAME_INSTRUMENT,
-          Instrument::DESCRIPTION_INSTRUMENT);
+          Instrument::DESCRIPTION_INSTRUMENT,
+          Instrument::GENERAL_LIST);
  
       $result = db_select(Instrument::INSTRUMENTS_TABLE_NAME, 'n')
                       ->fields('n', $fields)
@@ -118,6 +143,7 @@ class DbInstrument {
       $instrument->setKey($result->nid_instrument);
       $instrument->setName_instrument($result->name_instrument);
       $instrument->setDescription_instrument($result->description_instrument);
+      $instrument->setGeneral_list($result->general_list);
     } catch (Exception $e) {
       $databaseException = new InstrumentDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);
@@ -127,18 +153,19 @@ class DbInstrument {
   }
  
   //Añade un instrumento
-  function add($name_instrument, $description_instrument) {
+  function add($name_instrument, $description_instrument, $general_list) {
     try {
-      $fields = array(Instrument::NAME_INSTRUMENT, Instrument::DESCRIPTION_INSTRUMENT);
+      $fields = array(Instrument::NAME_INSTRUMENT, Instrument::DESCRIPTION_INSTRUMENT, Instrument::GENERAL_LIST);
  
       $insert = db_insert(Instrument::INSTRUMENTS_TABLE_NAME)->fields($fields);
-      $insert->values(array($name_instrument, $description_instrument));
+      $insert->values(array($name_instrument, $description_instrument,$general_list));
       $insert->execute();
     } catch (Exception $e) {
       $databaseException = new InstrumentDatabaseException($e->getMessage(), 'Add',
-                      t('Instrument Name: @name_instrument, Instrument Description: @description_instrument, Color: @color', 
+                      t('Instrument Name: @name_instrument, Instrument Description: @description_instrument, General List: @general_list', 
                            array('@name_instrument' => $name_instrument,
-                          '@description_instrument' => $description_instrument)), TRUE);
+                          '@description_instrument' => $description_instrument,
+                          '@general_list' => $general_list)), TRUE);
       $databaseException->handle();
     }
   }
@@ -150,7 +177,8 @@ class DbInstrument {
       $query->condition('nid_instrument', $instrument->getKey(), '=');
       $query->fields(array(
           'name_instrument' => $instrument->getName_instrument(),
-          'description_instrument' => $instrument->getDescription_instrument())
+          'description_instrument' => $instrument->getDescription_instrument(),
+          'general_list' => $instrument->getGeneral_list())
       );
       $query->execute();
     } catch (Exception $e) {

@@ -11,7 +11,7 @@
  * @see hook_install()
  * @ingroup forms_forcontu
  */
-
+/*
 function forms_forcontu_install() {
   // Outside of the .install file we would use drupal_write_record() to
   // populate the database, but it cannot be used here, so we'll use
@@ -163,7 +163,7 @@ function forms_forcontu_install() {
   db_insert('pym_instrumentos')
     ->fields($fields)
     ->execute();    
-}
+}*/
 /**
  * Implements hook_uninstall().
  *
@@ -185,7 +185,7 @@ function forms_forcontu_uninstall() {
 */
 
 function forms_forcontu_schema() {
-$schema['pym_instrumentos'] = array(
+/*$schema['pym_instrumentos'] = array(
 'description' => t('Table to store the instruments available'),
 'fields' => array('nid_instrument' => array(
 											'type' => 'serial',
@@ -206,7 +206,7 @@ $schema['pym_instrumentos'] = array(
 'primary key' => array('nid_instrument'),
 'unique key' => array('name_instrument'),
 );
-
+*/
 $schema['pym_ofertas'] = array(
 'description' => t('Tabla para almacenar las ofertas de los usuarios'),
 'fields' => array('nid_oferta' => array(
@@ -257,24 +257,13 @@ $schema['pym_ofertas'] = array(
                         'length' => 150,
                         'not null' => FALSE,
                         'description' => 'Ciudad de realizacion',),
-                  'Disponibilidad_manana' => array(
-                        'type' => 'int', 
-                        'size' => 'tiny',
+                  'Disponibilidad' => array(
+                        'type' => 'varchar', 
+                        'length' => 255,
                         'not null' => FALSE,
                         'default' => 0,
-                        'description' => 'Disponibilidad por las mañanas',),
-                   'Disponibilidad_tardes' => array(
-                        'type' => 'int', 
-                        'size' => 'tiny',
-                        'not null' => FALSE,
-                        'default' => 0,
-                        'description' => 'Disponibilidad por las tardes',),
-                    'Disponibilidad_finde' => array(
-                        'type' => 'int', 
-                        'size' => 'tiny',
-                        'not null' => FALSE,
-                        'default' => 0,
-                        'description' => 'Disponibilidad los fines de semana',),
+                        'description' => 'Disponibilidad para tocar',),
+                   
                   'Activo' => array(
                         'type' => 'int', 
                         'size' => 'tiny',

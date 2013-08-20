@@ -205,7 +205,16 @@ function forms_forcontu_load($uid, $reset = FALSE) {
 * Función de retorno para la página ofertas/formulario.
 */
 function offers_form($form_state) {
-
+$query = db_select('instruments', 'n');
+	// Obtiene los datos de la base de datos (tabla node).
+	$instruments = $query->
+		fields('n',array('nid_instrument','name_instrument'))
+		->condition('general_list', 1,'=')->execute();
+	$options = array();
+	$options[0] = 'Select an instrument';
+	foreach ($instruments as $result) {
+    	$options[$result->nid_instrument] = $result->name_instrument;
+	}
 
 
 	$form['description'] = array(
@@ -260,28 +269,28 @@ function offers_form($form_state) {
 	'#markup' => l(t('Cancel'), ''),
 	);
 
-	$form['rehearsal'] = array(
-		'#type' => 'checkboxes',
-		//'#title' => t('Rehearsal'),
+	$form['salon'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('<strong>Do you need a rehearsal?</strong>'),
 		//'#default_value' => array('red','green'),
-		//'#options' => drupal_map_assoc(array('1' => t('<strong>Do you need a rehearsal?</strong>')))
-		'#options' => drupal_map_assoc(array('1' =>t('<strong>Do you need a rehearsal?</strong>'))),
+		 //'#options' => array( '1' => t('Do you need a rehearsal?')),
+		//'#options' => drupal_map_assoc(array('1' =>t('<strong>Do you need a rehearsal?</strong>'))),
 	//),
 	//'#description' => t('Select your preferences.'),
 	);
 
 	$form['piano'] = array(
-		'#type' => 'checkboxes',
-		//'#title' => t('Piano'),
-		'#options' => array(
-		'1' => t('<strong>Do you need piano?</strong>'),
+		'#type' => 'checkbox',
+		'#title' => t('<strong>Do you need piano?</strong>'),
+		'#options' => array( '1' => t('<strong>Do you need piano?</strong>')),
 		// Only show this field if persons is set to 'Other'.
-    '#states' => array(
-      'visible' => array(  // Action to take: Make visible.
-        ':input[name="rehearsal[<strong>Do you need a rehearsal?</strong>]"]' => array('checked' => TRUE),
-      ),
+	    '#states' => array(
+	      'visible' => array(  // Action to take: Make visible.
+	        ':input[name="salon"]' => array('checked' => TRUE),
+	      ),
     ),
-	),
+
+	//),
 	//'#description' => t('Select if you need piano.'),
 	);
 
@@ -298,15 +307,13 @@ function offers_form($form_state) {
 
 
 	$form['time_availability'] = array(
-		'#type' => 'checkboxes',
+		'#type' => 'textfield',
 		'#title' => t('Time availability'),
 		//'#default_value' => array('red','green'),
 		//'#required' => TRUE,
-		'#options' => array(
-		'1' => t('Morning'),
-		'2' => t('Afternoon'),
-		'3' => t('Weekend'),
-		),
+		'#size' => 40,
+		'#maxlength' => 40,
+		
 		//'#description' => t('Wich is your hour availability'),
 		
 	);
@@ -317,15 +324,7 @@ function offers_form($form_state) {
 	'description' => array('data' => t('Description'), 'field' => 'n.description_instrument'),
 	);
 
-	$query = db_select('instruments', 'n');
-	// Obtiene los datos de la base de datos (tabla node).
-	$instruments = $query->
-		fields('n',array('nid_instrument','name_instrument'))->execute();
-	$options = array();
-	$options[0] = 'Select an instrument';
-	foreach ($instruments as $result) {
-    	$options[$result->nid_instrument] = $result->name_instrument;
-	}
+	
 		
 	//Construye el elemento de formulario select.
 	$form['uid_usuario'] = array(
@@ -335,9 +334,15 @@ function offers_form($form_state) {
 	);
 	
 
-
+	$form['to_play']['autor_instrumet'] = array(
+		'#type' => 'select',
+		'#title' => t('Instrument to play by the author'),
+		'#required' => TRUE,
+		'#options' => $options,
+            '#empty' => t('No content available.'),
+	);		
  
-    $no_of_fields = 9;     // The number of fields you wish to have in the form
+    $no_of_fields = 4;     // The number of fields you wish to have in the form
 
     // Start adding the fields to the form
     for ($i=1; $i<=$no_of_fields; $i++)
@@ -348,28 +353,81 @@ function offers_form($form_state) {
             '#options' => $options,
             '#empty' => t('No content available.'),
             
-        );      
+        ); 
+        $form['performers']['other_permformers'.$i] = array(
+		    '#type' => 'textfield',
+		    '#size' => 50,
+		    '#title' => t('Please enter the instrument.'),
+
+		    // Only show this field if persons is set to 'Other'.
+		    '#states' => array(
+		      'visible' => array(  // Action to take: Make visible.
+		        ':input[name="performers'.$i.'"]' => array('value' => '16'),
+		      ),
+		    ),
+  		);
+
     }
 
 
 
- 	$form['performers']['persons'] = array(
-    '#type' => 'checkboxes',
+ 	$form['performers']['more_instruments'] = array(
+    '#type' => 'checkbox',
     '#options' => drupal_map_assoc(array(t('More instrument/s'))),
-    '#title' => t(''),
+    '#title' => t('More instruments'),
  	 );
-  	$form['performers']['country_writein'] = array(
+  	/*$form['performers']['more_instruments'] = array(
     '#type' => 'textfield',
     '#size' => 75,
     '#title' => t('Please enter the instrument\'s name wich are needs separated by "|".'),
 
-    // Only show this field if persons is set to 'Other'.
+	    // Only show this field if persons is set to 'Other'.
+	    '#states' => array(
+	      'visible' => array(  // Action to take: Make visible.
+	        ':input[name="persons[More instrument/s]"]' => array('checked' => TRUE),
+	      ),
+    ),
+  );*/
+
+	$form['performers']['more_performes'] = array(
+	'#type' => 'fieldset',
+	'#title' => t('How many performers do you need?'),
+	'#collapsible' => TRUE,
+	'#collapsed' => TRUE,
+	    // Expand the expand_more_info fieldset if the box is checked.
     '#states' => array(
-      'visible' => array(  // Action to take: Make visible.
-        ':input[name="persons[More instrument/s]"]' => array('checked' => TRUE),
+      'expanded' => array(
+        ':input[name="more_instruments"]' => array('checked' => TRUE),
       ),
     ),
-  );
+	);
+
+	$no_of_fields = 9;     // The number of fields you wish to have in the form
+
+    // Start adding the fields to the form
+    for ($i=5; $i<=$no_of_fields; $i++)
+    {
+        $form['performers']['more_performes']['performers'.$i] = array(
+            '#title' => t('Instrument no. '.$i),
+            '#type' => 'select',
+            '#options' => $options,
+            '#empty' => t('No content available.'),
+            
+        ); 
+        $form['performers']['more_performes']['other_permformers'.$i] = array(
+		    '#type' => 'textfield',
+		    '#size' => 50,
+		    '#title' => t('Please enter the instrument.'),
+
+		    // Only show this field if persons is set to 'Other'.
+		    '#states' => array(
+		      'visible' => array(  // Action to take: Make visible.
+		        ':input[name="performers'.$i.'"]' => array('value' => '16'),
+		      ),
+		    ),
+  		);
+
+    }
 
 
 
@@ -384,28 +442,27 @@ function offers_form_submit($form, &$form_state){
 	// Función de inserción de datos
 
 	 $no_of_fields = 9;     // The number of fields you wish to have in the form
-
+	 dpm($form_state);
  	$transaction = db_transaction();
  	 try {
 			$id_oferta = db_insert('pym_ofertas')
 				->fields(array(
-				'uid' => $form_state['values']['uid_usuario'],
-				'fecha_creacion' =>time(),
-				'obra_musical' => $form_state['values']['musical_piece'],
-				'autor_obra' => $form_state['values']['author'],
-				'Salon' => $form_state['values']['rehearsal'],
-				'Piano' => $form_state['values']['piano'],
-				'Ciudad' => $form_state['values']['city'],
-				'Disponibilidad_manana' => ($form_state['values']['time_availability'][1]==1) ? 1 : 0,
-				'Disponibilidad_tardes' => ($form_state['values']['time_availability'][2]==2) ? 1 : 0,
-				'Disponibilidad_finde' => ($form_state['values']['time_availability'][3]==3) ? 1 : 0,
+					'uid' => $form_state['values']['uid_usuario'],
+					'fecha_creacion' =>time(),
+					'obra_musical' => $form_state['values']['musical_piece'],
+					'autor_obra' => $form_state['values']['author'],
+					'Salon' => $form_state['values']['rehearsal'],
+					'Piano' => $form_state['values']['piano'],
+					'Ciudad' => $form_state['values']['city'],
+					'Disponibilidad' => $form_state['values']['time_availability'],
+					//'Disponibilidad_tardes' => ($form_state['values']['time_availability'][2]==2) ? 1 : 0,
+					//'Disponibilidad_finde' => ($form_state['values']['time_availability'][3]==3) ? 1 : 0,
 
-				'Activo' => 1,
+					'Activo' => 1,
 			
 				))
 				->execute();
 				
-
 				 $array_instruments = array();
 			 	for ($i=1; $i<=$no_of_fields; $i++)
 		    	{
@@ -427,7 +484,7 @@ function offers_form_submit($form, &$form_state){
 				drupal_set_message ("<strong>Su oferta ha sido registrada correctamente.</strong> ");
 		    }
 		    catch (Exception $e) {
-			    $transaction->rollback();
+			   $transaction->rollback();
 			    watchdog_exception('my_type', $e);
 			    drupal_set_message ("<strong>Hubo un problema en el registro de su oferta, por favor inténtelo más tarde.</br>".$e->getMessage()."</strong> ");
 			}
@@ -748,7 +805,7 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 		'#default_value' => $record->autor_obra,
 		'#required' => TRUE,
 	);
-	$form['personal_data']['Salon'] = array(
+	$form['personal_data']['Salom'] = array(
 		'#type' => 'checkbox',
 		'#title' => t('Se necesita Salon'),
 		'#default_value' => ($record->Salon==0)?0:1,
@@ -765,14 +822,14 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 		'#required' => TRUE,
 	);
 	$form['personal_data']['Disponibilidad'] = array(
-		'#type' => 'fieldset',
+		'#type' => 'textfield',
 		'#title'=> t('Availability'),
-		'#collapsible' => TRUE,
-		'#collapsed' => FALSE,
+		'#default_value' => $record->Disponibilidad,
+		//'#collapsed' => FALSE,
 	);
 
 		
-		$options = array('1'.$record->Disponibilidad_tardes =>'Afternoon availability', 
+		/*$options = array('1'.$record->Disponibilidad_tardes =>'Afternoon availability', 
 						 '2'.$record->Disponibilidad_manana =>'Morning availability',
 						 '3'.$record->Disponibilidad_finde =>'Weekend availability',
 						);
@@ -782,7 +839,7 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 		'#title' => t(''),
 		'#options' => $options,
 		'#default_value' => $options_checked,// $options_checked is an array similar to $options but having elements which need to be checked by default...
-		);
+		);*/
 
 
 	$form['instruments']= array(
@@ -979,14 +1036,14 @@ function forms_ofertas_detalle($form,&$form_state) {
 
 	);
 	$form['personal_data']['Disponibilidad'] = array(
-		'#type' => 'fieldset',
+		'#type' => 'item',
 		'#title'=> t('Availability'),
-		'#collapsible' => TRUE,
-		'#collapsed' => FALSE,
+		'#markup' => ($record->Disponibilidad),
+		
 	);
 
 		
-		$options = array('1'.$record->Disponibilidad_tardes =>'Afternoon availability', 
+		/*$options = array('1'.$record->Disponibilidad_tardes =>'Afternoon availability', 
 						 '2'.$record->Disponibilidad_manana =>'Morning availability',
 						 '3'.$record->Disponibilidad_finde =>'Weekend availability',
 						);
@@ -997,7 +1054,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 		'#options' => $options,
 		'#default_value' => $options_checked,// $options_checked is an array similar to $options but having elements which need to be checked by default...
 		'#disabled' => TRUE,
-		);
+		);*/
 		
 
 
@@ -1266,13 +1323,14 @@ function forms_ofertas_listado_ofertas_usuario($form_state) {
 		'created' => array('data' => t('Creado'), 'field' => 'fecha_creacion','sort' => 'asc'),
 		'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
 		'Author Obra' => array('data' => t('Author'), 'field' => 'name'),
+		'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
 		'Activo' => array('data' => t('Estado'), 'field' => 'activo','sort' => 'asc'),
 	);
 
 	$query = db_select('pym_ofertas', 'pym');
 	//$query->range(0, 10);
 	// Obtiene los datos de la base de datos (tabla node).
-	$query->fields('pym',array('nid_oferta','fecha_creacion','autor_obra','obra_musical','activo'))
+	$query->fields('pym',array('nid_oferta','fecha_creacion','autor_obra','obra_musical','ciudad','activo'))
 				->condition('u.uid', $id,'=');
 	$query->join('users', 'u', 'u.uid = pym.uid');
 	      
@@ -1306,6 +1364,7 @@ function forms_ofertas_listado_ofertas_usuario($form_state) {
 			
 			
 			'Author Oferta' => $entry->autor_obra,
+			'Ciudad' => $entry->ciudad,
 			//'Estado' => $entry->activo,
 			'Estado' => (empty($entry->activo))?'cerrada':'abierta',
 
@@ -1338,6 +1397,7 @@ function forms_ofertas_listado_suscripciones_usuario($form_state) {
 		'created' => array('data' => t('Creado'), 'field' => 'fecha_creacion','sort' => 'asc'),
 		'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
 		'Author Obra' => array('data' => t('Offer Author'), 'field' => 'name'),
+		'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
 		'Activo' => array('data' => t('Estado'), 'field' => 'activo','sort' => 'asc'),
 	);
 
@@ -1348,6 +1408,7 @@ function forms_ofertas_listado_suscripciones_usuario($form_state) {
     $suscripciones->addField('pym', 'fecha_creacion');
     $suscripciones->addField('pym', 'autor_obra');
     $suscripciones->addField('pym', 'obra_musical');
+    $suscripciones->addField('pym', 'ciudad');
     $suscripciones->addField('pym', 'activo');
 	$suscripciones->leftJoin('pym_ofertas', 'pym', 'pym_io.nid_oferta = pym.nid_oferta');
 
@@ -1395,6 +1456,7 @@ function forms_ofertas_listado_suscripciones_usuario($form_state) {
 			
 			
 			'Author Oferta' => $entry->autor_obra,
+			'Ciudad' => $entry->ciudad,
 			//'Estado' => $entry->activo,
 			'Estado' => (empty($entry->activo))?'cerrada':'abierta',
 
@@ -1422,13 +1484,15 @@ function forms_ofertas_listado($form_state) {
 	'created' => array('data' => t('Creado'), 'field' => 'fecha_creacion','sort' => 'asc'),
 	'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
 	'Author Oferta' => array('data' => t('Author Oferta'), 'field' => 'name'),
+	'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
+
 	'Activo' => array('data' => t('Estado'), 'field' => 'activo','sort' => 'asc'),
 	);
 
 	$query = db_select('pym_ofertas', 'pym');
 	//$query->range(0, 10);
 	// Obtiene los datos de la base de datos (tabla node).
-	$query->fields('pym',array('nid_oferta','fecha_creacion','autor_obra','obra_musical','activo'));
+	$query->fields('pym',array('nid_oferta','fecha_creacion','autor_obra','obra_musical','ciudad','activo'));
 	//$query->join('users', 'u', 'u.uid = pym.uid');
 	$query->addField('u', 'name');
 	$query->addField('u', 'uid');
@@ -1467,6 +1531,7 @@ function forms_ofertas_listado($form_state) {
 									),
 			//'Author Oferta' => $entry->name,
 			//'Estado' => $entry->activo,
+			'Ciudad' => $entry->ciudad,
 			'Estado' => (empty($entry->activo))?'cerrada':'abierta',
 
 		);
