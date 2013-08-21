@@ -338,6 +338,18 @@ $query = db_select('instruments', 'n');
 		'#options' => $options,
             '#empty' => t('No content available.'),
 	);		
+	$form['to_play']['other_autor_instrument'] = array(
+		    '#type' => 'textfield',
+		    '#size' => 50,
+		    '#title' => t('Please enter the instrument.'),
+
+		    // Only show this field if persons is set to 'Other'.
+		    '#states' => array(
+		      'visible' => array(  // Action to take: Make visible.
+		        ':input[name="autor_instrumet"]' => array('value' => '16'),
+		      ),
+		    ),
+  		);
  
     $no_of_fields = 4;     // The number of fields you wish to have in the form
 
@@ -441,7 +453,7 @@ function offers_form_submit($form, &$form_state){
 	 $no_of_fields = 4;     // The number of fields you wish to have in the form
  	$transaction = db_transaction();
     $db = new DbOffer();
-   
+   	$id_new_instrument = 0;
  	 try {
  	 	$id_oferta = $db->add($form_state['values']['uid_usuario'], 
  	 				$form_state['values']['author'],
@@ -453,21 +465,38 @@ function offers_form_submit($form, &$form_state){
  	 				$form_state['values']['time_availability'],
  	 				1);
 			
-				
+				//Alta de la opción del propietario de la oferta
+
 
 			 	for ($i=1; $i<=$no_of_fields; $i++)
 		    	{
-			        if($form_state['values']['performers'.$i]!=0){
+			        if($form_state['values']['performers'.$i]!=0 && $form_state['values']['performers'.$i]!=16){
 			        	$result = db_insert('pym_instrumentos_ofertas')
-						->fields(array(
-						'nid_instrument' => $form_state['values']['performers'.$i],
-						'nid_oferta' => $id_oferta,
-						'uid'=>0,
-						'position'=>$i,
-						))
-						->execute();
+							->fields(array(
+							'nid_instrument' => $form_state['values']['performers'.$i],
+							'nid_oferta' => $id_oferta,
+							'uid'=>0,
+							'position'=>$i,
+							))
+							->execute();
 							
 			        }
+			        if($form_state['values']['performers'.$i]==16){
+			        	$db = new DbInstrument();
+			        	$id_new_instrument = $db->add($form_state['values']['other_permformers'.$i], 
+                         								'Instrumento propio de oferta: '.$id_oferta,
+                         								0);
+
+			        	$result = db_insert('pym_instrumentos_ofertas')
+							->fields(array(
+							'nid_instrument' => $id_new_instrument,
+							'nid_oferta' => $id_oferta,
+							'uid'=>0,
+							'position'=>$i,
+							))
+							->execute();
+			        }
+
 		    
 		    	}
 				offers_form_mail_send($id_oferta,$form_state['values'],'new_offer');
@@ -759,8 +788,7 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 
 
 	$oferta = db_select('pym_ofertas', 'n')
-		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad_manana','Disponibilidad_tardes',
-							'Disponibilidad_finde'))
+		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad'))
 		->condition('nid_oferta', $id,'=')
 		->condition('Activo', 1,'=');
 		
@@ -950,8 +978,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 
 
 	$oferta = db_select('pym_ofertas', 'n')
-		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad_manana','Disponibilidad_tardes',
-							'Disponibilidad_finde'))
+		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad'))
 		->condition('nid_oferta', $id,'=')
 		->condition('Activo', 1,'=');
 		

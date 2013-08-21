@@ -159,7 +159,7 @@ class DbInstrument {
  
       $insert = db_insert(Instrument::INSTRUMENTS_TABLE_NAME)->fields($fields);
       $insert->values(array($name_instrument, $description_instrument,$general_list));
-      $insert->execute();
+      $id = $insert->execute();
     } catch (Exception $e) {
       $databaseException = new InstrumentDatabaseException($e->getMessage(), 'Add',
                       t('Instrument Name: @name_instrument, Instrument Description: @description_instrument, General List: @general_list', 
@@ -168,6 +168,7 @@ class DbInstrument {
                           '@general_list' => $general_list)), TRUE);
       $databaseException->handle();
     }
+    return $id;
   }
  
   //Establece valores o actualiza

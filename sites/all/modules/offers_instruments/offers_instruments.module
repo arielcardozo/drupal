@@ -123,7 +123,6 @@ function _add_delete_operation_elements(&$form_state, $operation, $folk_id, $sub
  
   $name_instrument = '';
   $description_instrument = '';
-  dpm($form_state);
   if (!isset($form_state['input']['op'])) {
     // stored during form request
     $name_instrument = $form_state['storage']['name_instrument'];
