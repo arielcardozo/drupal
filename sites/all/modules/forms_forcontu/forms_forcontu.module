@@ -453,6 +453,7 @@ function offers_form_submit($form, &$form_state){
 	 $no_of_fields = 4;     // The number of fields you wish to have in the form
  	$transaction = db_transaction();
     $db = new DbOffer();
+    
    	$id_new_instrument = 0;
  	 try {
  	 	$id_oferta = $db->add($form_state['values']['uid_usuario'], 
@@ -465,11 +466,25 @@ function offers_form_submit($form, &$form_state){
  	 				$form_state['values']['time_availability'],
  	 				1);
 			
+			watchdog('oferta', $id_oferta);
+			$dbInstrument = new DbInstrument();
+		if(isset($form_state['values']['autor_instrumet'])){
+			$dbOfferInstrument = new DbOfferInstrument();
+			if($form_state['values']['autor_instrumet']==16){
+				$id_new_instrument_autor = $dbInstrument->add($form_state['values']['other_autor_instrument'], 
+                         								'Instrumento propio de oferta: '.$id_oferta,
+                         								0);
+				$dbOfferInstrument->add(0,$id_oferta, $id_new_instrument_autor,0);
+
+			}
+			else{
+				$dbOfferInstrument->add(0,$id_oferta, $form_state['values']['autor_instrumet'],0);
+			}
+
+		}
+
 				//Alta de la opción del propietario de la oferta
-
-
-			 	for ($i=1; $i<=$no_of_fields; $i++)
-		    	{
+			 	for ($i=1; $i<=$no_of_fields; $i++){
 			        if($form_state['values']['performers'.$i]!=0 && $form_state['values']['performers'.$i]!=16){
 			        	$result = db_insert('pym_instrumentos_ofertas')
 							->fields(array(
@@ -482,7 +497,7 @@ function offers_form_submit($form, &$form_state){
 							
 			        }
 			        if($form_state['values']['performers'.$i]==16){
-			        	$db = new DbInstrument();
+			        	
 			        	$id_new_instrument = $db->add($form_state['values']['other_permformers'.$i], 
                          								'Instrumento propio de oferta: '.$id_oferta,
                          								0);

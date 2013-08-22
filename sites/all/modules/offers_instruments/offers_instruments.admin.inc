@@ -154,12 +154,13 @@ class DbInstrument {
  
   //Añade un instrumento
   function add($name_instrument, $description_instrument, $general_list) {
+    $new_id_instrument = 0;
     try {
       $fields = array(Instrument::NAME_INSTRUMENT, Instrument::DESCRIPTION_INSTRUMENT, Instrument::GENERAL_LIST);
  
       $insert = db_insert(Instrument::INSTRUMENTS_TABLE_NAME)->fields($fields);
       $insert->values(array($name_instrument, $description_instrument,$general_list));
-      $id = $insert->execute();
+      $new_id_instrument = $insert->execute();
     } catch (Exception $e) {
       $databaseException = new InstrumentDatabaseException($e->getMessage(), 'Add',
                       t('Instrument Name: @name_instrument, Instrument Description: @description_instrument, General List: @general_list', 
@@ -168,7 +169,7 @@ class DbInstrument {
                           '@general_list' => $general_list)), TRUE);
       $databaseException->handle();
     }
-    return $id;
+    return $new_id_instrument;
   }
  
   //Establece valores o actualiza

@@ -94,11 +94,13 @@ class OfferInstrument extends OfferInstrumentEntity implements OfferInstrumentIn
 
   const POSITION = 'position';
 
+  const OFFERS_TABLE_NAME = 'pym_instrumentos_ofertas';
+
   
  
   protected $uid;
   protected $nid_oferta;
-  protected $nid_oferta;
+  protected $nid_instrument;
   protected $position;
   
  
@@ -174,7 +176,7 @@ class DbOfferInstrument {
       $offer->setNid_instrument($result->nid_instrument);
       $offer->setUid($result->uid);
       $offer->setPosition($result->position);
-      );
+      
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);
@@ -184,9 +186,9 @@ class DbOfferInstrument {
   }
  
   //Añade un instrumento
-  function add(&$form_state) {
+  function add($uid,$nid_oferta, $nid_instrument,$position) {
 
-    $i=1;
+    /*$i=1;
 
     for ($i=1; $i<=$no_of_fields; $i++)
           {
@@ -202,7 +204,7 @@ class DbOfferInstrument {
               
               }
         
-          }
+          }*/
 
       try {
         $fields = array(OfferInstrument::UID,
@@ -213,12 +215,12 @@ class DbOfferInstrument {
    
         $insert = db_insert(OfferInstrument::OFFERS_TABLE_NAME)->fields($fields);
         $insert->values(array($uid,$nid_oferta, $nid_instrument,$position));
-        $id_oferta = $insert->execute();
+        $id_instrument = $insert->execute();
       } catch (Exception $e) {
         $databaseException = new OfferDatabaseException($e->getMessage(), 'Add',
-                        t('Obra Musical: @obra_musical, Autor Obra: @autor_obra, Fecha de creación: @fecha_creacion', 
-                             array('@obra_musical' => $obra_musical,
-                            '@autor_obra' => $autor_obra,'@fecha_creacion' => $fecha_creacion)), TRUE);
+                        t('Oferta: @nid_oferta, Instrumento: @nid_instrument', 
+                             array('@nid_oferta' => $nid_oferta,
+                            '@nid_instrument' => $nid_instrument)), TRUE);
         $databaseException->handle();
       }
   }
@@ -226,7 +228,7 @@ class DbOfferInstrument {
   //Establece valores o actualiza
   function set(OfferInstrumentInterface $offer) {
     try {
-      $query = db_update('pym_ofertas_instruments');
+      $query = db_update('pym_instrumentos_ofertas');
       $query->condition('nid_oferta', $offer->getKey(), '=');
       $query->fields(array(
           'uid' => $offer->getUid(),
@@ -246,7 +248,7 @@ class DbOfferInstrument {
   //Elimina una entrada de instrumento
   function delete($uid,$nid_oferta, $nid_instrument,$position) {
     try {
-      $query = db_delete('pym_ofertas_instruments');
+      $query = db_delete('pym_instrumentos_ofertas');
       $query->condition('nid_oferta', $nid_oferta, '=');
       $query->condition('nid_instrument', $nid_instrument, '=');
       $query->condition('position', $position, '=');
