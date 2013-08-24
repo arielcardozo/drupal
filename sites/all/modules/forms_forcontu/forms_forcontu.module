@@ -94,30 +94,35 @@ function forms_forcontu_menu() {
 		'description' => t('Listado de ofertas'),
 		'type' => MENU_CALLBACK,
 	);
-	$items['listado/ofertas'] = array(
+	
+	$items['actividades/%'] = array(
+		'title' => t('Listado de Actividades'),
+		'page callback' => 'forms_ofertas_listado_ofertas_usuario',
+		'page arguments' => array(1),
+		//'access callback' => 'user_access',
+		'access callback' => TRUE,
+		//'access arguments' => array('view offers'),
+		//'access arguments' => array(0),
+		'description' => t('Listado de ofertas hechas'),
+		'type' => MENU_CALLBACK,
+		
+	);
+	$items['actividades/%/ofertas_hechas'] = array(
 	'title' => 'Todas las ofertas',
 	'type' => MENU_DEFAULT_LOCAL_TASK,
 	'weight' => 1,
 	);
-	$items['listado/ofertas_hechas'] = array(
-		'title' => t('Listado de ofertas hechas'),
-		'page callback' => 'forms_ofertas_listado_ofertas_usuario',
-		'page arguments' => array('forms_ofertas_listado_ofertas_usuario'),
-		'access callback' => 'user_access',
-		'access arguments' => array('view offers'),
+	$items['actividades/%/suscripciones_usuario'] = array(
+		'title' => t('Listado de suscripciones'),
+		'page callback' => 'forms_ofertas_listado_suscripciones_usuario',
+		'page arguments' => array(1),
+		'access callback' => TRUE,
+		//'access callback' => 'user_access',
+		//'access arguments' => array('view offers'),
+		//'access arguments' => array(0),
 		'description' => t('Listado de ofertas hechas'),
 		'type' => MENU_LOCAL_TASK,
 		'weight' => 2,
-	);
-	$items['listado/suscripciones_usuario'] = array(
-		'title' => t('Listado de suscripciones'),
-		'page callback' => 'forms_ofertas_listado_suscripciones_usuario',
-		'page arguments' => array('forms_ofertas_listado_suscripciones_usuario'),
-		'access callback' => 'user_access',
-		'access arguments' => array('view offers'),
-		'description' => t('Listado de ofertas hechas'),
-		'type' => MENU_LOCAL_TASK,
-		'weight' => 3,
 	);
 
 return $items;
@@ -474,7 +479,7 @@ function offers_form_submit($form, &$form_state){
 				$id_new_instrument_autor = $dbInstrument->add($form_state['values']['other_autor_instrument'], 
                          								'Instrumento propio de oferta: '.$id_oferta,
                          								0);
-				$dbOfferInstrument->add(0,$id_oferta, $id_new_instrument_autor,0);
+				$dbOfferInstrument->add($user->uid,$id_oferta, $id_new_instrument_autor,0);
 
 			}
 			else{
@@ -1347,10 +1352,8 @@ function is_complete($id){
 * Se expone el listado de ofertas realizadas por el usuario
 *
 */
-function forms_ofertas_listado_ofertas_usuario($form_state) {
-	global $user;
+function forms_ofertas_listado_ofertas_usuario($id='') {
 
-	$id = $user->uid;
 	$output = '';
 	$header = array(
 		'created' => array('data' => t('Creado'), 'field' => 'fecha_creacion','sort' => 'asc'),
@@ -1367,10 +1370,7 @@ function forms_ofertas_listado_ofertas_usuario($form_state) {
 				->condition('u.uid', $id,'=');
 	$query->join('users', 'u', 'u.uid = pym.uid');
 	      
-	
-	//$query->addField('u', 'name');
-	//$query->addField('u', 'uid');
-	//$query->leftJoin('users', 'u', 'u.uid = pym.uid');
+
 	$query = $query->extend('PagerDefault')->limit(20); // line1
 	$query = $query->extend('TableSort');
 	$offers = $query->orderByHeader($header)->execute()->fetchAll();
