@@ -94,13 +94,15 @@ class OfferInstrument extends OfferInstrumentEntity implements OfferInstrumentIn
 
   const POSITION = 'position';
 
-  const OFFERS_TABLE_NAME = 'pym_instrumentos_ofertas';
+  const OFFERS_INSTRUMENTS_TABLE_NAME = 'pym_instrumentos_ofertas';
 
   
  
   protected $uid;
   protected $nid_oferta;
   protected $nid_instrument;
+  protected $name_instrument;
+  protected $user_name;
   protected $position;
   
  
@@ -126,7 +128,7 @@ class OfferInstrument extends OfferInstrumentEntity implements OfferInstrumentIn
     return $this;
   }
 
-public function getNid_instrument(){
+  public function getNid_instrument(){
     return $this->nid_instrument;
   }
 
@@ -135,7 +137,23 @@ public function getNid_instrument(){
     return $this;
   }
 
+  public function getName_instrument(){
+    return $this->name_instrument;
+  }
 
+  public function setName_instrument($name_instrument) {
+    $this->name_instrument = $name_instrument;
+    return $this;
+  }
+
+  public function getUser_name(){
+    return $this->user_name;
+  }
+
+  public function setUser_name($user_name) {
+    $this->user_name = $user_name;
+    return $this;
+  }
  public function getPosition()
  {
     return $this->position;
@@ -151,8 +169,11 @@ public function getNid_instrument(){
   public function toArray() {
     return array('nid_oferta' => $this->nid_oferta,
         'nid_instrument' => $this->nid_instrument,
+        'name_instrument' => $this->name_instrument,
+        'user_name' => $this->user_name,
         'uid' => $this->uid,
-        'position' =>$this->position,);
+        'position' =>$this->position,
+        );
   }
  
 }
@@ -160,7 +181,7 @@ public function getNid_instrument(){
 class DbOfferInstrument {
  
   //Obtiene un instrumento
-  function get($id) {
+  function getInstruments($id) {
     try {
         $fields = array(OfferInstrument::UID,
           OfferInstrument::NID_OFERTAS,
@@ -168,21 +189,46 @@ class DbOfferInstrument {
           OfferInstrument::POSITION,
           );
  
-      $result = db_select(Offer::OFFERS_TABLE_NAME, 'n')
+      /*$result = db_select(OfferInstrument::OFFERS_INSTRUMENTS_TABLE_NAME, 'n')
                       ->fields('n', $fields)
-                      ->condition(Offer::ID, $id)->execute()->fetch();
-      $offer = new OfferInstrument();
-      $offer->setNid_oferta($result->nid_oferta);
-      $offer->setNid_instrument($result->nid_instrument);
-      $offer->setUid($result->uid);
-      $offer->setPosition($result->position);
+                      ->condition(Offer::ID, $id)->execute()->fetch();*/
+      $instrumentos = db_select(OfferInstrument::OFFERS_INSTRUMENTS_TABLE_NAME, 'io')
+                    ->fields('io', array('nid_oferta', 'nid_instrument', 'uid','position'))
+                    ->condition('nid_oferta', $id,'=');
+                    //->condition('activo', 1,'=');
+      $instrumentos->addField('u', 'name', 'name');
+      $instrumentos->addField('i', 'name_instrument', 'name_instrument');
+      $instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
+      $instrumentos->leftJoin('instruments', 'i', 'io.nid_instrument = i.nid_instrument ');
+      //defino una línea de instrumento 
+      $results = $instrumentos->execute()->fetchAll();
+
+      $offerInstruments = array();
+       foreach ($results as $result) {
+            $key = $result->nid_instrument.'-'.$result->nid_oferta.$result->position;
+              $offerInstrument = new OfferInstrument();
+              $offerInstrument->create();
+  
+              $offerInstrument->setNid_oferta($result->nid_oferta);
+              $offerInstrument->setNid_instrument($result->nid_instrument);
+              $offerInstrument->setUser_name($result->name);
+              $offerInstrument->setName_instrument($result->name_instrument);
+              $offerInstrument->setUid($result->uid);
+              $offerInstrument->setPosition($result->position);
+              
+              $offerInstruments[$key] = $offerInstrument->toArray();
+       }
+      
+
+
+
       
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);
       $databaseException->handle();
     }
-    return $offer;
+    return $offerInstruments;
   }
  
   //Añade un instrumento
@@ -245,7 +291,7 @@ class DbOfferInstrument {
     }
   }
  
-  //Elimina una entrada de instrumento
+  //Elimina una entrada de instrumento asociado al usuario y oferta
   function delete($uid,$nid_oferta, $nid_instrument,$position) {
     try {
       $query = db_delete('pym_instrumentos_ofertas');
@@ -257,6 +303,23 @@ class DbOfferInstrument {
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(),
                       'Delete', t('Offer Id: @id', array('@id' => $id)), TRUE);
+      $databaseException->handle();
+    }
+  }
+
+  //Actualiza la referencia una entrada de instrumento
+  function update($uid,$nid_oferta, $nid_instrument) {
+    try {
+      $query = db_update(OfferInstrument::OFFERS_INSTRUMENTS_TABLE_NAME);
+        $query->fields(array( 'uid'=>$uid,));
+        $query->condition('nid_oferta', $nid_oferta, '=');
+        $query->condition('nid_instrument', $nid_instrument, '=');
+        //$query->condition('position', $position, '=');
+        //$query->condition('uid', $uid, '=');
+        $query->execute();
+    } catch (Exception $e) {
+      $databaseException = new OfferDatabaseException($e->getMessage(),
+                      'Update', t('Offer Id: @id', array('@id' => $id)), TRUE);
       $databaseException->handle();
     }
   }

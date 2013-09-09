@@ -83,7 +83,14 @@ function forms_forcontu_menu() {
 		'page arguments' => array('forms_ofertas_detalle_confirm'),
 	);
 
-
+	$items['ofertas/edit/detalle/confirm'] = array(
+		'title' => t('Confirmación de actualización'),
+		'type' => MENU_CALLBACK,
+		'access callback' => TRUE,
+		'page callback' => 'drupal_get_form',
+		//'page callback' => 'forms_ofertas_detalle',
+		'page arguments' => array('forms_ofertas_detalle_edit_confirm'),
+	);
 	//Pestañas para el listado
 	$items['listado'] = array(
 	'title' => t('Listado de ofertas'),
@@ -166,7 +173,6 @@ function forms_forcontu_node_access($node, $op, $account) {
 	
 	
 	 $account = isset($account) ? $account : $GLOBALS['user'];
-	 dpm($account);
   if (is_string($node)) {
     return NODE_ACCESS_DENY;
   }
@@ -202,15 +208,13 @@ function forms_forcontu_node_access($node, $op, $account) {
  * @see user_load_multiple()
  */
 function forms_forcontu_load($uid, $reset = FALSE) {
-	alert('hola');
+	
   $users = user_load_multiple(array($uid), array(), $reset);
   return reset($users);
 }
-/**
-* Función de retorno para la página ofertas/formulario.
-*/
-function offers_form($form_state) {
-$query = db_select('instruments', 'n');
+
+function obtiene_instrumentos(){
+	$query = db_select('instruments', 'n');
 	// Obtiene los datos de la base de datos (tabla node).
 	$instruments = $query->
 		fields('n',array('nid_instrument','name_instrument'))
@@ -220,8 +224,15 @@ $query = db_select('instruments', 'n');
 	foreach ($instruments as $result) {
     	$options[$result->nid_instrument] = $result->name_instrument;
 	}
+	return $options;
+}
+/**
+* Función de retorno para la página ofertas/formulario.
+*/
+function offers_form($form_state) {
+	
 
-
+	$options = obtiene_instrumentos();
 	$form['description'] = array(
 	'#type' => 'item',
 	'#title' => t('Registra tu oferta'),
@@ -277,11 +288,7 @@ $query = db_select('instruments', 'n');
 	$form['salon'] = array(
 		'#type' => 'checkbox',
 		'#title' => t('<strong>Do you need a rehearsal?</strong>'),
-		//'#default_value' => array('red','green'),
-		//'#options' => array( '1' => t('Do you need a rehearsal?')),
-		//'#options' => drupal_map_assoc(array('1' =>t('<strong>Do you need a rehearsal?</strong>'))),
-	//),
-	//'#description' => t('Select your preferences.'),
+
 	);
 
 	$form['piano'] = array(
@@ -777,7 +784,7 @@ function forms_forcontu_mail_alter(&$message) {
 function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = 'account') {
 //function forms_ofertas_detalle_edit($form,&$form_state) {
 	  global $user;
-
+	  $options = obtiene_instrumentos();
 
   // During initial form build, add the entity to the form state for use during
   // form building and processing. During a rebuild, use what is in the form
@@ -794,7 +801,6 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
   $form['#user'] = $account;
   $form['#user_category'] = $category;
 
-
  	$operacion = '';
 
 	$id = $form_state['build_info']['args'][0];
@@ -806,80 +812,79 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 		'#value' => $id,
 	);
 
+	$dbOferta = new DbOffer();
+	$oferta = $dbOferta->get($id);
 
-	$oferta = db_select('pym_ofertas', 'n')
-		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad'))
-		->condition('nid_oferta', $id,'=')
-		->condition('Activo', 1,'=');
-		
-	
-	$oferta->addField('u', 'name','name');
-	$oferta->leftJoin('users', 'u', 'u.uid = n.uid ');
-
-	$record = $oferta->execute()->fetchObject();
-	/*$autor_oferta = db_select('users', 'n')
-		->fields('n', array('name'))
-		->condition('uid', $record->uid,'=')
-		->execute();*/
-
-	//$autor_of = $autor_oferta->fetchObject();	
 	//opciones que estarán checkeadas a TRUE
 	$options_checked = array('11','21','31');
+	
 
 	$form['personal_data'] = array(
 	'#type' => 'fieldset',
-	'#title' => t('Datos de la oferta. Author: <strong> '.$record->name.'</strong>'),
+	'#title' => t('Datos de la oferta. Author: <strong> '.$oferta->getUser_name().'</strong>'),
 	'#collapsible' => TRUE,
 	'#collapsed' => FALSE,
+	);
+	$form['personal_data']['mail'] = array(
+		'#type' => 'hidden',
+		'#default_value' => $oferta->getUser_mail(),
 	);
 	$form['personal_data']['obra_musical'] = array(
 		'#type' => 'textfield',
 		'#title' => t('Obra a tocar'),
-		'#default_value' => $record->obra_musical,
+		'#default_value' => $oferta->getObra_musical(),
 		'#required' => TRUE,
 	);
 	$form['personal_data']['autor_obra'] = array(
 		'#type' => 'textfield',
 		'#title' => t('Autor de la Obra'),
-		'#default_value' => $record->autor_obra,
+		'#default_value' => $oferta->getAutor_obra(),
 		'#required' => TRUE,
 	);
+	$form['personal_data']['autor_instrumet'] = array(
+		'#type' => 'select',
+		'#title' => t('Instrument to play by the author'),
+		'#required' => TRUE,
+		'#options' => $options,
+		'#value' => $oferta->getInstrumento_autor(),
+        '#empty' => t('No content available.'),
+	);	
 	$form['personal_data']['Salom'] = array(
 		'#type' => 'checkbox',
 		'#title' => t('Se necesita Salon'),
-		'#default_value' => ($record->Salon==0)?0:1,
+		'#default_value' => ($oferta->getSalon()==0)?0:1,
 	);
+	/*$form['personal_data']['Piano'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Se necesita Piano'),
+		'#default_value' => ($oferta->getPiano()==0)?0:1,
+	);*/
 	$form['personal_data']['Piano'] = array(
 		'#type' => 'checkbox',
 		'#title' => t('Se necesita Piano'),
-		'#default_value' => ($record->Piano==0)?0:1,
+		//'#options' => array( '1' => t('<strong>Do you need piano?</strong>')),
+		// Only show this field if persons is set to 'Other'.
+		'#default_value' => ($oferta->getPiano()==0)?0:1,
+	    '#states' => array(
+	      'visible' => array(  // Action to take: Make visible.
+	        ':input[name="Salom"]' => array('checked' => TRUE),
+	      ),
+    ),
+
+
 	);
 	$form['personal_data']['Ciudad'] = array(
 		'#type' => 'textfield',
 		'#title' => t('City to play'),
-		'#default_value' => $record->Ciudad,
+		'#default_value' => $oferta->getCiudad(),
 		'#required' => TRUE,
 	);
 	$form['personal_data']['Disponibilidad'] = array(
 		'#type' => 'textfield',
 		'#title'=> t('Availability'),
-		'#default_value' => $record->Disponibilidad,
+		'#default_value' => $oferta->getDisponibilidad(),
 		//'#collapsed' => FALSE,
 	);
-
-		
-		/*$options = array('1'.$record->Disponibilidad_tardes =>'Afternoon availability', 
-						 '2'.$record->Disponibilidad_manana =>'Morning availability',
-						 '3'.$record->Disponibilidad_finde =>'Weekend availability',
-						);
-		
-		$form['personal_data']['Disponibilidad']['availability'] = array(
-		'#type' => 'checkboxes',
-		'#title' => t(''),
-		'#options' => $options,
-		'#default_value' => $options_checked,// $options_checked is an array similar to $options but having elements which need to be checked by default...
-		);*/
-
 
 	$form['instruments']= array(
 		'#type' => 'fieldset',
@@ -891,9 +896,9 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 
 	
 	$header = array(
-	'Instrumento' => array('data' => t('Instrumento'), 'field' => 'i.name_instrument'),
-	'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'u.name'),
-	'Activo' => array('data' => t('Estado'), 'field' => 'io.position'),
+		'Instrumento' => array('data' => t('Instrumento'), 'field' => 'i.name_instrument'),
+		'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'u.name'),
+		'Activo' => array('data' => t('Estado'), 'field' => 'io.position'),
 	
 	);
 	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
@@ -935,7 +940,7 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 	    foreach ($entries as $entry) {
 	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
         
-	      if(evaluaCondiciones($entry,$user,$record) || $booleanSuscripcion)$optout[$key] = TRUE;
+	      if(evaluaCondiciones($entry,$user,$oferta) || $booleanSuscripcion)$optout[$key] = TRUE;
 	      $options[$key] = array(
 
 						'Instrumento' => check_plain($entry->name_instrument),
@@ -972,21 +977,56 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 		$form['actions'] = array('#type' => 'actions');
 		$form['actions']['submit'] = array(
 			'#type' => 'submit',
-			'#value' => t('Update'),
+			'#value' => t('Save'),
 			//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
 		);
 	//}
 
-  	$form['#multistep'] = TRUE;
-  	$form['#action'] = url('ofertas/ver/detalle/confirm');
+  	$form['#multistep'] = FALSE;
+  	$form['#action'] = url('ofertas/edit/detalle/confirm');
   	return $form;
 
 }
+
+function forms_ofertas_detalle_edit_confirm($form, &$form_state){
+		$edit = $_POST;
+	//dpm($edit);
+	$offer = new Offer();
+	$offer->setObra_musical($edit['obra_musical']);
+    $offer->setAutor_obra($edit['autor_obra']);
+    $offer->setKey($edit['nid_oferta']);
+    //$offer->setSalon($edit['Salom']);
+    (!empty($edit['Salom']))?$offer->setSalon($edit['Salom']):$offer->setSalon(0);
+    (!empty($edit['Piano']))?$offer->setPiano($edit['Piano']):$offer->setPiano(0);
+    //($oferta->getSalon()==0)?'No':'Si',
+    //$offer->setUser_name($edit->name);
+    $offer->setCiudad($edit['Ciudad']);
+    $offer->setInstrumento_autor($edit['autor_instrumet']);
+    $offer->setDisponibilidad($edit['Disponibilidad']);
+    //$offer->setActivo($result->activo);
+    //dpm($offer->toArray());
+	
+	$transaction = db_transaction();
+	$db = new DbOffer();
+    try{
+    	$db->set($offer);
+    }
+    catch (Exception $e) {
+			   $transaction->rollback();
+			    watchdog_exception('my_type', $e);
+			    drupal_set_message ("<strong>Hubo un problema en el registro de su oferta, por favor inténtelo más tarde.</br>".$e->getMessage()."</strong> ");
+			}
+	drupal_set_message(t('Update confirmed.'));	
+	drupal_goto($_SERVER['HTTP_REFERER']);
+
+	
+}
+
 /*  DETALLE DE LA OFERTA */
 function forms_ofertas_detalle($form,&$form_state) {
 	//dpm($form_state);
 	$operacion = '';
-
+	global $user; 
 	$id = $form_state['build_info']['args'][0];
 		
 	global $user;
@@ -996,26 +1036,10 @@ function forms_ofertas_detalle($form,&$form_state) {
 		'#value' => $id,
 	);
 
+	$dbOferta = new DbOffer();
+	$oferta = $dbOferta->get($id);
 
-	$oferta = db_select('pym_ofertas', 'n')
-		->fields('n', array('fecha_creacion', 'uid','obra_musical', 'autor_obra','Salon','Piano','Ciudad','Disponibilidad'))
-		->condition('nid_oferta', $id,'=')
-		->condition('Activo', 1,'=');
-		
 	
-	$oferta->addField('u', 'name','name');
-
-	$oferta->addField('u', 'mail','mail');
-
-	$oferta->leftJoin('users', 'u', 'u.uid = n.uid ');
-
-	$record = $oferta->execute()->fetchObject();
-	/*$autor_oferta = db_select('users', 'n')
-		->fields('n', array('name'))
-		->condition('uid', $record->uid,'=')
-		->execute();*/
-
-	//$autor_of = $autor_oferta->fetchObject();	
 	//opciones que estarán checkeadas a TRUE
 	$options_checked = array('11','21','31');
 
@@ -1027,77 +1051,61 @@ function forms_ofertas_detalle($form,&$form_state) {
 	);
 	$form['personal_data']['mail'] = array(
 		'#type' => 'hidden',
-		'#default_value' => $record->mail,
+		'#default_value' => $oferta->getUser_mail(),
 	);
 	$form['personal_data']['autor_oferta'] = array(
 		'#type' => 'item',
 		'#title' => t('Autor de la oferta'),
-		'#markup' => t('!url', array('!url' => l(t($record->name), "user/$record->uid"))),
+		'#markup' => t('!url', array('!url' => l(t($oferta->getUser_name()), "user/".$oferta->getUid()))),
 	);
 	$form['personal_data']['obra_musical'] = array(
 		'#type' => 'item',
 		'#title' => t('Obra a tocar'),
-		'#markup' => $record->obra_musical,
+		'#markup' => $oferta->getUser_mail(),
 	);
 	$form['personal_data']['musical_piece'] = array(
 		'#type' => 'hidden',
-		'#default_value' => $record->obra_musical,
+		'#default_value' => $oferta->getObra_musical(),
 	);
 	$form['personal_data']['autor_obra'] = array(
 		'#type' => 'item',
 		'#title' => t('Autor de la Obra'),
-		'#markup' => $record->autor_obra,
+		'#markup' => $oferta->getAutor_obra(),
 	);
 	$form['personal_data']['author'] = array(
 		'#type' => 'hidden',
-		'#default_value' => $record->autor_obra,
+		'#default_value' => $oferta->getAutor_obra(),
 	);
 	$form['personal_data']['Salon'] = array(
 		'#type' => 'item',
 		'#title' => t('Se necesita Salon'),
-		'#markup' => ($record->Salon==0)?'No':'Si',
+		'#markup' => ($oferta->getSalon()==0)?'No':'Si',
 	);
 	$form['personal_data']['Piano'] = array(
 		'#type' => 'item',
 		'#title' => t('Se necesita Piano'),
-		'#markup' => ($record->Piano==0)?'No':'Si',
+		'#markup' => ($oferta->getPiano()==0)?'No':'Si',
 	);
 	$form['personal_data']['Ciudad'] = array(
 		'#type' => 'item',
 		'#title' => t('City to play'),
-		'#markup' => ($record->Ciudad),
+		'#markup' => ($oferta->getCiudad()),
 
 	);
 	$form['personal_data']['city'] = array(
 		'#type' => 'hidden',
-		'#default_value' => $record->Ciudad,
+		'#default_value' => $oferta->getCiudad(),
 
 	);
 	$form['personal_data']['Disponibilidad'] = array(
 		'#type' => 'item',
 		'#title'=> t('Availability'),
-		'#markup' => ($record->Disponibilidad),
+		'#markup' => ($oferta->getDisponibilidad()),
 		
 	);
 
 		
-		/*$options = array('1'.$record->Disponibilidad_tardes =>'Afternoon availability', 
-						 '2'.$record->Disponibilidad_manana =>'Morning availability',
-						 '3'.$record->Disponibilidad_finde =>'Weekend availability',
-						);
 		
-		$form['personal_data']['Disponibilidad']['availability'] = array(
-		'#type' => 'checkboxes',
-		'#title' => t(''),
-		'#options' => $options,
-		'#default_value' => $options_checked,// $options_checked is an array similar to $options but having elements which need to be checked by default...
-		'#disabled' => TRUE,
-		);*/
-		
-
-
-
-
 	$form['instruments']= array(
 		'#type' => 'fieldset',
 		'#title'=> t('Instruments'),
@@ -1110,7 +1118,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 	$header = array(
 	'Instrumento' => array('data' => t('Instrumento'), 'field' => 'i.name_instrument'),
 	'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'u.name'),
-	'Activo' => array('data' => t('Activo'), 'field' => 'io.position'),
+	'Estado' => array('data' => t('Estado'), 'field' => 'io.position'),
 	
 	);
 	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
@@ -1123,6 +1131,9 @@ function forms_ofertas_detalle($form,&$form_state) {
 	$instrumentos->leftJoin('instruments', 'i', 'io.nid_instrument = i.nid_instrument ');
 	//defino una línea de instrumento 
   	$entries = $instrumentos->execute()->fetchAll();
+
+  	$dbOfferInstrument = new DbOfferInstrument();
+  	$contador = $dbOfferInstrument->getInstruments($id);
 
 	//Instrumentos seleccionados por el usuario actual
 	$instrumentos_usuario = db_select('pym_instrumentos_ofertas', 'io')
@@ -1145,12 +1156,12 @@ function forms_ofertas_detalle($form,&$form_state) {
 
 	$options = array();
 	$optout = array();
-
-	
+	//dpm($contador);
 	    foreach ($entries as $entry) {
 	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
         
-	      if(evaluaCondiciones($entry,$user,$record) || $booleanSuscripcion)$optout[$key] = TRUE;
+
+	      if(evaluaCondiciones($entry,$user,$oferta) || $booleanSuscripcion)$optout[$key] = TRUE;
 	      $options[$key] = array(
 
 						'Instrumento' => check_plain($entry->name_instrument),
@@ -1161,7 +1172,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 									'#href' => 'user/' . $entry->uid,
 									),
 						),
-						'Activo' => (empty($entry->name))?'Si':'No',
+						'Estado' => (empty($entry->name))?'Abierto':'Cerrado',
 						);
 	    }
 	 
@@ -1175,25 +1186,35 @@ function forms_ofertas_detalle($form,&$form_state) {
 		'#required' => TRUE,
 	);
 
+
 	foreach( $optout as $key => $value )
 	{
 	  $form['instruments']['instruments'][$key]['#disabled'] = true;
+
+	  
 	}
  	
 
 
-//drupal_set_message($optout[0]);
- 	//if(empty($optout)){
-
+ 	if($booleanSuscripcion ){
 	 	//botones
+		$form['actions'] = array('#type' => 'actions');
+		$form['actions']['submit'] = array(
+			'#type' => 'submit',
+			'#value' => t('Unsubscribe'),
+			//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
+		);
+
+	}
+	else{
+		//botones
 		$form['actions'] = array('#type' => 'actions');
 		$form['actions']['submit'] = array(
 			'#type' => 'submit',
 			'#value' => t('Continue'),
 			//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
 		);
-
-	//}
+	}
 
 
   	$form['#multistep'] = TRUE;
@@ -1205,7 +1226,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 function evaluaCondiciones($entry,$user,$record){
 	if (!empty($entry->name))return true;
 
-	if ($record->uid == $user->uid) return true;
+	if ($record->getUid() == $user->uid) return true;
 
 
 	//if($user->name == )
@@ -1221,7 +1242,8 @@ function evaluaCondiciones($entry,$user,$record){
 function forms_ofertas_detalle_validate($form, &$form_state){
 
 dpm($form_state);
-form_set_error('lista', t('You must enter a valid e-mail address.'));
+//form_set_error('lista', t('You must enter a valid e-mail address.'));
+drupal_set_message(t('Verify submission.'));
 /*if (!valid_email_address($form_state['values']['email'])) {
 	
 }*/
@@ -1236,27 +1258,25 @@ function forms_ofertas_detalle_confirm(){
 	// Get the post values (what user entered)
   $edit = $_POST;
 
-	//drupal_set_message($_POST['mail']);	
-
-
+	dpm($edit,'contenido');	
+	//dpm($form_build_id);
   $form = array();
-   $num = preg_split("/\/|-/",$edit['instruments']);
 
 
 $form['author'] = array(
     '#type' => 'hidden',
     '#title' => t('autor'),
-    '#value' => $edit['author']
+    '#value' => $edit['autor_obra']
   );
   $form['musical_piece'] = array(
     '#type' => 'hidden',
     '#title' => t('obra'),
-    '#value' => $edit['musical_piece']
+    '#value' => $edit['obra_musical']
   );
   $form['city'] = array(
     '#type' => 'hidden',
     '#title' => t('ciudad'),
-    '#value' => $edit['city'] 
+    '#value' => $edit['Ciudad'] 
   );
    $form['mail'] = array(
     '#type' => 'hidden',
@@ -1264,15 +1284,28 @@ $form['author'] = array(
     '#value' => $edit['mail'] 
   );
    
+  $text_info = '';
+ if(!empty($edit['instruments'])){
+  	  $num = preg_split("/\/|-/",$edit['instruments']);
+
+	  $form['instruments'] = array(
+	    '#type' => 'hidden',
+	    '#title' => t('Instruments'),
+	    '#value' => $num[0] // Include the $_POST form values
+	  );
+	  $text_info = 'Do you want to subscribe to this offer?';
+	dpm($edit['instruments']);
+  }
+  if(empty($edit['instruments'])){
+  	$text_info = 'Do you wish to unsubscribe from this offer?';
+  }
+
+  if(empty($edit['instruments']) && $edit['op'] =='Actualizar'){
+  	$text_info = 'Do you wish to update this offer?';
+  }
 
 
-
-  $form['instruments'] = 
-  $form['instruments'] = array(
-    '#type' => 'hidden',
-    '#title' => t('Instruments'),
-    '#value' => $num[0] // Include the $_POST form values
-  );
+ 
 
 	$form['nid_oferta'] = array(
     '#type' => 'hidden',
@@ -1280,8 +1313,9 @@ $form['author'] = array(
     '#value' => $edit['nid_oferta'] // Include the $_POST form values
   	);
 
+  
   $form= confirm_form($form,
-	    t('Do you want to subscribe to this offer?'), '/',
+	    t($text_info), '/',
 	    t('Only do this if you are sure!'),
 	    t('Subscribe to it!'),
 	    t('Nevermind')
@@ -1296,12 +1330,8 @@ function forms_ofertas_detalle_confirm_submit($form, &$form_state) {
 	global $user; 
 	$transaction = db_transaction();
 	try{
-		db_update('pym_instrumentos_ofertas')
-
-				->fields(array( 'uid'=>$user->uid,))
-				->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
-				->condition('nid_instrument', $form_state['values']['instruments'],'=')
-				->execute();
+		$dbOfferInstrument = new DbOfferInstrument();
+		$dbOfferInstrument->update($user->uid,$form_state['values']['nid_oferta'],$form_state['values']['instruments']);
 		
 		offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'subscription');
 
@@ -1321,7 +1351,7 @@ function forms_ofertas_detalle_confirm_submit($form, &$form_state) {
 		$transaction->rollback();
       	watchdog_exception('user', $e);
   		drupal_set_message(t('Error: %message', array('%message' => $e->getMessage())), 'error');
-  		 drupal_goto("");
+  		 drupal_goto($_SERVER['HTTP_REFERER']);
 	}
 	 
 

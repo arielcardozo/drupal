@@ -1,169 +1,6 @@
 <?php
 
-/**
- * Implements hook_install().
- *
- * In Drupal 7, there is no need to install schema using this hook, the schema
- * is already installed before this hook is called.
- *
- * We will create a default entry in the database.
- *
- * @see hook_install()
- * @ingroup forms_forcontu
- */
-/*
-function forms_forcontu_install() {
-  // Outside of the .install file we would use drupal_write_record() to
-  // populate the database, but it cannot be used here, so we'll use
-  // db_insert().
 
-  // Add a default entry.
-  $fields = array(
-    'name_instrument'    => 'Trompeta',
-    'description_instrument' => 'Instrumento de viento',
-
-  );
-  db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-  // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Flauta travesera',
-    'description_instrument' => 'Instrumento de viento',
-
-  );
-  db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-  // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Violín',
-    'description_instrument' => 'Instrumento de cuerda',
-
-  );
-  db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-
-  // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Viola',
-    'description_instrument' => 'Instrumento de cuerda',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Clarinete La y Sib',
-    'description_instrument' => 'Instrumento Aeróforos',
-
-  );
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => ' Corno ingles y frances',
-    'description_instrument' => 'Instrumento Aeróforos',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Tuba',
-    'description_instrument' => 'Instrumento Aeróforos',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Timbales',
-    'description_instrument' => 'Instrumento de percusión',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Redoblante',
-    'description_instrument' => 'Instrumento de percusión',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Bombo',
-    'description_instrument' => 'Instrumento de percusión',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'platillos',
-    'description_instrument' => 'Instrumento de percusión',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'xilófono',
-    'description_instrument' => 'Instrumento de percusión',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'celesta',
-    'description_instrument' => 'Instrumento de percusión',
-
-  );
-   db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-   // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Triángulo',
-    'description_instrument' => 'Instrumento de percusión',
-
-  );
-
-  db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();
-
-  // Add another entry.
-  $fields = array(
-    'name_instrument'    => 'Oboe',
-    'description_instrument' => 'Instrumento de viento',
-
-  );
-  db_insert('pym_instrumentos')
-    ->fields($fields)
-    ->execute();    
-}*/
 /**
  * Implements hook_uninstall().
  *
@@ -270,6 +107,12 @@ $schema['pym_ofertas'] = array(
                         'not null' => FALSE,
                         'default' => 1,
                         'description' => 'Indica si la oferta esta activa',),
+                  'Instrumento_autor' => array(
+                        'type' => 'int', 
+                        'size' => 'tiny',
+                        'not null' => FALSE,
+                        'default' => 1,
+                        'description' => 'Indica el instrumento tocado por el autor',),
 
           ),
 'primary key' => array('nid_oferta'),

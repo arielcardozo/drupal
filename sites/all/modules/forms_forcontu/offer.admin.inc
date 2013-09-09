@@ -138,6 +138,10 @@ interface OfferInterface {
 
   public function setPiano($piano);
 
+  public function getInstrumento_autor();
+
+  public function setInstrumento_autor($instrumento_autor);
+
   public function getCiudad();
 
   public function setCiudad($ciudad);
@@ -168,6 +172,8 @@ class Offer extends OfferEntity implements OfferInterface {
 
   const PIANO = 'piano';
 
+  const INSTRUMENTO_AUTOR = 'instrumento_autor';
+
   const CIUDAD = 'ciudad';
 
   const ACTIVO = 'activo';
@@ -182,10 +188,14 @@ class Offer extends OfferEntity implements OfferInterface {
   protected $autor_obra;
   protected $salon;
   protected $piano;
+  protected $instrumento_autor;
   protected $ciudad;
   protected $disponibilidad;
   protected $activo;
   protected $key;
+
+  protected $user_name;
+  protected $user_mail;
  
   public static function create() {
     return new Offer();
@@ -229,6 +239,27 @@ public function getObra_musical(){
     return $this;
   }
 
+  public function getUser_name()
+ {
+    return $this->user_name;
+  }
+ 
+  public function setUser_name($user_name) {
+    $this->user_name = $user_name;
+    return $this;
+  }
+  public function getUser_mail()
+ {
+    return $this->user_mail;
+  }
+ 
+  public function setUser_mail($user_mail) {
+    $this->user_mail = $user_mail;
+    return $this;
+  }
+
+
+
   public function getSalon(){
     return $this->salon;
   }
@@ -244,6 +275,15 @@ public function getObra_musical(){
 
   public function setPiano($piano) {
     $this->piano = $piano;
+    return $this;
+  }
+
+  public function getInstrumento_autor(){
+    return $this->instrumento_autor;
+  }
+
+  public function setInstrumento_autor($instrumento_autor) {
+    $this->instrumento_autor = $instrumento_autor;
     return $this;
   }
 
@@ -283,7 +323,10 @@ public function getObra_musical(){
         'disponibilidad' =>$this->disponibilidad,
         'salon' =>$this->salon,
         'piano' =>$this->piano,
+        'instrumento_autor' =>$this->instrumento_autor,
         'ciudad' =>$this->ciudad,
+        'user_name'=>$this->user_name,
+        'user_mail' =>$this->user_mail,
         'activo' =>$this->activo,
         'fecha_creacion' =>$this->fecha_creacion,);
   }
@@ -302,13 +345,18 @@ class DbOffer {
           Offer::FECHA_CREACION,
           Offer::SALON,
           Offer::PIANO,
+          Offer::INSTRUMENTO_AUTOR,
           Offer::CIUDAD,
           Offer::DISPONIBILIDAD,
           Offer::ACTIVO);
  
-      $result = db_select(Offer::OFFERS_TABLE_NAME, 'n')
+      $oferta = db_select(Offer::OFFERS_TABLE_NAME, 'n')
                       ->fields('n', $fields)
-                      ->condition(Offer::ID, $id)->execute()->fetch();
+                      ->condition(Offer::ID, $id);
+      $oferta->addField('u', 'name','name');
+      $oferta->addField('u', 'mail','mail');
+      $oferta->leftJoin('users', 'u', 'u.uid = n.uid ');               
+      $result = $oferta->execute()->fetch();
       $offer = new Offer();
       $offer->setKey($result->nid_oferta);
       $offer->setObra_musical($result->obra_musical);
@@ -317,6 +365,10 @@ class DbOffer {
       $offer->setFecha_creacion($result->fecha_creacion);
       $offer->setSalon($result->salon);
       $offer->setPiano($result->piano);
+      $offer->setInstrumento_autor($result->instrumento_autor);
+      $offer->setUser_name($result->name);
+      $offer->setCiudad($result->ciudad);
+      $offer->setUser_mail($result->mail);
       $offer->setDisponibilidad($result->disponibilidad);
       $offer->setActivo($result->activo);
     } catch (Exception $e) {
@@ -328,13 +380,14 @@ class DbOffer {
   }
  
   //Añade un instrumento
-  function add($uid,$autor_obra, $obra_musical,$fecha_creacion,$salon,$piano,$ciudad,$disponibilidad,$activo) {
+  function add($uid,$autor_obra, $obra_musical,$fecha_creacion,$salon,$piano,$instrumento_autor,$ciudad,$disponibilidad,$activo) {
     try {
       $fields = array(
           Offer::UID,
           Offer::AUTOR_OBRA,
           Offer::OBRA_MUSICAL,
           Offer::FECHA_CREACION,
+          Offer::INSTRUMENTO_AUTOR,
           Offer::SALON,
           Offer::PIANO,
           Offer::CIUDAD,
@@ -342,7 +395,7 @@ class DbOffer {
           Offer::ACTIVO);
  
       $insert = db_insert(Offer::OFFERS_TABLE_NAME)->fields($fields);
-      $insert->values(array($uid, $autor_obra,$obra_musical,$fecha_creacion,$salon,$piano,$ciudad,$disponibilidad,$activo));
+      $insert->values(array($uid, $autor_obra,$obra_musical,$fecha_creacion,$salon,$piano,$instrumento_autor,$ciudad,$disponibilidad,$activo));
       $id_oferta = $insert->execute();
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Add',
@@ -362,13 +415,14 @@ class DbOffer {
       $query->fields(array(
           'obra_musical' => $offer->getObra_musical(),
           'autor_obra' => $offer->getAutor_obra(),
-          'uid' => $offer->getUid(),
-          'activo' => $offer->getActivo(),
+          //'uid' => $offer->getUid(),
+          //'activo' => $offer->getActivo(),
+          'instrumento_autor'=> $offer->getInstrumento_autor(),
           'disponibilidad' => $offer->getDisponibilidad(),
           'salon' => $offer->getSalon(),
           'piano' => $offer->getPiano(),
           'ciudad' => $offer->getCiudad(),
-          'fecha_creacion' => $offer->getFecha_creacion(),
+          //'fecha_creacion' => $offer->getFecha_creacion(),
       ));
       $query->execute();
     } catch (Exception $e) {
