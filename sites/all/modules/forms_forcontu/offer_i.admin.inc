@@ -292,17 +292,16 @@ class DbOfferInstrument {
   }
  
   //Elimina una entrada de instrumento asociado al usuario y oferta
-  function delete($uid,$nid_oferta, $nid_instrument,$position) {
+  function delete($uid,$nid_oferta) {
     try {
-      $query = db_delete('pym_instrumentos_ofertas');
-      $query->condition('nid_oferta', $nid_oferta, '=');
-      $query->condition('nid_instrument', $nid_instrument, '=');
-      $query->condition('position', $position, '=');
+      $query = db_update(OfferInstrument::OFFERS_INSTRUMENTS_TABLE_NAME);
+      $query->fields(array( 'uid'=>0,));
+      $query->condition('nid_oferta', $nid_oferta, '=');      
       $query->condition('uid', $uid, '=');
       $query->execute();
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(),
-                      'Delete', t('Offer Id: @id', array('@id' => $id)), TRUE);
+                      'Delete', t('Offer Id: @id, User Id: @uid', array('@id' => $nid_oferta,'@uid'=>$uid)), TRUE);
       $databaseException->handle();
     }
   }

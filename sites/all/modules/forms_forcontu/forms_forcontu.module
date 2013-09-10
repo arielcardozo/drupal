@@ -220,7 +220,6 @@ function obtiene_instrumentos(){
 		fields('n',array('nid_instrument','name_instrument'))
 		->condition('general_list', 1,'=')->execute();
 	$options = array();
-	$options[0] = 'Select an instrument';
 	foreach ($instruments as $result) {
     	$options[$result->nid_instrument] = $result->name_instrument;
 	}
@@ -614,6 +613,28 @@ function forms_forcontu_mail($key, &$message, $params) {
 		      break;
      break;
 
+     //Se realiza una desuscripción	      
+     case 'offer_unsubscriber':
+		     $message['subject'] = t('Registro de desuscripción enviado por @site-name', array('@site-name' => variable_get('site_name', 'Drupal')), $options);
+		      $message['body'][] = t('@name Le envía a usted un mensaje de confirmación de baja de su suscripción a la oferta:', array('@name' => variable_get('site_name', 'Drupal')), $options);
+
+		      $message['body'][] = check_plain($params['message']);
+		      break;
+     break;
+
+     case 'unsubscriber_offer_owner':
+	      $message['subject'] = t('Registro de desuscripción enviado por @user-name', array('@user-name' => $user->name), $options);
+	      // Note that the message body is an array, not a string.
+	      $message['body'][] = t('@user-name Se acaba de desuscribir a una de tus ofertas con los siguientes datos:',array('@user-name' => $user->name), $options);
+	      // Because this is just user-entered text, we do not need to translate it.
+
+	      // Since user-entered text may have unintentional HTML entities in it like
+	      // '<' or '>', we need to make sure these entities are properly escaped,
+	      // as the body will later be transformed from HTML to text, meaning
+	      // that a normal use of '<' will result in truncation of the message.
+	      $message['body'][] = check_plain($params['message']);
+     break;
+
      case 'subscriber_offer_owner':
 	      $message['subject'] = t('Registro de suscripción enviado por @user-name', array('@user-name' => $user->name), $options);
 	      // Note that the message body is an array, not a string.
@@ -642,10 +663,37 @@ function forms_forcontu_mail($key, &$message, $params) {
 		      $message['body'][] = check_plain($params['message']);
      break;
 
+     //Se finaliza una oferta      
+     case 'open_offer_owner':
+		     $message['subject'] = t('Registro de apertura de oferta enviado por @site-name', array('@site-name' => variable_get('site_name', 'Drupal')), $options);
+		      // Note that the message body is an array, not a string.
+		      $message['body'][] = t('@name Le comunica que una de sus ofertas se ha abierto por baja de un suscriptor, los de detalles de la misma a continuación:', array('@name' => variable_get('site_name', 'Drupal')), $options);
+		      // Because this is just user-entered text, we do not need to translate it.
+
+		      // Since user-entered text may have unintentional HTML entities in it like
+		      // '<' or '>', we need to make sure these entities are properly escaped,
+		      // as the body will later be transformed from HTML to text, meaning
+		      // that a normal use of '<' will result in truncation of the message.
+		      $message['body'][] = check_plain($params['message']);
+     break;
+
      case 'closed_offer_admin_mail':
 	      $message['subject'] = t('Registro de cierre de oferta de @user-name', array('@user-name' => $user->name), $options);
 	      // Note that the message body is an array, not a string.
 	      $message['body'][] = t('Se acaba de cerrar con éxito la siguiente oferta:', $options);
+	      // Because this is just user-entered text, we do not need to translate it.
+
+	      // Since user-entered text may have unintentional HTML entities in it like
+	      // '<' or '>', we need to make sure these entities are properly escaped,
+	      // as the body will later be transformed from HTML to text, meaning
+	      // that a normal use of '<' will result in truncation of the message.
+	      $message['body'][] = check_plain($params['message']);
+     break;
+
+     case 'open_offer_admin_mail':
+	      $message['subject'] = t('Registro de apertura de oferta de @user-name', array('@user-name' => $user->name), $options);
+	      // Note that the message body is an array, not a string.
+	      $message['body'][] = t('Se acaba de abrir siguiente oferta:', $options);
 	      // Because this is just user-entered text, we do not need to translate it.
 
 	      // Since user-entered text may have unintentional HTML entities in it like
@@ -692,8 +740,8 @@ function offers_form_mail_send($id_oferta, $form_values, $operation) {
   	$params = array();
 	$params['subject'] = t('[@site_name] : Alert from offer create', array( '@site_name' => variable_get('site_name', 'Drupal'),
 	));
-	$params['message'] = "\nNombre Autor:".$form_values['author'];
-	$params['message'] .= "\nObra: ".$form_values['musical_piece'];
+	$params['message'] = "\nNombre Autor:".$form_values['autor_obra'];
+	$params['message'] .= "\nObra: ".$form_values['obra_musical'];
 	$params['message'] .= "\nCiudad: ".$form_values['city'];
 	$params['message'] .= "\nEnlace: ".$form_url;
 
@@ -735,9 +783,19 @@ function offers_form_mail_send($id_oferta, $form_values, $operation) {
   		$key_admin = 'subscriber_offer_owner'; //propietario de la oferta a la que se han suscrito
   		$site_mail =  $form_values['mail'];
   }
+  if($operation == 'unsubscription'){
+  		$key = 'offer_unsubscriber'; //suscriptor de la oferta
+  		$key_admin = 'unsubscriber_offer_owner'; //propietario de la oferta a la que se han suscrito
+  		$site_mail =  $form_values['mail'];
+  }
   if($operation == 'close_offer'){
 		$key = 'closed_offer_owner';
   		$key_admin = 'closed_offer_admin_mail';
+  		$to =  $form_values['mail'];
+  }
+  if($operation == 'open_offer'){
+		$key = 'open_offer_owner';
+  		$key_admin = 'open_offer_admin_mail';
   		$to =  $form_values['mail'];
   }
 
@@ -1063,7 +1121,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 		'#title' => t('Obra a tocar'),
 		'#markup' => $oferta->getUser_mail(),
 	);
-	$form['personal_data']['musical_piece'] = array(
+	$form['personal_data']['obra_musical'] = array(
 		'#type' => 'hidden',
 		'#default_value' => $oferta->getObra_musical(),
 	);
@@ -1072,10 +1130,19 @@ function forms_ofertas_detalle($form,&$form_state) {
 		'#title' => t('Autor de la Obra'),
 		'#markup' => $oferta->getAutor_obra(),
 	);
-	$form['personal_data']['author'] = array(
+
+	$form['personal_data']['autor_obra'] = array(
 		'#type' => 'hidden',
 		'#default_value' => $oferta->getAutor_obra(),
 	);
+	$dbInstrument = new DbInstrument();
+	$inst = $dbInstrument->get($oferta->getInstrumento_autor());
+	$form['personal_data']['autor_instrumet'] = array(
+		'#type' => 'item',
+		'#title' => t('Instrument to play by the author:'),
+		'#markup' => $inst->getName_instrument(),
+		
+	);	
 	$form['personal_data']['Salon'] = array(
 		'#type' => 'item',
 		'#title' => t('Se necesita Salon'),
@@ -1088,7 +1155,7 @@ function forms_ofertas_detalle($form,&$form_state) {
 	);
 	$form['personal_data']['Ciudad'] = array(
 		'#type' => 'item',
-		'#title' => t('City to play'),
+		'#title' => t('City to play:'),
 		'#markup' => ($oferta->getCiudad()),
 
 	);
@@ -1233,42 +1300,38 @@ function evaluaCondiciones($entry,$user,$record){
 	return false;
 }
 
-/**
+/*
 * Función de validación del formulario forms_ofertas_detalle
-*/
-/**
+*
 * Implements hook_validate().
-*/
+*
 function forms_ofertas_detalle_validate($form, &$form_state){
 
 dpm($form_state);
 //form_set_error('lista', t('You must enter a valid e-mail address.'));
 drupal_set_message(t('Verify submission.'));
-/*if (!valid_email_address($form_state['values']['email'])) {
+if (!valid_email_address($form_state['values']['email'])) {
 	
-}*/
+}
 }
 
 
 function forms_ofertas_detalle_submit($form, &$form_state) {
 	drupal_set_message(t('Verify submission.'));
-}
+}*/
 
 function forms_ofertas_detalle_confirm(){
 	// Get the post values (what user entered)
   $edit = $_POST;
 
-	dpm($edit,'contenido');	
-	//dpm($form_build_id);
   $form = array();
+  dpm($edit,'detalle_confirm');
 
-
-$form['author'] = array(
+ $form['autor_obra'] = array(
     '#type' => 'hidden',
-    '#title' => t('autor'),
     '#value' => $edit['autor_obra']
   );
-  $form['musical_piece'] = array(
+  $form['obra_musical'] = array(
     '#type' => 'hidden',
     '#title' => t('obra'),
     '#value' => $edit['obra_musical']
@@ -1276,7 +1339,7 @@ $form['author'] = array(
   $form['city'] = array(
     '#type' => 'hidden',
     '#title' => t('ciudad'),
-    '#value' => $edit['Ciudad'] 
+    '#value' => $edit['city'] 
   );
    $form['mail'] = array(
     '#type' => 'hidden',
@@ -1285,6 +1348,7 @@ $form['author'] = array(
   );
    
   $text_info = '';
+  $text_button ='';
  if(!empty($edit['instruments'])){
   	  $num = preg_split("/\/|-/",$edit['instruments']);
 
@@ -1294,22 +1358,20 @@ $form['author'] = array(
 	    '#value' => $num[0] // Include the $_POST form values
 	  );
 	  $text_info = 'Do you want to subscribe to this offer?';
-	dpm($edit['instruments']);
+	//dpm($edit['instruments']);
+	  $text_button ='Subscribe';
   }
   if(empty($edit['instruments'])){
   	$text_info = 'Do you wish to unsubscribe from this offer?';
+  	$text_button ='Unsubscribe';
   }
 
   if(empty($edit['instruments']) && $edit['op'] =='Actualizar'){
   	$text_info = 'Do you wish to update this offer?';
+  	$text_button ='';
   }
-
-
- 
-
 	$form['nid_oferta'] = array(
     '#type' => 'hidden',
-    '#title' => t('Instruments'),
     '#value' => $edit['nid_oferta'] // Include the $_POST form values
   	);
 
@@ -1317,8 +1379,8 @@ $form['author'] = array(
   $form= confirm_form($form,
 	    t($text_info), '/',
 	    t('Only do this if you are sure!'),
-	    t('Subscribe to it!'),
-	    t('Nevermind')
+	    t($text_button),
+	    t('Cancel')
   );
 
   return $form;
@@ -1328,23 +1390,47 @@ $form['author'] = array(
 //Se envía la suscripción a una oferta
 function forms_ofertas_detalle_confirm_submit($form, &$form_state) {
 	global $user; 
+	dpm($form_state);
 	$transaction = db_transaction();
 	try{
 		$dbOfferInstrument = new DbOfferInstrument();
-		$dbOfferInstrument->update($user->uid,$form_state['values']['nid_oferta'],$form_state['values']['instruments']);
+		if($form_state['values']['op']=='Unsubscribe'){
+			$dbOfferInstrument->delete($user->uid,$form_state['values']['nid_oferta']);
 		
-		offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'subscription');
+			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'unsubscription');
+			drupal_set_message('You have successfully unsubscribed.');
+			//Comprobamos si la oferta está completa
+			if(!is_complete($form_state['values']['nid_oferta'])){
+				db_update('pym_ofertas')
+					->fields(array( 'activo'=>1,))
+					->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
+					->execute();
+			}
 
-		//Comprobamos si la oferta está completa
-		if(is_complete($form_state['values']['nid_oferta'])){
-			db_update('pym_ofertas')
-				->fields(array( 'activo'=>0,))
-				->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
-				->execute();
+			//mails de cierre de oferta
+			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'open_offer');
+
 		}
-		//mails de cierre de oferta
-		offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'close_offer');
-		drupal_set_message('You have successfully subscribed.');
+		else{
+			
+			$dbOfferInstrument->update($user->uid,$form_state['values']['nid_oferta'],$form_state['values']['instruments']);
+		
+			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'subscription');
+			drupal_set_message('You have successfully subscribed.');
+		
+			//Comprobamos si la oferta está completa
+			if(is_complete($form_state['values']['nid_oferta'])){
+				db_update('pym_ofertas')
+					->fields(array( 'activo'=>0,))
+					->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
+					->execute();
+			}
+
+			//mails de cierre de oferta
+			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'close_offer');
+		}
+
+		
 		drupal_goto("");
 	}
 	catch (PDOException $e) {
