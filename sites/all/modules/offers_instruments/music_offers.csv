@@ -1,0 +1,14 @@
+nid_oferta,uid,fecha_creacion,obra_musical,autor_obra,Salon,Piano,Ciudad,Disponibilidad,Activo,Instrumento_autor
+1,13,1377068263,"Los Neues-Liebeslieder-Wälzer","Johannes Brahms",0,0,Madrid,"martes tarde",1,17
+2,33,1377068591,"Ciclo de Mignon y el Harpista","Robert Schumann",1,1,Madrid,"jueves mañana",1,17
+3,33,1377068828,"Quinta Sinfonía",Shubert,1,1,Valencia,"mañana de los sábados",0,17
+4,79,1377069132,"Pasión según San Mateo"," Johann Sebastian BACH",1,1,Barcelona,"viernes tarde",1,17
+5,79,1377069132,"Pasión según San Mateo"," Johann Sebastian BACH",1,1,Barcelona,"viernes tarde",1,17
+6,1,1377069563,"Sinfonía No. 9 “Coral”","Ludwig van BEETHOVEN",1,1,"Villanueva de la Serena","todas las mañanas",1,17
+7,1,1377069928,"Tres esbozos sinfónicos “La Mer (El mar)”"," Claude DEBUSSY",1,1,"Don Benito","todos los días",1,17
+8,79,1377102573,"Misa del Papa Marcelo","Giovanni Pierluigi da PALESTRINA",0,0,Merida,"fines de semana",1,17
+9,19,1377103383,"L’Estro Armonico (La inspiración armónica)","Antonio VIVALDI ",0,0,"Villanueva de la Serena",tardes,1,17
+10,19,1377156598,"Concierto para Piano Nº1 en Si bemol menor ","Pyotr Ilyich TCHAIKOVSKY",0,0,Mérida,"mañanas ",1,17
+11,13,1377156834,"Variaciones Goldberg","Johann Sebastian BACH",1,1,"Villanueva de la serena","todas las tardes",1,17
+13,13,1377158080,"19 Rapsodias Húngaras","Franz LISZT",1,1,"Villanueva de la Serena","todas las mañanas",1,17
+14,13,1377158424,"Fantasía en do mayor para piano (Wandererfantasie)","Franz SCHUBERT",1,1,"Villanueva de la Serena",mañanas,1,17

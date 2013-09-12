@@ -216,13 +216,9 @@ class DbOfferInstrument {
               $offerInstrument->setUid($result->uid);
               $offerInstrument->setPosition($result->position);
               
-              $offerInstruments[$key] = $offerInstrument->toArray();
+              $offerInstruments[$key] = $offerInstrument;
        }
-      
-
-
-
-      
+     
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);

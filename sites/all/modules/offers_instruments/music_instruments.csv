@@ -1,17 +1,18 @@
 name_instrument,description_instrument,general_list
-"Ninguno,""Elecci�n por defecto"",1"
-"Trompeta,""Instrumento de viento"",1"
-"Flauta travesera,""Instrumento de viento"",1"
-"Violín,""Instrumento de cuerda"",1"
-"Viola,""Instrumento de cuerda"",1"
-"Corno ingles y frances,""Instrumento Aeróforos"",1"
-"Tuba,""Instrumento Aeróforos"",1"
-"Timbales,""Instrumento de percusión"",1"
-"Redoblante,""Instrumento de percusión"",1"
-"Bombo,""Instrumento de percusión"",1"
-"platillos,""Instrumento de percusión"",1"
-"xilófono,""Instrumento de percusión"",1"
-"Triángulo,""Instrumento de percusión"",1"
-"Oboe,""Instrumento de viento"",1"
-Viloncello,res,1
-"Piano,""instrumento de teclado"",1"
+Ninguno,"Valor por defecto",1
+Trompeta,"Instrumento de viento",1
+"Flauta travesera","Instrumento de viento",1
+Violín,"Instrumento de cuerda",1
+Viola,"Instrumento de cuerda",1
+"Corno ingles y frances","Instrumento de Viento",1
+Tuba,"Instrumento de Viento",1
+Timbales,"Instrumento de percusión",1
+Redoblante,"Instrumento de percusión",1
+Bombo,"Instrumento de percusión",1
+Platillos,"Instrumento de percusión",1
+Xilófono,"Instrumento de percusión",1
+Triángulo,"Instrumento de percusión",1
+Oboe,"Instrumento de viento",1
+Viloncello,"instrumento de viento",1
+Piano,"instrumento de teclado",1
+Compositor,"Compositor musical",1

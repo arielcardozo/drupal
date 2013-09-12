@@ -1090,6 +1090,7 @@ if(!isset($form_state['storage']['confirm'])) {
 		'#value' => $id,
 	);
 
+
 	$dbOferta = new DbOffer();
 	$oferta = $dbOferta->get($id);
 
@@ -1193,20 +1194,10 @@ if(!isset($form_state['storage']['confirm'])) {
 	'Estado' => array('data' => t('Estado'), 'field' => 'io.position'),
 	
 	);
-	//Selecciona los instrumentos utilizados por la oferta actual, además del nombre (si los tuviera) del usuario suscrito
-	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
-			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','position'))
-			->condition('nid_oferta', $id,'=');
-			//->condition('activo', 1,'=');
-	$instrumentos->addField('u', 'name', 'name');
-	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
-	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
-	$instrumentos->leftJoin('instruments', 'i', 'io.nid_instrument = i.nid_instrument ');
-	//defino una línea de instrumento 
-  	$entries = $instrumentos->execute()->fetchAll();
-
+	
   	$dbOfferInstrument = new DbOfferInstrument();
-  	$contador = $dbOfferInstrument->getInstruments($id);
+  	$entries = $dbOfferInstrument->getInstruments($id);
+
 
 	//Instrumentos seleccionados por el usuario actual
 	$instrumentos_usuario = db_select('pym_instrumentos_ofertas', 'io')
@@ -1236,21 +1227,21 @@ if(!isset($form_state['storage']['confirm'])) {
 	$optout = array();
 	//dpm($contador);
 	    foreach ($entries as $entry) {
-	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
+	      $key = $entry->getNid_instrument().'-'.$entry->getNid_oferta().$entry->getPosition();
         
-
+	      $user_name = $entry->getUser_name();
 	      if(evaluaCondiciones($entry,$user,$oferta) || $booleanSuscripcion)$optout[$key] = TRUE;
 	      $options[$key] = array(
 
-						'Instrumento' => check_plain($entry->name_instrument),
+						'Instrumento' => check_plain($entry->getName_instrument()),
 						'Suscriptor' => array(
 									'data' => array(
 									'#type' => 'link',
-									'#title' => $entry->name,
-									'#href' => 'user/' . $entry->uid,
+									'#title' => $user_name,
+									'#href' => 'user/' . $entry->getUid(),
 									),
 						),
-						'Estado' => (empty($entry->name))?'Abierto':'Cerrado',
+						'Estado' => (empty($user_name))?'Abierto':'Cerrado',
 						);
 	    }
 	 
@@ -1271,9 +1262,7 @@ if(!isset($form_state['storage']['confirm'])) {
 	  $form['instruments']['instruments'][$key]['#disabled'] = true;
 
 	}
- 	
-
-
+ 
  	if($booleanSuscripcion ){
 	 	//botones
 		$form['actions'] = array('#type' => 'actions');
@@ -1316,13 +1305,14 @@ else {
 	    	'#type' => 'hidden',
 	    	'#value' => 1 // Include the $_POST form values
 	  	);
-	  }
 
-		
-
-	  if($form_state['values']['autor_oferta']==$user->uid){
-	  	$text_owner = 'You are the owner of this offer but if you want to unsubscribe it will keep open';
+	  	if($form_state['values']['autor_oferta']==$user->uid){
+	  		$text_owner = 'You are the owner of this offer but if you want to unsubscribe it will keep open';
+	  	}
 	  }
+	
+
+	  
 
 	  $form = fill_form($form_state);
 	  return confirm_form($form,

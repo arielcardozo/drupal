@@ -43,3 +43,9 @@ function offers_form_admin_settings_validate($form,
 &$form_state){
 //Validación de campos del formulario
 }
+
+function offers_form_views($form,&$form_state){
+	$form = array();
+	
+	return $form;
+}
