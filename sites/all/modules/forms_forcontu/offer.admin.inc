@@ -415,14 +415,11 @@ class DbOffer {
       $query->fields(array(
           'obra_musical' => $offer->getObra_musical(),
           'autor_obra' => $offer->getAutor_obra(),
-          //'uid' => $offer->getUid(),
-          //'activo' => $offer->getActivo(),
           'instrumento_autor'=> $offer->getInstrumento_autor(),
           'disponibilidad' => $offer->getDisponibilidad(),
           'salon' => $offer->getSalon(),
           'piano' => $offer->getPiano(),
           'ciudad' => $offer->getCiudad(),
-          //'fecha_creacion' => $offer->getFecha_creacion(),
       ));
       $query->execute();
     } catch (Exception $e) {
@@ -432,6 +429,21 @@ class DbOffer {
     }
   }
  
+ //Establece valores o actualiza
+  function deleteAutor_instrument($id) {
+    try {
+      $query = db_update('pym_ofertas');
+      $query->condition('nid_oferta', $id, '=');
+      $query->fields(array(
+           'instrumento_autor'=> 1,
+      ));
+      $query->execute();
+    } catch (Exception $e) {
+      $databaseException = new OfferDatabaseException($e->getMessage(), 'Update',
+                      t('Offer Id: @id', array('@id' => $offer->getKey())), TRUE);
+      $databaseException->handle();
+    }
+  }
   //Elimina una entrada de instrumento
   function delete($id) {
     try {
