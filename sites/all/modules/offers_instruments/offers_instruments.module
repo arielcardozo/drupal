@@ -138,7 +138,7 @@ function _add_delete_operation_elements(&$form_state, $operation, $folk_id, $sub
  
   $form['record_fieldset']['name_instrument'] = array(
       '#type' => 'textfield',
-      '#size' => 10,
+      '#size' => 50,
       '#default_value' => $name_instrument,
       '#prefix' => '<table><tr><td>',
       '#suffix' => '</td>',
@@ -204,8 +204,8 @@ function _handler_step_00($form, &$form_state, $submit_value) {
  
   $form['record_fieldset']['name_instrument'] = array(
       '#type' => 'textfield',
-      '#size' => 10,
-      '#maxlength' => 10,
+      '#size' => 50,
+      '#maxlength' => 255,
       '#title' => t('Instrument\' Name'),
       '#weight' => $weight++,
       '#prefix' => '<table border=0 cellspacing=3 celladding=3><tr><td>',
@@ -216,7 +216,7 @@ function _handler_step_00($form, &$form_state, $submit_value) {
  
   $form['record_fieldset']['description_instrument'] = array(
       '#type' => 'textfield',
-      '#size' => 30,
+      '#size' => 50,
       '#maxlength' => 255,
       '#title' => t('Insturment\' Description'),
       '#weight' => $weight++,

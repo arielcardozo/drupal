@@ -352,7 +352,7 @@ function offers_form($form_state) {
 		    // Only show this field if persons is set to 'Other'.
 		    '#states' => array(
 		      'visible' => array(  // Action to take: Make visible.
-		        ':input[name="autor_instrumet"]' => array('value' => '16'),
+		        ':input[name="autor_instrumet"]' => array('value' => '3'),
 		      ),
 		    ),
   		);
@@ -377,14 +377,20 @@ function offers_form($form_state) {
 		    // Only show this field if persons is set to 'Other'.
 		    '#states' => array(
 		      'visible' => array(  // Action to take: Make visible.
-		        ':input[name="performers'.$i.'"]' => array('value' => '16'),
+		        ':input[name="performers'.$i.'"]' => array('value' => '3'),
 		      ),
 		    ),
   		);
 
     }
 
-
+    $form['performers']['more']= array(
+		'#type' => 'checkbox',
+		'#title' => t('More Instruments'),
+		//'#options' => array( '1' => t('<strong>Do you need piano?</strong>')),
+		// Only show this field if persons is set to 'Other'.
+	    
+	    );
 /*
  	$form['performers']['more_instruments'] = array(
     '#type' => 'checkbox',
@@ -403,23 +409,23 @@ function offers_form($form_state) {
 	      ),
     ),
   );
-
+*/
 	$form['performers']['more_performes'] = array(
 	'#type' => 'fieldset',
-	'#title' => t('How many performers do you need?'),
+	'#title' => t('More Instruments'),
 	'#collapsible' => TRUE,
-	'#collapsed' => TRUE,
+	'#collapsed' => FALSE,
 	    // Expand the expand_more_info fieldset if the box is checked.
     '#states' => array(
-      'expanded' => array(
-        ':input[name="more_instruments"]' => array('checked' => TRUE),
+      'visible' => array(
+        ':input[name="more"]' => array('checked' => TRUE),
       ),
     ),
-	);*/
+	);
 
 	$no_of_fields = 9;     // The number of fields you wish to have in the form
 
-    /* Start adding the fields to the form
+    // Start adding the fields to the form
     for ($i=5; $i<=$no_of_fields; $i++)
     {
         $form['performers']['more_performes']['performers'.$i] = array(
@@ -444,7 +450,7 @@ function offers_form($form_state) {
 
     }
 
-*/
+
 
 return $form;
 }
@@ -476,7 +482,7 @@ function offers_form_submit($form, &$form_state){
 			$dbInstrument = new DbInstrument();
 		if(isset($form_state['values']['autor_instrumet'])){
 			$dbOfferInstrument = new DbOfferInstrument();
-			if($form_state['values']['autor_instrumet']==16){
+			if($form_state['values']['autor_instrumet']==3){
 				$id_new_instrument_autor = $dbInstrument->add($form_state['values']['other_autor_instrument'], 
                          								'Instrumento propio de oferta: '.$id_oferta,
                          								0);
@@ -491,7 +497,7 @@ function offers_form_submit($form, &$form_state){
 
 				//Alta de la opción del propietario de la oferta
 			 	for ($i=1; $i<=$no_of_fields; $i++){
-			        if($form_state['values']['performers'.$i]!=0 && $form_state['values']['performers'.$i]!=16){
+			        if($form_state['values']['performers'.$i]!=0 && $form_state['values']['performers'.$i]!=3){
 			        	$result = db_insert('pym_instrumentos_ofertas')
 							->fields(array(
 							'nid_instrument' => $form_state['values']['performers'.$i],
@@ -502,7 +508,7 @@ function offers_form_submit($form, &$form_state){
 							->execute();
 							
 			        }
-			        if($form_state['values']['performers'.$i]==16){
+			        if($form_state['values']['performers'.$i]==3){
 			        	
 			        	$id_new_instrument = $db->add($form_state['values']['other_permformers'.$i], 
                          								'Instrumento propio de oferta: '.$id_oferta,
@@ -874,13 +880,20 @@ function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = '
 
 	$form['personal_data'] = array(
 	'#type' => 'fieldset',
-	'#title' => t('Datos de la oferta. Author: <strong> '.$oferta->getUser_name().'</strong>'),
+	'#title' => t('Datos de la oferta. Creado: <strong> '.date('d-M-Y', $oferta->getFechaCreacion()).'</strong>'),
+	 
 	'#collapsible' => TRUE,
 	'#collapsed' => FALSE,
 	);
 	$form['personal_data']['mail'] = array(
 		'#type' => 'hidden',
 		'#default_value' => $oferta->getUser_mail(),
+	);
+	$form['personal_data']['creador_oferta'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Creador de la oferta'),
+		'#default_value' => $oferta->getUser_name(),
+		'#required' => TRUE,
 	);
 	$form['personal_data']['obra_musical'] = array(
 		'#type' => 'textfield',
@@ -1100,7 +1113,7 @@ if(!isset($form_state['storage']['confirm'])) {
 
 	$form['personal_data'] = array(
 	'#type' => 'fieldset',
-	'#title' => t('Datos de la oferta.'),
+	'#title' => t('Datos de la oferta. Creado: <strong> '.date('d-M-Y', $oferta->getFechaCreacion()).'</strong>'),
 	'#collapsible' => TRUE,
 	'#collapsed' => FALSE,
 	);
@@ -1210,17 +1223,21 @@ if(!isset($form_state['storage']['confirm'])) {
 	//Se activa con la primera aparición del nombre en la lista de suscriptos
 	if($ii->uid_count>0) {
 		$booleanSuscripcion = TRUE;
-		
-		
 		drupal_set_message('You are already subscribed to this offer. You havent got permission to select another one');
+		/*$form['instruments']['booleanSuscripcion'] = array(
+	    	'#type' => 'hidden',
+	    	'#default_value' => 1, 
+	  	);*/
 	}
 	else
 	{
 		$booleanSuscripcion = FALSE;
-		$form['instruments']['booleanSuscripcion'] = array(
+		
+			$form['instruments']['booleanSuscripcion'] = array(
 	    	'#type' => 'hidden',
 	    	'#default_value' => 1, 
-	  	);	
+	  	);
+			
 	}
 
 	$options = array();
