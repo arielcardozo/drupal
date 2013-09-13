@@ -51,6 +51,7 @@ function forms_forcontu_menu() {
 		'access arguments' => array('make an offer'),
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('forms_ofertas_detalle',1),
+		'file' => 'forms_forcontu.admin.inc',
 	);
 	$items['ofertas/%/user/%user/detalle/view'] = array(
 		'title' => 'View offer',
@@ -69,6 +70,7 @@ function forms_forcontu_menu() {
 		'description' => t('Offer edit'),
 		'type' => MENU_LOCAL_TASK,
 		'weight' => 2,
+		'file' => 'forms_forcontu.admin.inc',
 
 	);
 	$items['ofertas/ver/detalle/confirm'] = array(
@@ -212,7 +214,7 @@ function forms_forcontu_load($uid, $reset = FALSE) {
   return reset($users);
 }
 
-function obtiene_instrumentos(){
+/*function obtiene_instrumentos(){
 	$query = db_select('instruments', 'n');
 	// Obtiene los datos de la base de datos (tabla node).
 	$instruments = $query->
@@ -223,7 +225,7 @@ function obtiene_instrumentos(){
     	$options[$result->nid_instrument] = $result->name_instrument;
 	}
 	return $options;
-}
+}*/
 /**
 * Función de retorno para la página ofertas/formulario.
 */
@@ -285,13 +287,13 @@ function offers_form($form_state) {
 
 	$form['salon'] = array(
 		'#type' => 'checkbox',
-		'#title' => t('<strong>Do you need a rehearsal?</strong>'),
+		'#title' => '<strong>'.t('Do you need a rehearsal?').'</strong>',
 
 	);
 
 	$form['piano'] = array(
 		'#type' => 'checkbox',
-		'#title' => t('<strong>Do you need piano?</strong>'),
+		'#title' => '<strong>'.t('Do you need piano?').'</strong>',
 		//'#options' => array( '1' => t('<strong>Do you need piano?</strong>')),
 		// Only show this field if persons is set to 'Other'.
 	    '#states' => array(
@@ -533,12 +535,12 @@ function offers_form_submit($form, &$form_state){
 		    	}
 				offers_form_mail_send($id_oferta,$form_state['values'],'new_offer');
 
-				drupal_set_message ("<strong>Su oferta ha sido registrada correctamente.</strong> ");
+				drupal_set_message ('<strong>'.t("Su oferta ha sido registrada correctamente. ").'</strong>');
 		    }
 		    catch (Exception $e) {
 			   $transaction->rollback();
 			    watchdog_exception('my_type', $e);
-			    drupal_set_message ("<strong>Hubo un problema en el registro de su oferta, por favor inténtelo más tarde.</br>".$e->getMessage()."</strong> ");
+			    drupal_set_message ('<strong>'.t("Hubo un problema en el registro de su oferta, por favor inténtelo más tarde.").'</br>'.$e->getMessage()."</strong> ");
 			}
 		
 		drupal_goto("listado/ofertas");
@@ -845,221 +847,14 @@ function forms_forcontu_mail_alter(&$message) {
   }
 }
 
+//Encargado de visualizar la edición de la oferta
 function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = 'account') {
-//function forms_ofertas_detalle_edit($form,&$form_state) {
-	  global $user;
-	  $options = obtiene_instrumentos();
 
-  // During initial form build, add the entity to the form state for use during
-  // form building and processing. During a rebuild, use what is in the form
-  // state.
-  if (!isset($form_state['user'])) {
-    $form_state['user'] = $account;
-  }
-  else {
-    $account = $form_state['user'];
-  }
-
-  // @todo Legacy support. Modules are encouraged to access the entity using
-  //   $form_state. Remove in Drupal 8.
-  $form['#user'] = $account;
-  $form['#user_category'] = $category;
-
- 	$operacion = '';
-
-	$id = $form_state['build_info']['args'][0];
-		
-	global $user;
-	$form['nid_oferta'] = array(
-		'#type' => 'hidden',
-		'#title' => t('Oferta'),
-		'#value' => $id,
-	);
-
-	$dbOferta = new DbOffer();
-	$oferta = $dbOferta->get($id);
-
-	//opciones que estarán checkeadas a TRUE
-	$options_checked = array('11','21','31');
-	
-
-	$form['personal_data'] = array(
-	'#type' => 'fieldset',
-	'#title' => t('Datos de la oferta. Creado: <strong> '.date('d-M-Y', $oferta->getFechaCreacion()).'</strong>'),
-	 
-	'#collapsible' => TRUE,
-	'#collapsed' => FALSE,
-	);
-	$form['personal_data']['mail'] = array(
-		'#type' => 'hidden',
-		'#default_value' => $oferta->getUser_mail(),
-	);
-	$form['personal_data']['creador_oferta'] = array(
-		'#type' => 'textfield',
-		'#title' => t('Creador de la oferta'),
-		'#default_value' => $oferta->getUser_name(),
-		'#required' => TRUE,
-	);
-	$form['personal_data']['obra_musical'] = array(
-		'#type' => 'textfield',
-		'#title' => t('Obra a tocar'),
-		'#default_value' => $oferta->getObra_musical(),
-		'#required' => TRUE,
-	);
-	$form['personal_data']['autor_obra'] = array(
-		'#type' => 'textfield',
-		'#title' => t('Autor de la Obra'),
-		'#default_value' => $oferta->getAutor_obra(),
-		'#required' => TRUE,
-	);
-	$form['personal_data']['autor_instrumet'] = array(
-		'#type' => 'select',
-		'#title' => t('Instrument to play by the author'),
-		'#required' => TRUE,
-		'#options' => $options,
-		'#value' => $oferta->getInstrumento_autor(),
-        '#empty' => t('No content available.'),
-	);	
-	$form['personal_data']['Salom'] = array(
-		'#type' => 'checkbox',
-		'#title' => t('Se necesita Salon'),
-		'#default_value' => ($oferta->getSalon()==0)?0:1,
-	);
-	/*$form['personal_data']['Piano'] = array(
-		'#type' => 'checkbox',
-		'#title' => t('Se necesita Piano'),
-		'#default_value' => ($oferta->getPiano()==0)?0:1,
-	);*/
-	$form['personal_data']['Piano'] = array(
-		'#type' => 'checkbox',
-		'#title' => t('Se necesita Piano'),
-		//'#options' => array( '1' => t('<strong>Do you need piano?</strong>')),
-		// Only show this field if persons is set to 'Other'.
-		'#default_value' => ($oferta->getPiano()==0)?0:1,
-	    '#states' => array(
-	      'visible' => array(  // Action to take: Make visible.
-	        ':input[name="Salom"]' => array('checked' => TRUE),
-	      ),
-    ),
-
-
-	);
-	$form['personal_data']['Ciudad'] = array(
-		'#type' => 'textfield',
-		'#title' => t('City to play'),
-		'#default_value' => $oferta->getCiudad(),
-		'#required' => TRUE,
-	);
-	$form['personal_data']['Disponibilidad'] = array(
-		'#type' => 'textfield',
-		'#title'=> t('Availability'),
-		'#default_value' => $oferta->getDisponibilidad(),
-		//'#collapsed' => FALSE,
-	);
-
-	$form['instruments']= array(
-		'#type' => 'fieldset',
-		'#title'=> t('Instruments'),
-		'#collapsible' => TRUE,
-		'#collapsed' => FALSE,
-		'#description' => t('Select the instrument wich you want to suscribe to.'),
-	);
-
-	
-	$header = array(
-		'Instrumento' => array('data' => t('Instrumento'), 'field' => 'i.name_instrument'),
-		'Suscriptor' => array('data' => t('Suscriptor'), 'field' => 'u.name'),
-		'Activo' => array('data' => t('Estado'), 'field' => 'io.position'),
-	
-	);
-	$instrumentos = db_select('pym_instrumentos_ofertas', 'io')
-			->fields('io', array('nid_oferta', 'nid_instrument', 'uid','position'))
-			->condition('nid_oferta', $id,'=');
-			//->condition('activo', 1,'=');
-	$instrumentos->addField('u', 'name', 'name');
-	$instrumentos->addField('i', 'name_instrument', 'name_instrument');
-	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
-	$instrumentos->leftJoin('instruments', 'i', 'io.nid_instrument = i.nid_instrument ');
-	//defino una línea de instrumento 
-  	$entries = $instrumentos->execute()->fetchAll();
-
-	//Instrumentos seleccionados por el usuario actual
-	$instrumentos_usuario = db_select('pym_instrumentos_ofertas', 'io')
-			//->fields('io', array('uid'))
-			->condition('nid_oferta', $id,'=')
-			->condition('uid', $user->uid,'=');
-
-	$instrumentos_usuario->addExpression('COUNT(uid)', 'uid_count');
-	
-	$ii = $instrumentos_usuario->execute()->fetchObject();
-	//Se activa con la primera aparición del nombre en la lista de suscriptos
-	if($ii->uid_count>0) {
-		$booleanSuscripcion = TRUE;
-		drupal_set_message('You are already subscribed to this offer. You havent got permission to select another one');
-	}
-	else
-	{
-		$booleanSuscripcion = FALSE;
-	}
-
-
-
-	$options = array();
-	$optout = array();
-
-	
-	    foreach ($entries as $entry) {
-	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
-        
-	      if(evaluaCondiciones($entry,$user,$oferta) || $booleanSuscripcion)$optout[$key] = TRUE;
-	      $options[$key] = array(
-
-						'Instrumento' => check_plain($entry->name_instrument),
-						'Suscriptor' => array(
-									'data' => array(
-									'#type' => 'link',
-									'#title' => $entry->name,
-									'#href' => 'user/' . $entry->uid,
-									),
-						),
-						'Activo' => (empty($entry->name))?'Si':'No',
-						);
-	    }
-	 
-
-	$form['instruments']['instruments'] = array(
-		'#type' => 'tableselect',
-		'#header' => $header,
-		'#options' => $options,
-		'#empty' => t('No tiene contenido.'),
-		'#multiple' => FALSE,
-		'#required' => TRUE,
-	);
-
-	foreach( $optout as $key => $value )
-	{
-	  $form['instruments']['instruments'][$key]['#disabled'] = true;
-	}
- 	
-
-
- 	//if(empty($optout)){
-	 	//botones
-		$form['actions'] = array('#type' => 'actions');
-		$form['actions']['submit'] = array(
-			'#type' => 'submit',
-			'#value' => t('Save'),
-			//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
-		);
-	//}
-
-  	$form['#multistep'] = FALSE;
-  	$form['#action'] = url('ofertas/edit/detalle/confirm');
-  	return $form;
+  	return offers_form_views($form,$form_state, 'edit');
 
 }
 
-function forms_ofertas_detalle_edit_confirm($form, &$form_state){
+function forms_ofertas_detalle_edit_submit($form, &$form_state){
 		$edit = $_POST;
 	//dpm($edit);
 	$offer = new Offer();
@@ -1084,7 +879,7 @@ function forms_ofertas_detalle_edit_confirm($form, &$form_state){
     }
     catch (Exception $e) {
 			   $transaction->rollback();
-			    watchdog_exception('my_type', $e);
+			    watchdog_exception('registering offer', $e);
 			    drupal_set_message ("<strong>Hubo un problema en el registro de su oferta, por favor inténtelo más tarde.</br>".$e->getMessage()."</strong> ");
 			}
 	drupal_set_message(t('Update confirmed.'));	
@@ -1098,7 +893,6 @@ function forms_ofertas_detalle($form,&$form_state) {
 	global $user;
 if(!isset($form_state['storage']['confirm'])) {	
 	$operacion = '';
-	global $user; 
 	$id = $form_state['build_info']['args'][0];
 		
 	global $user;
@@ -1112,13 +906,10 @@ if(!isset($form_state['storage']['confirm'])) {
 	$dbOferta = new DbOffer();
 	$oferta = $dbOferta->get($id);
 
-	
-	//opciones que estarán checkeadas a TRUE
-	$options_checked = array('11','21','31');
 
 	$form['personal_data'] = array(
 	'#type' => 'fieldset',
-	'#title' => t('Datos de la oferta. Creado: <strong> '.date('d-M-Y', $oferta->getFechaCreacion()).'</strong>'),
+	'#title' => t('Datos de la oferta. Creado:').' <strong> '.date('d-M-Y', $oferta->getFechaCreacion()).'</strong>',
 	'#collapsible' => TRUE,
 	'#collapsed' => FALSE,
 	);
@@ -1306,9 +1097,8 @@ if(!isset($form_state['storage']['confirm'])) {
 	}
 
 
-  	//$form['#validate'] = TRUE;
-  	//$form['#action'] = url('ofertas/ver/detalle/confirm');
-  	return $form;
+  	return offers_form_views($form,$form_state, 'view');
+  	//return $form;
 }
 else {
 	$text_info = '';
@@ -1525,75 +1315,7 @@ function fill_form($form_state){
 
   return $form;
 }
-/*
-* Implements hook_validate().
-*
-function forms_ofertas_detalle_confirm_validate($form, &$form_state) {
-	form_set_error('lista', t('You must enter a valid e-mail address.'));
 
-}
-//Se envía la suscripción a una oferta
-function forms_ofertas_detalle_confirm_submit($form, &$form_state) {
-	global $user; 
-	dpm($form_state);
-	$transaction = db_transaction();
-	try{
-		$dbOfferInstrument = new DbOfferInstrument();
-		if($form_state['values']['op']=='Unsubscribe'){
-			$dbOfferInstrument->delete($user->uid,$form_state['values']['nid_oferta']);
-		
-			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'unsubscription');
-			drupal_set_message('You have successfully unsubscribed.');
-			//Comprobamos si la oferta está completa
-			if(!is_complete($form_state['values']['nid_oferta'])){
-				db_update('pym_ofertas')
-					->fields(array( 'activo'=>1,))
-					->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
-					->execute();
-			}
-			//Además, si el usuario actual es el propietario se eliminará el instrumento de autor
-			if ($user->uid==$form_state['values']['autor_oferta']) {
-				$dbOffer = new DbOffer();
-				$dbOffer->deleteAutor_instrument($form_state['values']['nid_oferta']);
-			}
-			//mails de cierre de oferta
-			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'open_offer');
-
-		}
-		else{
-			
-			$dbOfferInstrument->update($user->uid,$form_state['values']['nid_oferta'],$form_state['values']['instruments']);
-		
-			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'subscription');
-			drupal_set_message('You have successfully subscribed.');
-		
-			//Comprobamos si la oferta está completa
-			if(is_complete($form_state['values']['nid_oferta'])){
-				db_update('pym_ofertas')
-					->fields(array( 'activo'=>0,))
-					->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
-					->execute();
-			}
-
-			//mails de cierre de oferta
-			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'close_offer');
-		}
-
-		
-		drupal_goto("listado/ofertas");
-	}
-	catch (PDOException $e) {
-		$transaction->rollback();
-      	watchdog_exception('user', $e);
-  		drupal_set_message(t('Error: %message', array('%message' => $e->getMessage())), 'error');
-  		 drupal_goto($_SERVER['HTTP_REFERER']);
-	}
-	 
-
-
-
-}
-*/
 //comprobamos si es la ultima suscripción para esa oferta
 function is_complete($id){
 
@@ -1861,19 +1583,3 @@ global $user;
   }
 }
 
-/*function forms_forcontu_menu_alter(&$items) {
-  $items['ofertas/%/detalle/edit']['access callback'] = 'ofertas_user_edit_access';
-}*/
-/**
-* Access callback for user account editing.
- *
- */
-/*function ofertas_user_edit_access($account) {
-	//drupal_set_message(t($account->uid));
-
-	//dpm($GLOBALS['user']);
-	drupal_set_message(t($GLOBALS['user']->uid));
-	return TRUE;
-	
-  //return ((($GLOBALS['user']->uid == $user->uid) && user_access('update offers')) || user_access('administer users')) && $user->uid > 0;
-}*/
