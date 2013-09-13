@@ -311,7 +311,7 @@ function dbtng_example_advanced_list() {
       $rows[] = array_map('check_plain', $entry);
     }
     // Make a table for them.
-    $header = array(t('Id'), t('Created by aRI'), t('Name'), t('Surname'), t('Age'));
+    $header = array(t('Id'), t('Created by'), t('Name'), t('Surname'), t('Age'));
     $output .= theme('table', array('header' => $header, 'rows' => $rows));
   }
   else {

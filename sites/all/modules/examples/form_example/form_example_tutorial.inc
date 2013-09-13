@@ -4,7 +4,7 @@
  * @file
  * This is the Form API Tutorial from the handbook.
  *
- * It goes through 11 form examples of increasing complexity to demonstrate
+ * It goes through 10 form examples of increasing complexity to demonstrate
  * Drupal 7 Form API.
  *
  * Links are provided inline for the related handbook pages.
@@ -25,12 +25,11 @@
  * @see form_example_tutorial_8()
  * @see form_example_tutorial_9()
  * @see form_example_tutorial_10()
- * @see form_example_tutorial_11()
  *
  * @ingroup form_example
  */
 function form_example_tutorial() {
-  return t('This is a set of 11 form tutorials tied to the <a href="http://drupal.org/node/262422">Drupal handbook</a>.');
+  return t('This is a set of 10 form tutorials tied to the <a href="http://drupal.org/node/262422">Drupal handbook</a>.');
 }
 
 //////////////// Tutorial Example 1 //////////////////////
@@ -765,104 +764,4 @@ function form_example_tutorial_10_submit($form, &$form_state) {
   file_save($file);
   // Set a response to the user.
   drupal_set_message(t('The form has been submitted and the image has been saved, filename: @filename.', array('@filename' => $file->filename)));
-}
-
-
-//////////////// Tutorial Example 11 //////////////////////
-
-/**
- * Example 11: adding a confirmation form.
- *
- * This example generates a simple form that, when submitted, directs
- * the user to a confirmation form generated using the confirm_form function.
- * It asks the user to verify that the name they input was correct
- *
- * @see form_example_tutorial_11_submit()
- * @ingroup form_example
- */
-function form_example_tutorial_11($form, &$form_state) {
-  // this form is identical to the one in example 2 except for one thing
-  // we are adding an #action tag to direct the form submission to
-  // a confirmation page
-  $form['description'] = array(
-    '#type' => 'item',
-    '#title' => t('A set of two forms that demonstrate the confirm_form function.  This form has an explicit action to direct he form to a confirmation page'),
-  );
-  $form['name'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Name'),
-    '#required' => TRUE,
-  );
-
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => 'Submit',
-  );
-  return $form;
-}
-
-/**
- * Submit function for form_example_tutorial_11().
- *
- * Adds a submit handler/function to our form to redirect
- * the user to a confirmation page
- */
-function form_example_tutorial_11_submit($form, &$form_state) {
-  // Simple submit function that changes the redirect of the form
-  // based on the value of the name field
-  $name = $form_state['values']['name'];
-  $form_state['redirect'] = 'examples/form_example/tutorial/11/confirm/' . urlencode($name);
-}
-
-/**
- * Example 11: A form generated with confirm_form.
- *
- * This function generates the confirmation form using thew confirm_form function
- * if confirmed it sets a drupal message to demonstrate it's success
- *
- * @param string $name
- *  the urlencoded name entered by the user
- *
- * @see form_example_tutorial_11_confirm_name_submit()
- * @ingroup form_example
- */
-function form_example_tutorial_11_confirm_name($form, $form_state, $name) {
-  // confirm_form returns a complete form array for confirming an action
-  // it has 7 argmuments: $form, $question, $path, $description, $yes, $no, and $name
-  // - $form: additional elements to add to the form that will be available in the submit
-  // - $question: What is the user confirming?  this will be the title of the page
-  // - $path: where should the page go if the user hits cancel
-  // - $description = NULL: Additional text to display
-  // - $yes = NULL: anchor text for the confirmation button. Defaults to t('Confirm').
-  // - $no = NULL: anchor text for the cancel link. Defaults to t('Cancel').
-  // - $name = 'confirm': The internal name used to refer to the confirmation item.
-  // see the documentation here:
-  // https://api.drupal.org/api/drupal/modules%21system%21system.module/function/confirm_form/7
-  return confirm_form(
-    array(
-      'name' => array(
-        '#type' => 'textfield',
-        '#title' => t('Name'),
-        '#value' => urldecode($name),
-      ),
-    ),
-    t('Is this really your name?'),
-    'examples/form_example/tutorial/11',
-    t('Please verify whether or not you have input your name correctly.  If you verify you will be sent back to the form and a essage will be set.  Otherwise you will be sent to the same page but with no message.'),
-    t('This is my name'),
-    t('Nope, not my name'),
-    'confirm_example'
-  );
-}
-
-/**
- * Submit function for form_example_tutorial_11_confirm_form().
- *
- * Adds a submit handler/function to the confirmation form
- * if this point is reached the submission has been confirmed
- * so we will set a message to demonstrate the success
- */
-function form_example_tutorial_11_confirm_name_submit($form, &$form_state) {
-  drupal_set_message(t('Confirmation form submission recieved.  According to your submission your name is "@name"', array("@name"=> $form_state['values']['name'])));
-  $form_state['redirect'] = 'examples/form_example/tutorial/11';
 }

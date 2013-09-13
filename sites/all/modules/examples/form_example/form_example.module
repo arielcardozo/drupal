@@ -129,28 +129,10 @@ function form_example_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('form_example_tutorial_10'),
     'access callback' => TRUE,
-    'description' => 'Tutorial 10: Form with file upload',
+    'description' => 'Tutorial 11: Form with file upload',
     'type' => MENU_LOCAL_TASK,
     'file' => 'form_example_tutorial.inc',
     'weight' => 10,
-  );
-  $items['examples/form_example/tutorial/11'] = array(
-    'title' => '#11',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('form_example_tutorial_11'),
-    'access callback' => TRUE,
-    'description' => 'Tutorial 11: generating a confirmation form',
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'form_example_tutorial.inc',
-    'weight' => 11,
-  );
-  $items['examples/form_example/tutorial/11/confirm/%'] = array(
-    'title' => 'Name Confirmation',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('form_example_tutorial_11_confirm_name', 5),
-    'access callback' => TRUE,
-    'description' => 'Confirmation form for tutorial 11.  Generated using the confirm_form function',
-    'file' => 'form_example_tutorial.inc',
   );
   $items['examples/form_example/states'] = array(
     'title' => '#states example',
@@ -200,13 +182,6 @@ function form_example_help($path, $arg) {
     case 'examples/form_example/element_example':
       $help = t('The Element Example shows how modules can provide their own Form API element types. Four different element types are demonstrated.');
       break;
-    case 'ofertas/formulario':
-      $help = t('Es muy sencillo: piensa una pieza de música de cámara que te gustaría tocar  y haz tu propuesta aquí para que otros intérpretes puedan sumarse a ella. Si tu oferta resulta atractiva para otros intérpretes, ellos podrán sumarse a ésta y cuando esté completa os enviaremos un mail con los datos de todos para que podáis poneros de acuerdo para ensayarla. Hasta que esto suceda, siempre podrás saber cómo evoluciona el estado de tu oferta pinchando en la etiqueta ofertas. 
-      Si necesitáis un lugar para ensayar, nosotros podemos poneros en contacto con varias salas que alquilan estos espacios por horas. 
-      Pero antes de eso, para hacer una oferta debes estar registrado:
-      Regístrate  / Ya estoy registrado');
-      break;
-
   }
   if (!empty($help)) {
     return '<p>' . $help . '</p>';
