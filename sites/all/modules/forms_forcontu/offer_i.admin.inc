@@ -255,7 +255,7 @@ class DbOfferInstrument {
             OfferInstrument::POSITION,
             );
    
-        $insert = db_insert(OfferInstrument::OFFERS_TABLE_NAME)->fields($fields);
+        $insert = db_insert(OfferInstrument::OFFERS_INSTRUMENTS_TABLE_NAME)->fields($fields);
         $insert->values(array($uid,$nid_oferta, $nid_instrument,$position));
         $id_instrument = $insert->execute();
       } catch (Exception $e) {

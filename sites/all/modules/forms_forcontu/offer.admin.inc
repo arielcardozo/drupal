@@ -381,6 +381,7 @@ class DbOffer {
  
   //Añade un instrumento
   function add($uid,$autor_obra, $obra_musical,$fecha_creacion,$salon,$piano,$instrumento_autor,$ciudad,$disponibilidad,$activo) {
+    $id_oferta = 0;
     try {
       $fields = array(
           Offer::UID,
@@ -395,7 +396,7 @@ class DbOffer {
           Offer::ACTIVO);
  
       $insert = db_insert(Offer::OFFERS_TABLE_NAME)->fields($fields);
-      $insert->values(array($uid, $autor_obra,$obra_musical,$fecha_creacion,$salon,$piano,$instrumento_autor,$ciudad,$disponibilidad,$activo));
+      $insert->values(array($uid, $autor_obra,$obra_musical,$fecha_creacion,$instrumento_autor,$salon,$piano,$ciudad,$disponibilidad,$activo));
       $id_oferta = $insert->execute();
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Add',

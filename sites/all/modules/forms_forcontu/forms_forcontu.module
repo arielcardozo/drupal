@@ -162,10 +162,14 @@ function forms_forcontu_permission(){
  *
  * @see hook_node_access()
  */
+/*
 function forms_forcontu_node_access($node, $op, $account) {
  // If $node is a string, the node has not yet been created. We don't care
   // about that case.
-/*
+	//dpm($op,'op');
+	//dpm($account,'account');
+	//dpm($node,'node');
+
 	 $account = isset($account) ? $account : $GLOBALS['user'];
   if (is_string($node)) {
     return NODE_ACCESS_DENY;
@@ -174,8 +178,9 @@ function forms_forcontu_node_access($node, $op, $account) {
     drupal_set_message(t('Access to node @nid allowed because requester name (@name) is specifically allowed', array('@name' => $node->name, '@uid' => $account->uid)));
     return NODE_ACCESS_ALLOW;
   }
-  return NODE_ACCESS_ALLOW;*/
+  return NODE_ACCESS_ALLOW;
 }
+*/
 
 /**
  * Loads a user object.
@@ -236,7 +241,7 @@ function offers_form($form_state) {
 	'#collapsible' => TRUE,
 	'#collapsed' => FALSE,
 	);
-	$form['to_play']['musical_piece'] = array(
+	$form['to_play']['obra_musical'] = array(
 	'#type' => 'textfield',
 	'#title' => t('Musical piece'),
 	'#required' => TRUE,
@@ -245,7 +250,7 @@ function offers_form($form_state) {
 	'#size' => 75,
 	'#maxlength' => 75,
 	);
-	$form['to_play']['author'] = array(
+	$form['to_play']['autor_obra'] = array(
 	'#type' => 'textfield',
 	'#title' => t('Author'),
 	'#required' => TRUE,
@@ -468,16 +473,17 @@ function offers_form_submit($form, &$form_state){
    	$id_new_instrument = 0;
  	 try {
  	 	$id_oferta = $db->add($form_state['values']['uid_usuario'], 
- 	 				$form_state['values']['author'],
- 	 				$form_state['values']['musical_piece'],
+ 	 				$form_state['values']['autor_obra'],
+ 	 				$form_state['values']['obra_musical'],
  	 				time(),
  	 				$form_state['values']['salon'],
  	 				$form_state['values']['piano'],
+ 	 				$form_state['values']['autor_instrumet'],
  	 				$form_state['values']['city'],
  	 				$form_state['values']['time_availability'],
  	 				1);
 			
-			watchdog('oferta', $id_oferta);
+			watchdog('oferta_creada:', $id_oferta);
 			$dbInstrument = new DbInstrument();
 		if(isset($form_state['values']['autor_instrumet'])){
 			$dbOfferInstrument = new DbOfferInstrument();
@@ -535,7 +541,7 @@ function offers_form_submit($form, &$form_state){
 			    drupal_set_message ("<strong>Hubo un problema en el registro de su oferta, por favor inténtelo más tarde.</br>".$e->getMessage()."</strong> ");
 			}
 		
-		drupal_goto("");
+		drupal_goto("listado/ofertas");
 }
 
 
@@ -1387,7 +1393,7 @@ function forms_ofertas_detalle_submit($form, &$form_state) {
     else
     {
       // this is where you do your processing after they have pressed the confirm button
-    	global $user; 
+    global $user; 
 	$transaction = db_transaction();
 	try{
 		$dbOfferInstrument = new DbOfferInstrument();
@@ -1413,7 +1419,7 @@ function forms_ofertas_detalle_submit($form, &$form_state) {
 
 		}
 		else{
-			
+			dpm($form_state,'valores recibidos');
 			$dbOfferInstrument->update($user->uid,$form_state['values']['nid_oferta'],$form_state['values']['instruments']);
 		
 			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'subscription');
@@ -1425,10 +1431,11 @@ function forms_ofertas_detalle_submit($form, &$form_state) {
 					->fields(array( 'activo'=>0,))
 					->condition('nid_oferta', $form_state['values']['nid_oferta'],'=')
 					->execute();
+					//mails de cierre de oferta
+					offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'close_offer');
 			}
 
-			//mails de cierre de oferta
-			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'close_offer');
+			
 		}
 
 		
@@ -1518,9 +1525,9 @@ function fill_form($form_state){
 
   return $form;
 }
-/**
+/*
 * Implements hook_validate().
-*/
+*
 function forms_ofertas_detalle_confirm_validate($form, &$form_state) {
 	form_set_error('lista', t('You must enter a valid e-mail address.'));
 
@@ -1586,7 +1593,7 @@ function forms_ofertas_detalle_confirm_submit($form, &$form_state) {
 
 
 }
-
+*/
 //comprobamos si es la ultima suscripción para esa oferta
 function is_complete($id){
 
