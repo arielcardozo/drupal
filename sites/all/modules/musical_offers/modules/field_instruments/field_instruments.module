@@ -1,0 +1,293 @@
+<?php
+/**
+ * @file
+ * An example field using the Field Types API.
+ */
+
+/**
+ * @defgroup field_example Example: Field Types API
+ * @ingroup examples
+ * @{
+ * Examples using Field Types API.
+ *
+ * This is updated from Barry Jaspan's presentation at Drupalcon Paris,
+ * @link http://acquia.com/community/resources/acquia-tv/intro-field-api-module-developers Video Presentation @endlink
+ *
+ * Providing a field requires:
+ * - Defining a field:
+ *   - hook_field_info()
+ *   - hook_field_schema()
+ *   - hook_field_validate()
+ *   - hook_field_is_empty()
+ *
+ * - Defining a formatter for the field (the portion that outputs the field for
+ *   display):
+ *   - hook_field_formatter_info()
+ *   - hook_field_formatter_view()
+ *
+ * - Defining a widget for the edit form:
+ *   - hook_field_widget_info()
+ *   - hook_field_widget_form()
+ *
+ * Our module defines the field in field_example_field_info(),
+ * field_example_field_validate() and field_example_field_is_empty().
+ * field_example_field_schema() is implemented in field_example.install.
+ *
+ * Our module sets up a formatter in field_example_field_formatter_info() and
+ * field_example_field_formatter_view(). These are the API hooks that present
+ * formatted and themed output to the user.
+*
+ * And finally, our module defines the widet in
+ * field_example_field_widget_info() and field_example_field_widget_form().
+ * The widget is the form element used to receive input from the user
+ * when the field is being populated.
+ *
+ * @see field_types
+ * @see field
+ */
+
+/***************************************************************
+ * Field Type API hooks
+ ***************************************************************/
+
+/**
+ * Implements hook_field_info().
+ *
+ * Provides the description of the field.
+ */
+function field_instruments_field_info() {
+  return array(
+    // We name our field as the associative name of the array.
+    'field_instruments' => array(
+      'label' => t('Instruments'),
+      'description' => t('Demonstrates a field composed of an instrument.'),
+      'default_widget' => 'options_buttons',
+      'default_formatter' => 'options_buttons',
+    ),
+  );
+
+}
+
+/**
+ * Implements hook_field_validate().
+ *
+ * This hook gives us a chance to validate content that's in our
+ * field. We're really only interested in the $items parameter, since
+ * it holds arrays representing content in the field we've defined.
+ * We want to verify that the items only contain RGB hex values like
+ * this: #RRGGBB. If the item validates, we do nothing. If it doesn't
+ * validate, we add our own error notification to the $errors parameter.
+ *
+ * @see field_example_field_widget_error()
+ */
+
+function field_instruments_field_validate($entity_type, $entity, $field, $instance, $langcode, $items, &$errors) {
+ /* foreach ($items as $delta => $item) {
+    if (!empty($item['rgb'])) {
+      if (! preg_match('@^#[0-9a-f]{6}$@', $item['rgb'])) {
+        $errors[$field['field_name']][$langcode][$delta][] = array(
+          'error' => 'field_example_invalid',
+          'message' => t('Color must be in the HTML format #abcdef.'),
+        );
+      }
+    }
+  }*/
+  
+}
+
+
+/**
+ * Implements hook_field_is_empty().
+ *
+ * hook_field_is_emtpy() is where Drupal asks us if this field is empty.
+ * Return TRUE if it does not contain data, FALSE if it does. This lets
+ * the form API flag an error when required fields are empty.
+ */
+function field_instruments_field_is_empty($item, $field) {
+  return empty($item['nid_instrument']);
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ *
+ *
+ * @see field_example_field_formatter_view()
+ */
+
+function field_instruments_field_formatter_info() {
+  return array(
+    // This formatter changes the background color of the content region.
+    'options_select' => array(
+      'label' => t('Desplegable de instrumentos'),
+      'field types' => array('field_instruments'),
+    ),
+    'options_buttons' => array(
+      'label' => t('Checkbox de instrumentos'),
+      'field types' => array('field_instruments'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ *
+ * 
+ * @see field_example_field_formatter_info()
+ */
+
+function field_instruments_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+   
+  $element = array();
+  $value_key = key($field['columns']);
+  
+  $type = str_replace('options_', '', $instance['widget']['type']);
+  $multiple = $field['cardinality'] > 1 || $field['cardinality'] == FIELD_CARDINALITY_UNLIMITED;
+  $required = '';
+  $has_value = isset($items[0][$value_key]);
+  $properties = _options_properties($type, $multiple, $required, $has_value);
+
+  //$entity_type = $element['#entity_type'];
+  //$entity = $element['#entity'];
+ 
+  // Prepare the list of options.
+  $options = _options_get_options($field, $instance, $properties, $entity_type, $entity);
+
+ 
+  // Put current field values in shape.
+  $default_value = _options_storage_to_form($items, $options, $value_key, $properties);
+
+      foreach ($items as $delta => $item) {
+          //dpm($item, 'item');
+          $element[$delta] = array('#markup' => $options[$item['nid_instrument']]);
+      }
+      
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_info().
+ *
+ * Three widgets are provided.
+ * - A simple text-only widget where the user enters the '#ffffff'.
+ * - A 3-textfield widget that gathers the red, green, and blue values
+ *   separately.
+ * - A farbtastic colorpicker widget that chooses the value graphically.
+ *
+ * These widget types will eventually show up in hook_field_widget_form,
+ * where we will have to flesh them out.
+ *
+ * @see field_example_field_widget_form()
+ */
+
+function field_instruments_field_widget_info() {
+ 
+}
+
+/**
+ * Con esto estoy llamando a la opción por defecto que tiene el API para enviarle el tipo de elemento que quiero que se muestre
+ * Implements hook_field_widget_info_alter().
+ */
+function field_instruments_field_widget_info_alter(&$info) {
+  
+  $info['options_buttons']['field types'][] = 'field_instruments';
+  $info['options_select']['field types'][] = 'field_instruments';
+   
+}
+
+/**
+ * Implements hook_field_widget_form().
+ *
+ * hook_widget_form() is where Drupal tells us to create form elements for
+ * our field's widget.
+ *
+ * We provide one of three different forms, depending on the widget type of
+ * the Form API item provided.
+ *
+ * The 'field_example_colorpicker' and 'field_example_text' are essentially
+ * the same, but field_example_colorpicker adds a javascript colorpicker
+ * helper.
+ *
+ * field_example_3text displays three text fields, one each for red, green,
+ * and blue. However, the field type defines a single text column,
+ * rgb, which needs an HTML color spec. Define an element validate
+ * handler that converts our r, g, and b fields into a simulated single
+ * 'rgb' form element.
+ */
+function field_instruments_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  //$value = isset($items[$delta]['rgb']) ? $items[$delta]['rgb'] : '';
+
+  $widget = $element;
+  $widget['#delta'] = $delta;
+
+  $instruments = db_select('instruments', 'i')
+                 ->fields('i', array('nid_instrument', 'name_instrument'));
+    
+  $result = $instruments->execute()->fetchAll();
+
+ 
+  $list = array();
+  //$list[0] = "-- Select an instrument--";
+      foreach ($result as $record) {
+        $list[$record->nid_instrument] = $record->name_instrument;
+      }
+      
+      $widget += array(
+        //'#prefix' => $skillsetselect,
+        '#type' => 'select',
+        '#options' => $list,
+        '#multiple' => TRUE,
+        '#empty_option' => t('-- None selected --'),
+        '#default_value' => $list[0] ,
+      );
+
+  $element['instruments'] = $widget;
+  
+  return $element;
+}
+
+
+/**
+ * Hago una implementación propia de la lista de opciones que mostrará el API
+ * con esto doy a options.module la lista de opciones que debe pintar, y el se encarga del COMO las pinta
+ * Implements hook_options_list().
+ */
+function field_instruments_options_list($field) {
+
+  $list = array();
+  //$list[0] = "-- Select an instrument--";
+  $instruments = db_select('instruments', 'i')
+                 ->fields('i', array('nid_instrument', 'name_instrument'))
+                 ->condition('general_list', 1,'=');
+    
+  $result = $instruments->execute()->fetchAll();
+  foreach ($result as $record) {
+        $list[$record->nid_instrument] = $record->name_instrument;
+      } 
+  return $list;
+}
+
+
+/**
+ * Implements hook_field_widget_error().
+ *
+ * hook_field_widget_error() lets us figure out what to do with errors
+ * we might have generated in hook_field_validate(). Generally, we'll just
+ * call form_error().
+ *
+ * @see field_example_field_validate()
+ * @see form_error()
+ */
+function field_instruments_field_widget_error($element, $error, $form, &$form_state) {
+  switch ($error['error']) {
+    case 'field_instrument':
+      form_error($element, $error['message']);
+      break;
+  }
+}
+
+
+
+/**
+ * @} End of "defgroup instrument".
+ */

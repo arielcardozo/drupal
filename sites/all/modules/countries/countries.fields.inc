@@ -252,23 +252,27 @@ function countries_field_formatter_view($entity_type, $entity, $field, $instance
   );
   foreach ($items as $delta => $item) {
     $country = $item['country'];
+   // dpm($country,'country');
     if (empty($country)) {
       continue;
     }
     elseif (isset($map[$display['type']])) {
+
       $element[$delta]['#markup'] = country_property($country, $map[$display['type']]);
     }
     elseif ($display['type'] == 'country_icon') {
+
       $variables = array(
         'country' => $country,
         'settings' => $display['settings'],
       );
       $element[$delta]['#markup'] = theme('country_icon_adapter', $variables);
     }
-    else {
+    else { 
       $element[$delta]['#markup'] = $item['safe_value'];
     }
   }
+  //dpm($element,'elemento_pais');
   return $element;
 }
 

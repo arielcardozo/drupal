@@ -1,0 +1,125 @@
+<?php
+
+/**
+* Implements hook_schema()
+*/
+function offers_instruments_schema() {
+    $schema['instruments'] = array(
+    'description' => t('Table to store the instruments available'),
+    'fields' => array('nid_instrument' => array(
+                          'type' => 'serial',
+                          'unsigned' => TRUE,
+                          'not null' => TRUE, 
+                          'description' => 'The instrument identification',),
+              'name_instrument' => array(
+                            'type' => 'varchar', 
+                            'length' => 255,
+                            'not null' => TRUE,
+                            'description' => 'Instruments name',),
+              'description_instrument' => array(
+                            'type' => 'varchar', 
+                            'length' => 255,
+                            'not null' => FALSE,
+                            'description' => 'Instruments description',),
+              'general_list' => array(
+                            'type' => 'int', 
+                             'size' => 'tiny',
+                            'not null' => TRUE,
+                            'default' => 0,
+                            'description' => 'Below to general list',),
+              ),
+    'primary key' => array('nid_instrument'),
+    'unique key' => array('name_instrument'),
+    );
+ 
+    return $schema;
+}
+ 
+/**
+ * Implements hook_uninstall().
+ */
+function offers_instruments_uninstall() {
+  drupal_uninstall_schema('instruments');
+ 
+}
+
+/**
+ * Implements hook_install().
+ */
+function offers_instruments_install() {
+  // Import the data.
+  offers_instruments_import_csv();
+}
+
+/*
+ * Helper function to inform users about available updates.
+ *
+function instruments_install_available_update_message($link) {
+  $t = get_t();
+  drupal_set_message($t('Visit the countries !config_page to import the most recent changes from the !link.',
+    array(
+      '!config_page' => l($t('configuration page'), 'admin/config/instruments/import'),
+      '!link' => $link,
+    )));
+}
+*/
+/**
+ * Helper function to import countries.
+ */
+function offers_instruments_import_csv() {
+  $t = get_t();
+  $instruments = array();
+  $handle = fopen(dirname(__FILE__) . '/music_instruments.csv', 'r');
+
+  $headers = fgetcsv($handle, 1024, ",");
+  while (($row = fgetcsv($handle, 1024, ",")) !== FALSE) {
+    // The name data.
+    $row[0] = empty($row[0]) || $row[0] == 'NULL' ? '' : trim($row[0]);
+    // The description  data.
+    $row[1] = empty($row[1]) || $row[1] == 'NULL' ? '' : trim($row[1]);
+     // The general list data.
+    $row[2] = empty($row[2]) || $row[2] == 'NULL' ? '' : trim($row[2]);
+   // The general list data.
+    $row[3] = empty($row[3]) || $row[3] == '9999' ? '' : trim($row[3]);
+
+    if (!empty($row[0]) && $row[0] != 'NULL') {
+      $instruments[$row[0]] = array(
+        'nid_instrument' => $row[0],
+        'name_instrument' => $row[1],
+        'description_instrument' => $row[2],
+        'general_list' => $row[3],
+        
+      );
+    }
+  }
+  fclose($handle);
+  //include_once DRUPAL_ROOT . '/includes/iso.inc';
+  /*foreach (_instrument_get_predefined_list() as $code => $name) {
+    if (array_key_exists($code, $instruments)) {
+      $instruments[$code]['name_instruments'] = $name;
+      $instruments[$code]['description_instrument'] = '';
+    }
+    else {
+      drupal_set_message($t('Missing details for ISO 3166-1 alpha-2 code %code for %name in Instruments data.', array('%code' => $code, '%name' => $name_instruments)), 'warning');
+      $instruments[$code] = array(
+        'name_instruments' => $name,
+        'description_instrument' => '',
+        
+      );
+    }
+  }
+  */
+  watchdog('instrumentos','insertamos');
+  $insert = db_insert('instruments')->fields(array(
+    'nid_instrument',
+    'name_instrument',
+    'description_instrument',
+    'general_list',
+
+  ));
+  foreach ($instruments as $instrument) {
+    $insert->values($instrument);
+  }
+  $insert->execute();
+  watchdog('instrumentos', "Pre-populated instruments data.");
+}

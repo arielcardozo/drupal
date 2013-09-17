@@ -1,0 +1,12 @@
+name = "Ofertas Musicales"
+description = Module which provides you a way to offers music meeting...
+core = 7.x
+files[] = musical_offers.module
+files[] = musical_offers.admin.inc
+files[] = offer.admin.inc
+files[] = offer_i.admin.inc
+package = Formulario de Ofertas
+
+version = "1.0 beta"
+
+dependencies[] = offers_instruments

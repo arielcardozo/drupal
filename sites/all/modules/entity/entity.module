@@ -507,6 +507,7 @@ function entity_type_is_fieldable($entity_type) {
  *   The renderable array.
  */
 function entity_build_content($entity_type, $entity, $view_mode = 'full', $langcode = NULL) {
+  
   $info = entity_get_info($entity_type);
   if (method_exists($entity, 'buildContent')) {
     return $entity->buildContent($view_mode, $langcode);

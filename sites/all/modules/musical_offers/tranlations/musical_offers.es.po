@@ -1,0 +1,605 @@
+ # $Id$
+#
+# Spanish translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  musical_offers.admin.inc: n/a
+#  musical_offers_instrumentos.admin.inc: n/a
+#  musical_offers.module: n/a
+#  modules/field_instruments/field_instruments.module: n/a
+#  offer.admin.inc: n/a
+#  offer_i.admin.inc: n/a
+#  modules/offers_instruments/offers_instruments.admin.inc: n/a
+#  musical_offers_lista.module: n/a
+#  modules/offers_instruments/offers_instruments.module: n/a
+#  modules/offers_instruments/offers_instruments.info: n/a
+#  musical_offers.install: n/a
+#  musical_offers.info: n/a
+#  modules/field_instruments/field_instruments.info: n/a
+#  modules/offers_instruments/offers_instruments.install: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2013-09-17 15:40+0200\n"
+"PO-Revision-Date: 2013-09-17 15:40+0200\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Spanish <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: musical_offers.admin.inc:23
+msgid "Add an expiration date to these content types"
+msgstr "Añadir una fecha de caducidad a estos contenidos"
+
+#: musical_offers.admin.inc:26 musical_offers_instrumentos.admin.inc:34
+msgid "The selected content types will have an\r\n\t\texpiration date."
+msgstr ""
+
+#: musical_offers.admin.inc:80 musical_offers.module:251
+msgid "Save"
+msgstr "Guardar"
+
+#: musical_offers.admin.inc:91
+msgid "Unsubscribe"
+msgstr "Desuscribir"
+
+#: musical_offers.admin.inc:101
+msgid "Subscribe"
+msgstr ""
+
+#: musical_offers.admin.inc:115
+msgid "Offer"
+msgstr ""
+
+#: musical_offers.admin.inc:123
+msgid "Offer details. Created:"
+msgstr ""
+
+#: musical_offers.admin.inc:141
+msgid "!url"
+msgstr ""
+
+#: musical_offers.admin.inc:145 musical_offers.module:1098;1169;1238
+msgid "Music piece"
+msgstr "Pieza Musical"
+
+#: musical_offers.admin.inc:151
+msgid "Musical work"
+msgstr "Obra musical"
+
+#: musical_offers.admin.inc:161;169
+msgid "Instrument to play by the author:"
+msgstr "Instrumento a tocar por el autor"
+
+#: musical_offers.admin.inc:169 musical_offers.module:321
+msgid "Instrument to play by the author"
+msgstr "Instrumento a tocar por el autor de la oferta"
+
+#: musical_offers.admin.inc:173 musical_offers.module:324;348;397
+msgid "No content available."
+msgstr "No hay contenido disponible."
+
+#: musical_offers.admin.inc:182;194
+msgid "It takes Salon"
+msgstr "Se necesita salón"
+
+#: musical_offers.admin.inc:187;199
+msgid "Piano needed"
+msgstr "Se necesita piano"
+
+#: musical_offers.admin.inc:214
+msgid "City to play"
+msgstr "Ciudad"
+
+#: musical_offers.admin.inc:220
+msgid "Availability"
+msgstr "Disponibilidad horaria"
+
+#: musical_offers.admin.inc:227 modules/field_instruments/field_instruments.module:62
+msgid "Instruments"
+msgstr "Instrumentos"
+
+#: musical_offers.admin.inc:230
+msgid "Select the instrument wich you want to suscribe to."
+msgstr ""
+
+#: musical_offers.admin.inc:235 musical_offers.module:305
+msgid "Instrument"
+msgstr "Instrumento"
+
+#: musical_offers.admin.inc:236
+msgid "Subscriber"
+msgstr "Suscribirse"
+
+#: musical_offers.admin.inc:237 musical_offers.module:1101;1172;1242
+msgid "State"
+msgstr "Estado"
+
+#: musical_offers.admin.inc:279
+msgid "No content."
+msgstr "No hay contenido"
+
+#: musical_offers_instrumentos.admin.inc:30
+msgid "Add an instrument to the list"
+msgstr "Añada un instrumento a la lista"
+
+#: musical_offers_instrumentos.admin.inc:55
+msgid "Update"
+msgstr "Actualizar"
+
+#: offer.admin.inc:376 offer_i.admin.inc:224 modules/offers_instruments/offers_instruments.admin.inc:149
+msgid "Index ID: @index"
+msgstr ""
+
+#: offer.admin.inc:403
+msgid "Obra Musical: @obra_musical, Autor Obra: @autor_obra, Fecha de creación: @fecha_creacion"
+msgstr ""
+
+#: offer.admin.inc:428;444;456 offer_i.admin.inc:285;317
+msgid "Offer Id: @id"
+msgstr ""
+
+#: offer.admin.inc:480 offer_i.admin.inc:341 modules/offers_instruments/offers_instruments.admin.inc:225
+msgid "Database Exception : @operation : @parameters : @system"
+msgstr ""
+
+#: offer_i.admin.inc:263
+msgid "Oferta: @nid_oferta, Instrumento: @nid_instrument"
+msgstr ""
+
+#: offer_i.admin.inc:300
+msgid "Offer Id: @id, User Id: @uid"
+msgstr ""
+
+#: musical_offers.module:127
+msgid "Access to offers module"
+msgstr ""
+
+#: musical_offers.module:128
+msgid "Access to offers module."
+msgstr ""
+
+#: musical_offers.module:131
+msgid "View offers made"
+msgstr ""
+
+#: musical_offers.module:132
+msgid "View offers made."
+msgstr ""
+
+#: musical_offers.module:135
+msgid "Update registered offers"
+msgstr ""
+
+#: musical_offers.module:136
+msgid "Update registered offers, only the owners."
+msgstr ""
+
+#: musical_offers.module:211
+msgid "Register your offer"
+msgstr ""
+
+#: musical_offers.module:215 musical_offers_lista.module:51
+msgid "What do you want to play?"
+msgstr "¿Que es lo que quieres tocar?"
+
+#: musical_offers.module:221 musical_offers_lista.module:57
+msgid "Musical piece"
+msgstr "Obra musical"
+
+#: musical_offers.module:230;1099 musical_offers_lista.module:66
+msgid "Author"
+msgstr "Autor"
+
+#: musical_offers.module:241
+msgid "How many performers do you need?"
+msgstr "¿Cuantos integrantes necesitas?"
+
+#: musical_offers.module:258;888
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: musical_offers.module:263
+msgid "It takes Salon?"
+msgstr "¿Necesitas salón?"
+
+#: musical_offers.module:269
+msgid "Piano needed?"
+msgstr ""
+
+#: musical_offers.module:285;1100;1171;1240
+msgid "City"
+msgstr "Ciudad"
+
+#: musical_offers.module:296
+msgid "Time availability"
+msgstr "Disponibilad horaria"
+
+#: musical_offers.module:306 modules/offers_instruments/offers_instruments.module:388
+msgid "Description"
+msgstr "Descripción"
+
+#: musical_offers.module:329;354;403
+msgid "Please enter the instrument."
+msgstr ""
+
+#: musical_offers.module:345;393
+msgid "Instrument no.@i "
+msgstr ""
+
+#: musical_offers.module:368;376
+msgid "More Instruments"
+msgstr ""
+
+#: musical_offers.module:493
+msgid "Your offer has been recorded correctly. "
+msgstr ""
+
+#: musical_offers.module:498
+msgid "There was a problem registering your bid, please try again later."
+msgstr ""
+
+#: musical_offers.module:540
+msgid "Registro de oferta enviado por @site-name"
+msgstr ""
+
+#: musical_offers.module:542
+msgid "@name Le envía a usted un mensaje de confirmación del alta de su oferta:"
+msgstr ""
+
+#: musical_offers.module:552
+msgid "Registro de oferta enviado por @user-name"
+msgstr ""
+
+#: musical_offers.module:554
+msgid "Se acaba de crear una nueva oferta con los siguientes datos:"
+msgstr ""
+
+#: musical_offers.module:566
+msgid "Registro de suscripción enviado por @site-name"
+msgstr ""
+
+#: musical_offers.module:568
+msgid "@name Le envía a usted un mensaje de confirmación del alta de su suscripción a la oferta:"
+msgstr ""
+
+#: musical_offers.module:581
+msgid "Registro de desuscripción enviado por @site-name"
+msgstr ""
+
+#: musical_offers.module:582
+msgid "@name Le envía a usted un mensaje de confirmación de baja de su suscripción a la oferta:"
+msgstr ""
+
+#: musical_offers.module:589
+msgid "Registro de desuscripción enviado por @user-name"
+msgstr ""
+
+#: musical_offers.module:591
+msgid "@user-name Se acaba de desuscribir a una de tus ofertas con los siguientes datos:"
+msgstr ""
+
+#: musical_offers.module:602
+msgid "Registro de suscripción enviado por @user-name"
+msgstr ""
+
+#: musical_offers.module:604
+msgid "@user-name Se acaba de suscribir a una de tus ofertas con los siguientes datos:"
+msgstr ""
+
+#: musical_offers.module:617
+msgid "Registro de cierre de oferta enviado por @site-name"
+msgstr ""
+
+#: musical_offers.module:619
+msgid "@name Le comunica que una de sus ofertas se ha cerrado con éxito, los de detalles de la misma a continuación:"
+msgstr ""
+
+#: musical_offers.module:631
+msgid "Registro de apertura de oferta enviado por @site-name"
+msgstr ""
+
+#: musical_offers.module:633
+msgid "@name Le comunica que una de sus ofertas se ha abierto por baja de un suscriptor, los de detalles de la misma a continuación:"
+msgstr ""
+
+#: musical_offers.module:644
+msgid "Registro de cierre de oferta de @user-name"
+msgstr ""
+
+#: musical_offers.module:646
+msgid "Se acaba de cerrar con éxito la siguiente oferta:"
+msgstr ""
+
+#: musical_offers.module:657
+msgid "Registro de apertura de oferta de @user-name"
+msgstr ""
+
+#: musical_offers.module:659
+msgid "Se acaba de abrir siguiente oferta:"
+msgstr ""
+
+#: musical_offers.module:704
+msgid "[@site_name] : Alert from offer create"
+msgstr ""
+
+#: musical_offers.module:768
+msgid "Your message has been sent."
+msgstr "Se ha enviado su mensaje."
+
+#: musical_offers.module:773
+msgid "There was a problem sending your message and it was not sent."
+msgstr ""
+
+#: musical_offers.module:796
+msgid "\n--\nCorreo enviado por el equipo de Piano y Mengano."
+msgstr ""
+
+#: musical_offers.module:840
+msgid "Update confirmed."
+msgstr ""
+
+#: musical_offers.module:919
+msgid "You must select least one instrument."
+msgstr ""
+
+#: musical_offers.module:988
+msgid "Error: %message"
+msgstr ""
+
+#: musical_offers.module:1097;1168;1237
+msgid "Created"
+msgstr "Creado"
+
+#: musical_offers.module:1151
+msgid "Did not match offers made"
+msgstr ""
+
+#: musical_offers.module:1170
+msgid "Offer Author"
+msgstr ""
+
+#: musical_offers.module:1225
+msgid "No se han encontrado ofertas"
+msgstr ""
+
+#: musical_offers.module:1239
+msgid "Author Oferta"
+msgstr ""
+
+#: musical_offers.module:1298
+msgid "No records found"
+msgstr ""
+
+#: musical_offers.module:1312
+msgid "Offers list You can click on each one to acces to its details ."
+msgstr ""
+
+#: musical_offers.module:1314
+msgid "It will see the offers made by you. Fields with asterisks (*) are required ."
+msgstr ""
+
+#: musical_offers.module:17
+msgid "Offers form for authenticated users"
+msgstr ""
+
+#: musical_offers.module:23
+msgid "Offers Form"
+msgstr ""
+
+#: musical_offers.module:29
+msgid "Node Offers Form settings"
+msgstr ""
+
+#: musical_offers.module:30
+msgid "Settings for module Offers form "
+msgstr ""
+
+#: musical_offers.module:39 modules/offers_instruments/offers_instruments.module:26 modules/offers_instruments/offers_instruments.info:0
+msgid "Instruments Management"
+msgstr ""
+
+#: musical_offers.module:40
+msgid "Settings the Instrument table content "
+msgstr ""
+
+#: musical_offers.module:49
+msgid "Offer's detail"
+msgstr ""
+
+#: musical_offers.module:57
+msgid "View offer"
+msgstr ""
+
+#: musical_offers.module:64
+msgid "Edit offer"
+msgstr ""
+
+#: musical_offers.module:70
+msgid "Offer edit"
+msgstr ""
+
+#: musical_offers.module:79;84
+msgid "List of offers"
+msgstr ""
+
+#: musical_offers.module:89
+msgid "List of activities"
+msgstr ""
+
+#: musical_offers.module:96
+msgid "List of activities made"
+msgstr ""
+
+#: musical_offers.module:101
+msgid "Todas las ofertas"
+msgstr ""
+
+#: musical_offers.module:106
+msgid "Listado de suscripciones"
+msgstr ""
+
+#: musical_offers.module:113
+msgid "Listado de ofertas hechas"
+msgstr ""
+
+#: musical_offers_lista.module:16;26
+msgid "Listado de ofertas"
+msgstr ""
+
+#: musical_offers_lista.module:20;30
+msgid "Example Form 1"
+msgstr ""
+
+#: musical_offers_lista.module:47
+msgid "Registra tu oferta"
+msgstr ""
+
+#: musical_offers.install:48
+msgid "Tabla para almacenar las ofertas de los usuarios"
+msgstr ""
+
+#: musical_offers.install:127
+msgid "Tabla para almacenar la relación entre las ofertas y sus instrumentos"
+msgstr ""
+
+#: musical_offers.info:0
+msgid "Ofertas Musicales"
+msgstr ""
+
+#: musical_offers.info:0
+msgid "Module which provides you a way to offers music meeting..."
+msgstr ""
+
+#: musical_offers.info:0 modules/field_instruments/field_instruments.info:0 modules/offers_instruments/offers_instruments.info:0
+msgid "Formulario de Ofertas"
+msgstr ""
+
+#: modules/field_instruments/field_instruments.module:63
+msgid "Demonstrates a field composed of an instrument."
+msgstr ""
+
+#: modules/field_instruments/field_instruments.module:121
+msgid "Desplegable de instrumentos"
+msgstr ""
+
+#: modules/field_instruments/field_instruments.module:125
+msgid "Checkbox de instrumentos"
+msgstr ""
+
+#: modules/field_instruments/field_instruments.module:240
+msgid "-- None selected --"
+msgstr ""
+
+#: modules/field_instruments/field_instruments.info:0
+msgid "Field Instruments"
+msgstr ""
+
+#: modules/field_instruments/field_instruments.info:0
+msgid "An implementation of a field to show the Field API"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.admin.inc:166
+msgid "Instrument Name: @name_instrument, Instrument Description: @description_instrument, General List: @general_list"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.admin.inc:188;201
+msgid "Instruments Id: @id"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:13
+msgid "proto menu."
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:70
+msgid "Add New Instrument"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:71
+msgid "Add an instrument by\r\n          performing 2 steps. 1) Add the name and description. 2) Confirm your election."
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:81
+msgid "Edit Record"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:84
+msgid "Submit Change"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:92
+msgid "Delete Record"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:94
+msgid "Confirm Delete"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:208
+msgid "Instrument' Name"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:220
+msgid "Insturment' Description"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:231
+msgid "General List"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:280
+msgid "Click this button to complete the form and submit your entries."
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:386
+msgid "Id"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:387
+msgid "Name"
+msgstr "Nombre"
+
+#: modules/offers_instruments/offers_instruments.module:389
+msgid "Lista General"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:390
+msgid "Operations"
+msgstr "Operaciones"
+
+#: modules/offers_instruments/offers_instruments.module:417
+msgid "Modify"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.module:419
+msgid "Delete"
+msgstr "Eliminar"
+
+#: modules/offers_instruments/offers_instruments.module:27
+msgid "Instruments Management for Musical Offers"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.install:8
+msgid "Table to store the instruments available"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.install:112;124
+msgid "instrumentos"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.install:112
+msgid "insertamos"
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.install:124
+msgid "Pre-populated instruments data."
+msgstr ""
+
+#: modules/offers_instruments/offers_instruments.info:0
+msgid "A module that provides a FAPI / Field instrument element and a simple wrapper module to store / update instruments data."
+msgstr ""
+

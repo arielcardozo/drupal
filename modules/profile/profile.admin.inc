@@ -174,6 +174,7 @@ function theme_profile_admin_overview($variables) {
   $output = theme('table', array('header' => $header, 'rows' => $rows, 'empty' => t('No fields available.'), 'attributes' => array('id' => 'profile-fields')));
   $output .= drupal_render_children($form);
 
+  dpm('hola');
   return $output;
 }
 

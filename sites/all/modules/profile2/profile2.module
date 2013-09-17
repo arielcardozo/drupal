@@ -221,11 +221,13 @@ function profile2_load_by_user($account, $type_name = NULL) {
       }
       return $profiles ? array_combine(array_keys($cache[$uid]), $profiles) : array();
     }
+
     $cache[$uid] = db_select('profile', 'p')
       ->fields('p', array('type', 'pid'))
       ->condition('uid', $uid)
       ->execute()
       ->fetchAllKeyed();
+
   }
   if (isset($type_name)) {
     return isset($cache[$uid][$type_name]) ? profile2_load($cache[$uid][$type_name]) : FALSE;
@@ -326,15 +328,19 @@ function profile2_profile2_type_delete(ProfileType $type) {
  * Implements hook_user_view().
  */
 function profile2_user_view($account, $view_mode, $langcode) {
+  
   foreach (profile2_get_types() as $type => $profile_type) {
     if ($profile_type->userView && $profile = profile2_load_by_user($account, $type)) {
+     
       if (profile2_access('view', $profile)) {
+
         $account->content['profile_' . $type] = array(
           '#type' => 'user_profile_category',
           '#title' => $profile->label,
           '#prefix' => '<a id="profile-' . $profile->type . '"></a>',
         );
-        $account->content['profile_' . $type]['view'] = $profile->view('account');
+        $account->content['profile_' . $type]['view'] = $profile->view('account'); 
+
       }
     }
   }
@@ -347,9 +353,7 @@ function profile2_user_view($account, $view_mode, $langcode) {
  * @see profile2_form_submit_handler
  */
 function profile2_form_user_profile_form_alter(&$form, &$form_state) {
-
   if (($type = profile2_get_types($form['#user_category'])) && $type->userCategory) {
-
     if (empty($form_state['profiles'])) {
       $profile = profile2_load_by_user($form['#user'], $form['#user_category']);
       if (empty($profile)) {
@@ -458,8 +462,7 @@ function profile2_form_submit_handler(&$form, &$form_state) {
       
       $profile->uid = $form_state['user']->uid;
     }
-
-    
+  
     profile2_save($profile);
   }
 }
@@ -510,6 +513,7 @@ function profile2_user_categories() {
       );
     }
   }
+
   return $data;
 }
 
