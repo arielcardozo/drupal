@@ -29,7 +29,7 @@ function offers_form_lists($id,$operacion){
 			break;
 		case 'subscriptions_made':
 			$suscripciones = db_select('pym_instrumentos_ofertas', 'pym_io');
-			$suscripciones->fields('pym',array('nid_oferta', 'uid'))
+			$suscripciones->fields('pym_io',array('nid_oferta', 'uid'))
 							->condition('pym_io.uid', $id,'=');
 		    $suscripciones->addField('pym', 'nid_oferta');
 		    $suscripciones->addField('pym', 'fecha_creacion');

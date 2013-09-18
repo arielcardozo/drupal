@@ -436,16 +436,16 @@ msgid "All offers"
 msgstr "Todas las ofertas"
 
 #: musical_offers.module:106
-msgid "Listado de suscripciones"
-msgstr "List of subscriptions"
+msgid "List of subscriptions"
+msgstr "Listado de suscripciones"
 
 #: musical_offers.module:113
-msgid "Listado de ofertas hechas"
-msgstr ""
+msgid "List of offers made"
+msgstr "Listado de ofertas hechas"
 
 #: musical_offers_lista.module:16;26
 msgid "Listado de ofertas"
-msgstr ""
+msgstr "List of offers"
 
 #: musical_offers_lista.module:20;30
 msgid "Example Form 1"
@@ -577,7 +577,7 @@ msgstr "Eliminar"
 
 #: modules/offers_instruments/offers_instruments.module:27
 msgid "Instruments Management for Musical Offers"
-msgstr ""
+msgstr "Administración de los instrumentos para ofertas musicales"
 
 #: modules/offers_instruments/offers_instruments.install:8
 msgid "Table to store the instruments available"

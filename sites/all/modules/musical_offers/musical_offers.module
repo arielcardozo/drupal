@@ -86,8 +86,10 @@ function musical_offers_menu() {
 		'file' => 'musical_offers.lists.inc',
 	);
 	
-	$items['actividades/%'] = array(
+	$items['actividades/%user'] = array(
 		'title' => 'List of activities',
+		'title callback' => 'list_page_title',
+		'title arguments' => array(1),
 		'page callback' => 'forms_ofertas_listado_ofertas_usuario',
 		'page arguments' => array(1),
 		//'access callback' => 'user_access',
@@ -97,23 +99,20 @@ function musical_offers_menu() {
 		'description' => 'List of activities made',
 		'type' => MENU_CALLBACK,
 		'file' => 'musical_offers.lists.inc',
+		'menu_name' => 'navigation',
 	);
-	$items['actividades/%/ofertas_hechas'] = array(
-	'title' => 'All offers',
+	$items['actividades/%user/ofertas_hechas'] = array(
+	'title' => 'List of activities',
 	'type' => MENU_DEFAULT_LOCAL_TASK,
-	'weight' => 1,
+	'weight' => -10,
 	);
-	$items['actividades/%/suscripciones_usuario'] = array(
-		'title' => 'Listado de suscripciones',
+	$items['actividades/%user/suscripciones_usuario'] = array(
+		'title' => 'List of subscriptions',
 		'page callback' => 'forms_ofertas_listado_suscripciones_usuario',
 		'page arguments' => array(1),
 		'access callback' => TRUE,
-		//'access callback' => 'user_access',
-		//'access arguments' => array('view offers'),
-		//'access arguments' => array(0),
-		'description' => 'Listado de ofertas hechas',
+		'description' => 'List of subscriptions made',
 		'type' => MENU_LOCAL_TASK,
-		'weight' => 2,
 		'file' => 'musical_offers.lists.inc',
 	);
 
@@ -140,6 +139,13 @@ function musical_offers_permission(){
 	);
 }
 
+/**
+ * Menu item title callback - use the user name.
+ */
+function list_page_title($account) {
+	$title = t('User name: ').format_username($account);
+  return is_object($account) ?  $title: '';
+}
 /**
  * Implements hook_node_access().
  *
@@ -323,7 +329,7 @@ function offers_form($form_state) {
 		'#title' => t('Instrument to play by the author'),
 		'#required' => TRUE,
 		'#options' => $options,
-            '#empty' => t('No content available.'),
+        '#empty' => t('No content available.'),
 	);		
 	$form['to_play']['other_autor_instrument'] = array(
 		    '#type' => 'textfield',
@@ -1066,68 +1072,8 @@ function is_complete($id){
 * Se expone el listado de ofertas realizadas por el usuario
 *
 */
-function forms_ofertas_listado_ofertas_usuario($id='') {
-/*
-	$output = '';
-	$header = array(
-		'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'asc'),
-		'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
-		'Author Obra' => array('data' => t('Author'), 'field' => 'name'),
-		'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
-		'Activo' => array('data' => t('State'), 'field' => 'activo','sort' => 'asc'),
-	);
-
-	$query = db_select('pym_ofertas', 'pym');
-	//$query->range(0, 10);
-	// Obtiene los datos de la base de datos (tabla node).
-	$query->fields('pym',array('nid_oferta','fecha_creacion','autor_obra','obra_musical','ciudad','activo'))
-				->condition('u.uid', $id,'=');
-	$query->join('users', 'u', 'u.uid = pym.uid');
-	      
-
-	$query = $query->extend('PagerDefault')->limit(20); // line1
-	$query = $query->extend('TableSort');
-	$offers = $query->orderByHeader($header)->execute()->fetchAll();
-	$options = array();
-
-
-
-
-  if (!empty($offers)) {
-    $rows = array();
-    foreach ($offers as $entry) {
-      // Sanitize the data before handing it off to the theme layer.
-
-    	$row = array(
-			'created' => date('d-M-Y', $entry->fecha_creacion),
-			'Music piece' => array(
-							'data' => array(
-										'#type' => 'link',
-										'#title' => $entry->obra_musical,
-										'#href' => 'ofertas/'.$entry->nid_oferta.'/user/'.$id.'/detalle/view' ,
-										'#options' => $options,
-										),
-									),
-			
-			
-			'Author Obra' => $entry->autor_obra,
-			'Ciudad' => $entry->ciudad,
-			//'Estado' => $entry->activo,
-			'Estado' => (empty($entry->activo))?'closed':'open',
-
-		);
-      $rows[] = $row;
-    }
-    // Make a table for them.
-    //$header = array(t('created'), t('Music piece'), t('Offer Author'),t('Estado'));
-    $output .= theme('table', array('header' => $header, 'rows' => $rows));
-     $output .= theme('pager');
-  }
-  else {
-    drupal_set_message(t('Did not match offers made'));
-  }*/
-return  offers_form_lists($id,'offers_made');
-//return $output;
+function forms_ofertas_listado_ofertas_usuario($account) {
+  return  offers_form_lists($account->uid,'offers_made');
 }
 
 
@@ -1136,146 +1082,14 @@ return  offers_form_lists($id,'offers_made');
 *
 *
 */
-function forms_ofertas_listado_suscripciones_usuario($form_state) {
-	global $user;
-	$id = $user->uid;
-	$output = '';
-	$header = array(
-		'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'asc'),
-		'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
-		'Author Obra' => array('data' => t('Offer Author'), 'field' => 'name'),
-		'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
-		'Activo' => array('data' => t('State'), 'field' => 'activo','sort' => 'asc'),
-	);
-
-	$suscripciones = db_select('pym_instrumentos_ofertas', 'pym_io');
-	$suscripciones->fields('pym',array('nid_oferta', 'uid'))
-					->condition('pym_io.uid', $id,'=');
-    $suscripciones->addField('pym', 'nid_oferta');
-    $suscripciones->addField('pym', 'fecha_creacion');
-    $suscripciones->addField('pym', 'autor_obra');
-    $suscripciones->addField('pym', 'obra_musical');
-    $suscripciones->addField('pym', 'ciudad');
-    $suscripciones->addField('pym', 'activo');
-	$suscripciones->leftJoin('pym_ofertas', 'pym', 'pym_io.nid_oferta = pym.nid_oferta');
-
-
-	$suscripciones = $suscripciones->extend('PagerDefault')->limit(20); // line1
-	$suscripciones = $suscripciones->extend('TableSort');
-	$offers = $suscripciones->orderByHeader($header)->execute()->fetchAll();
-	$options = array();
-
-
-  if (!empty($offers)) {
-    $rows = array();
-    foreach ($offers as $entry) {
-      // Sanitize the data before handing it off to the theme layer.
-
-    	$row = array(
-			'created' => date('d-M-Y', $entry->fecha_creacion),
-			'Music piece' => array(
-							'data' => array(
-										'#type' => 'link',
-										'#title' => $entry->obra_musical,
-										
-										'#href' => 'ofertas/'.$entry->nid_oferta.'/user/'.$id.'/detalle/view' ,
-										'#options' => $options,
-										),
-									),
-			
-			
-			'Author Oferta' => $entry->autor_obra,
-			'Ciudad' => $entry->ciudad,
-			//'Estado' => $entry->activo,
-			'Estado' => (empty($entry->activo))?'closed':'open',
-
-		);
-      $rows[] = $row;
-    }
-    // Make a table for them.
-    //$header = array(t('created'), t('Music piece'), t('Offer Author'),t('Estado'));
-    $output .= theme('table', array('header' => $header, 'rows' => $rows));
-     $output .= theme('pager');
-  }
-  else {
-    drupal_set_message(t('No records found'));
-  }
-return  offers_form_lists($id,'subscriptions_made');
-//return $output;
+function forms_ofertas_listado_suscripciones_usuario($account) {
+	return  offers_form_lists($account->uid,'subscriptions_made');
 }
 /**
 * Función de retorno para la página de listado de ofertas.
 */
 function forms_ofertas_listado($form_state) {
-	
- 	/*$output = '';
-	$header = array(
-	'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'asc'),
-	'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
-	'Author Oferta' => array('data' => t('Offer\'s Author'), 'field' => 'name'),
-	'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
-
-	'Activo' => array('data' => t('State'), 'field' => 'activo','sort' => 'asc'),
-	);
-
-	$query = db_select('pym_ofertas', 'pym');
-	//$query->range(0, 10);
-	// Obtiene los datos de la base de datos (tabla node).
-	$query->fields('pym',array('nid_oferta','fecha_creacion','autor_obra','obra_musical','ciudad','activo'));
-	//$query->join('users', 'u', 'u.uid = pym.uid');
-	$query->addField('u', 'name');
-	$query->addField('u', 'uid');
-	$query->leftJoin('users', 'u', 'u.uid = pym.uid');
-	$query = $query->extend('PagerDefault')->limit(20); // line1
-	$query = $query->extend('TableSort');
-	$offers = $query->orderByHeader($header)->execute()->fetchAll();
-	$options = array();
-
-
-
-
-  if (!empty($offers)) {
-    $rows = array();
-    foreach ($offers as $entry) {
- 
-    	$row = array(
-			'created' => date('d-M-Y', $entry->fecha_creacion),
-			'Music piece' => array(
-							'data' => array(
-										'#type' => 'link',
-										'#title' => $entry->obra_musical,
-										
-										'#href' => 'ofertas/'.$entry->nid_oferta.'/user/'.$entry->uid.'/detalle/view' ,
-										'#options' => $options,
-										),
-									),
-			
-			'Author Oferta' => array(
-							'data' => array(
-										'#type' => 'link',
-										'#title' => $entry->name,
-										'#href' => 'user/' . $entry->uid,
-										'#options' => $options,
-										),
-									),
-
-			'Ciudad' => $entry->ciudad,	
-			'Estado' => (empty($entry->activo))?'closed':'open',
-
-		);
-      $rows[] = $row;
-    }
-    // Make a table for them.
-    //$header = array(t('created'), t('Music piece'), t('Offer Author'),t('Estado'));
-    $output .= theme('table', array('header' => $header, 'rows' => $rows));
-     $output .= theme('pager');
-  }
-  else {
-    drupal_set_message(t('No records found'));
-  }*/
-
-return  offers_form_lists(0,'offers_list');
-//return $output;
+	return  offers_form_lists(0,'offers_list');
 }
 /**
  * Implements hook_help().
@@ -1284,11 +1098,15 @@ return  offers_form_lists(0,'offers_list');
  */
 function musical_offers_help($path, $arg) {
 global $user;
+
   switch ($path) {
     case 'ofertas/listado':
       return '<p>' . t('Offers list You can click on each one to acces to its details .') . '</p>';
-     case 'formulario/oferta':
+    case 'formulario/oferta':
       return '<p>' . t('It will see the offers made by you. Fields with asterisks (*) are required .') . '</p>';
+   /* case 'actividades/%':
+    	return '<p>' . t('Ariel ') .$arg[1]. '</p>';*/
+    
   }
 }
 
