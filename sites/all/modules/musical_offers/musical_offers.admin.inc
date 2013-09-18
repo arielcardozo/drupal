@@ -4,45 +4,7 @@
 * Resultado de llamadas a páginas de administración para el módulo
 * Node Expiration Date.
 */
-/**
-* Constructor del formulario para configurar el módulo.
-*
-*/
-function offers_form_admin_settings() {
-	/**
-	* Con node_type_get_types() se obtiene la información de todos los tipos
-	* de contenido, cada uno como un objeto, por lo que hay que seleccionar
-	* sólo los nombres de los tipo de contenido para mostrarlos en las opciones.
-	*/
-	$content_types_list = node_type_get_types();
-	foreach ($content_types_list as $key => $type) {
-		$list[$key] = $type->name;
-	}
-	$form['offers_form_types'] = array(
-		'#type' => 'checkboxes',
-		'#title' => t('Add an expiration date to these content types'),
-		'#options' => $list,
-		'#default_value'=> variable_get('offers_form_types', array('page')),
-		'#description' => t('The selected content types will have an
-		expiration date.'),
-	);
 
-	$form['myfield'] = array(
-        '#title' => 'My Field',
-        '#description' => 'This is a basic text input field',
-        '#type' => 'textfield',
-        '#default_value' => variable_get('myfield', array('page')),
-    );
-return system_settings_form($form);
-}
-
-/**
-* Función de validación.
-*/
-function offers_form_admin_settings_validate($form,
-&$form_state){
-//Validación de campos del formulario
-}
 
 function offers_form_views($form,&$form_state,$operacion){
 	global $user;	
@@ -53,6 +15,7 @@ function offers_form_views($form,&$form_state,$operacion){
 	$options = obtiene_instrumentos();
 	$dbOferta = new DbOffer();
 	$oferta = $dbOferta->get($id);
+
 	//Instrumentos seleccionados por el usuario actual
 	$instrumentos_usuario = db_select('pym_instrumentos_ofertas', 'io')
 			//->fields('io', array('uid'))
@@ -83,7 +46,7 @@ function offers_form_views($form,&$form_state,$operacion){
 			break;
 		case 'view':
 			
-			if($booleanSuscripcion ){
+			if($booleanSuscripcion){
 		 	//botones
 			$form['actions'] = array('#type' => 'actions');
 			$form['actions']['submit'] = array(
@@ -94,13 +57,16 @@ function offers_form_views($form,&$form_state,$operacion){
 
 			}
 			else{
-				//botones
-				$form['actions'] = array('#type' => 'actions');
-				$form['actions']['submit'] = array(
-					'#type' => 'submit',
-					'#value' => t('Subscribe'),
-					//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
-				);
+				if($oferta->getActivo()==1){
+					//botones
+					$form['actions'] = array('#type' => 'actions');
+					$form['actions']['submit'] = array(
+						'#type' => 'submit',
+						'#value' => t('Subscribe'),
+						//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
+					);
+				}
+				
 			}
 			break;
 		default:
@@ -108,7 +74,6 @@ function offers_form_views($form,&$form_state,$operacion){
 			break;
 	}
 	
-
 
 	$form['nid_oferta'] = array(
 		'#type' => 'hidden',
@@ -267,7 +232,7 @@ function offers_form_views($form,&$form_state,$operacion){
 									'#href' => 'user/' . $entry->uid,
 									),
 						),
-						'Activo' => (empty($entry->name))?'Si':'No',
+						'Activo' => (empty($entry->name))?'Open':'Closed',
 						);
 	    }
 	 

@@ -3,6 +3,7 @@ description = Module which provides you a way to offers music meeting...
 core = 7.x
 files[] = musical_offers.module
 files[] = musical_offers.admin.inc
+files[] = musical_offers.lists.inc
 files[] = offer.admin.inc
 files[] = offer_i.admin.inc
 package = Formulario de Ofertas

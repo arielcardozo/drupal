@@ -49,15 +49,15 @@ msgstr "Desuscribir"
 
 #: musical_offers.admin.inc:101
 msgid "Subscribe"
-msgstr ""
+msgstr "Suscribirse"
 
 #: musical_offers.admin.inc:115
 msgid "Offer"
-msgstr ""
+msgstr "Oferta"
 
 #: musical_offers.admin.inc:123
 msgid "Offer details. Created:"
-msgstr ""
+msgstr "Detalle de la oferta. Creado:"
 
 #: musical_offers.admin.inc:141
 msgid "!url"
@@ -105,7 +105,7 @@ msgstr "Instrumentos"
 
 #: musical_offers.admin.inc:230
 msgid "Select the instrument wich you want to suscribe to."
-msgstr ""
+msgstr "Seleccione el instrumento al que se quiere suscribir."
 
 #: musical_offers.admin.inc:235 musical_offers.module:305
 msgid "Instrument"
@@ -113,7 +113,7 @@ msgstr "Instrumento"
 
 #: musical_offers.admin.inc:236
 msgid "Subscriber"
-msgstr "Suscribirse"
+msgstr "Suscriptor"
 
 #: musical_offers.admin.inc:237 musical_offers.module:1101;1172;1242
 msgid "State"
@@ -163,13 +163,9 @@ msgstr ""
 msgid "Access to offers module."
 msgstr ""
 
-#: musical_offers.module:131
+#: musical_offers.module:131;132
 msgid "View offers made"
-msgstr ""
-
-#: musical_offers.module:132
-msgid "View offers made."
-msgstr ""
+msgstr "Vista de las ofertas hechas"
 
 #: musical_offers.module:135
 msgid "Update registered offers"
@@ -181,7 +177,7 @@ msgstr ""
 
 #: musical_offers.module:211
 msgid "Register your offer"
-msgstr ""
+msgstr "Registre su oferta"
 
 #: musical_offers.module:215 musical_offers_lista.module:51
 msgid "What do you want to play?"
@@ -229,15 +225,15 @@ msgstr ""
 
 #: musical_offers.module:345;393
 msgid "Instrument no.@i "
-msgstr ""
+msgstr "Instrumento no.@i"
 
 #: musical_offers.module:368;376
 msgid "More Instruments"
-msgstr ""
+msgstr "Más instrumentos"
 
 #: musical_offers.module:493
-msgid "Your offer has been recorded correctly. "
-msgstr ""
+msgid "Your offer has been recorded correctly."
+msgstr "Su oferta se ha registrado correctamente"
 
 #: musical_offers.module:498
 msgid "There was a problem registering your bid, please try again later."
@@ -364,24 +360,24 @@ msgid "Offer Author"
 msgstr ""
 
 #: musical_offers.module:1225
-msgid "No se han encontrado ofertas"
-msgstr ""
+msgid "No records found"
+msgstr "No se han encontrado ofertas"
 
 #: musical_offers.module:1239
-msgid "Author Oferta"
-msgstr ""
+msgid "Offer\'s Author"
+msgstr "Autor de la oferta"
 
 #: musical_offers.module:1298
 msgid "No records found"
-msgstr ""
+msgstr "No se encontraron ofertas"
 
 #: musical_offers.module:1312
 msgid "Offers list You can click on each one to acces to its details ."
 msgstr ""
 
 #: musical_offers.module:1314
-msgid "It will see the offers made by you. Fields with asterisks (*) are required ."
-msgstr ""
+msgid "It will see the offers made by you. Fields with asterisks (*) are required."
+msgstr "Verá la lista de ofertas hechas por usted. Los campos con asterisco (*) son obligatorios"
 
 #: musical_offers.module:17
 msgid "Offers form for authenticated users"
@@ -409,39 +405,39 @@ msgstr ""
 
 #: musical_offers.module:49
 msgid "Offer's detail"
-msgstr ""
+msgstr "Detalle de la oferta"
 
 #: musical_offers.module:57
 msgid "View offer"
-msgstr ""
+msgstr "Vista de la oferta"
 
 #: musical_offers.module:64
 msgid "Edit offer"
-msgstr ""
+msgstr "Editar la oferta"
 
 #: musical_offers.module:70
-msgid "Offer edit"
-msgstr ""
+msgid "Edit the actual offer"
+msgstr "Editar la oferta actual"
 
 #: musical_offers.module:79;84
 msgid "List of offers"
-msgstr ""
+msgstr "Listado de ofertas"
 
 #: musical_offers.module:89
 msgid "List of activities"
-msgstr ""
+msgstr "Listado de actividades"
 
 #: musical_offers.module:96
 msgid "List of activities made"
-msgstr ""
+msgstr "Listado de actividades hechas"
 
 #: musical_offers.module:101
-msgid "Todas las ofertas"
-msgstr ""
+msgid "All offers"
+msgstr "Todas las ofertas"
 
 #: musical_offers.module:106
 msgid "Listado de suscripciones"
-msgstr ""
+msgstr "List of subscriptions"
 
 #: musical_offers.module:113
 msgid "Listado de ofertas hechas"
