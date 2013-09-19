@@ -180,6 +180,8 @@ class Offer extends OfferEntity implements OfferInterface {
 
   const ID = 'nid_oferta';
 
+  const NAME_SURNAME = 'name_surname';
+
   const OFFERS_TABLE_NAME = 'pym_ofertas';
  
   protected $uid;
@@ -195,6 +197,7 @@ class Offer extends OfferEntity implements OfferInterface {
   protected $key;
 
   protected $user_name;
+  protected $user_name_surname;
   protected $user_mail;
  
   public static function create() {
@@ -240,7 +243,7 @@ public function getObra_musical(){
   }
 
   public function getUser_name()
- {
+  {
     return $this->user_name;
   }
  
@@ -248,6 +251,17 @@ public function getObra_musical(){
     $this->user_name = $user_name;
     return $this;
   }
+
+  public function getName_surname()
+  {
+    return $this->user_name_surname;
+  }
+ 
+  public function setName_surname($user_name_surname) {
+    $this->user_name_surname = $user_name_surname;
+    return $this;
+  }
+
   public function getUser_mail()
  {
     return $this->user_mail;
@@ -326,6 +340,7 @@ public function getObra_musical(){
         'instrumento_autor' =>$this->instrumento_autor,
         'ciudad' =>$this->ciudad,
         'user_name'=>$this->user_name,
+        'user_name_surname'=>$this->user_name_surname,
         'user_mail' =>$this->user_mail,
         'activo' =>$this->activo,
         'fecha_creacion' =>$this->fecha_creacion,);
@@ -355,6 +370,7 @@ class DbOffer {
                       ->fields('n', $fields)
                       ->condition(Offer::ID, $id);
       $oferta->addField('u', 'name','name');
+
       $oferta->addField('u', 'mail','mail');
       $oferta->leftJoin('users', 'u', 'u.uid = n.uid ');               
       $result = $oferta->execute()->fetch();
@@ -396,18 +412,19 @@ class DbOffer {
           Offer::ACTIVO);
  
       $oferta = db_select(Offer::OFFERS_TABLE_NAME, 'n')
-                      ->fields('n', $fields);
-                      //->condition(Offer::ID, $id);
+                      ->fields('n', $fields)
+                      ->condition('n.uid', 1,'!=');
       $oferta->addField('u', 'name','name');
+      //$oferta->addField('u', 'nombre_y_apellido','name_surname');
       $oferta->addField('u', 'mail','mail');
       $oferta->leftJoin('users', 'u', 'u.uid = n.uid ');   
       $oferta = $oferta->extend('PagerDefault')->limit(20); // line1
       $oferta = $oferta->extend('TableSort');
       $result = $oferta->orderByHeader($header)->execute()->fetchAll();            
       //$result = $oferta->execute()->fetchAll();
-
-
       
+
+
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);

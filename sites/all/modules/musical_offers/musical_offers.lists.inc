@@ -52,7 +52,10 @@ function offers_form_lists($id,$operacion){
 			  if (!empty($offers)) {
 			    $rows = array();
 			    foreach ($offers as $entry) {
-			 
+
+			    	$user_data = user_load($entry->uid);
+			    	//dpm($user_data,'user_data');
+			 		//dpm($user_data->field_nombre_y_apellido['und'][0]['given'],'given');
 			    	$row = array(
 						'created' => date('d-M-Y', $entry->fecha_creacion),
 						'Music piece' => array(
@@ -68,7 +71,8 @@ function offers_form_lists($id,$operacion){
 						'Author Oferta' => array(
 										'data' => array(
 													'#type' => 'link',
-													'#title' => $entry->name,
+													//'#title' => $entry->name,
+													'#title' => $user_data->field_nombre_y_apellido['und'][0]['given'].', '.$user_data->field_nombre_y_apellido['und'][0]['family'],
 													'#href' => 'user/' . $entry->uid,
 													'#options' => $options,
 													),
@@ -101,7 +105,7 @@ function obtiene_cabecera($tipo_listado){
 			$header = array(
 			'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'asc'),
 			'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
-			'Author Oferta' => array('data' => t('Offer\'s Author'), 'field' => 'name'),
+			'Author Oferta' => array('data' => t('Offer\'s Author'), 'field' => 'name','sort' => 'asc'),
 			'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
 
 			'Activo' => array('data' => t('State'), 'field' => 'activo','sort' => 'asc'),
