@@ -115,7 +115,7 @@ function offers_form_views($form,&$form_state,$operacion){
 	);
 	$form['personal_data']['autor_obra'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
-		'#title' => t('Musical work'),
+		'#title' => t('Author'),
 		($operacion=='view')?'#markup':'#default_value' => $oferta->getAutor_obra(),
 		'#required' => TRUE,
 	);
