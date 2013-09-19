@@ -99,11 +99,13 @@ function offers_form_views($form,&$form_state,$operacion){
 		'#default_value' => $oferta->getUser_name(),
 		'#required' => TRUE,
 	);*/
+	$user_data = user_load($oferta->getUid());
+	$user_full_name = $user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given'];
 	$form['personal_data']['a_oferta'] = array(
 		'#type' => 'item',
 		'#title' => t('Offer\'s author'),
 		//'#markup' => t('!url', array('!url' => l(t($oferta->getUser_name()), "user/".$oferta->getUid()))),
-		'#markup' => t('!url', array('!url' => l($oferta->getUser_name(), "user/".$oferta->getUid()))),
+		'#markup' => t('!url', array('!url' => l($user_full_name, "user/".$oferta->getUid()))),
 	);	
 	$form['personal_data']['obra_musical'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
@@ -198,7 +200,7 @@ function offers_form_views($form,&$form_state,$operacion){
 	
 	$header = array(
 		'Instrumento' => array('data' => t('Instrument'), 'field' => 'i.name_instrument'),
-		'Suscriptor' => array('data' => t('Subscriber'), 'field' => 'u.name'),
+		'Suscriptor' => array('data' => t('Subscriber'), 'field' => 'u.name', 'sort'=>'asc'),
 		'Activo' => array('data' => t('State'), 'field' => 'io.position'),
 	
 	);
@@ -211,7 +213,9 @@ function offers_form_views($form,&$form_state,$operacion){
 	$instrumentos->leftJoin('users', 'u', 'io.uid = u.uid ');
 	$instrumentos->leftJoin('instruments', 'i', 'io.nid_instrument = i.nid_instrument ');
 	//defino una línea de instrumento 
-  	$entries = $instrumentos->execute()->fetchAll();
+	$instrumentos = $instrumentos->extend('PagerDefault')->limit(20); // line1
+    $instrumentos = $instrumentos->extend('TableSort');
+  	$entries = $instrumentos->orderByHeader($header)->execute()->fetchAll();
 
 	
 
@@ -220,7 +224,7 @@ function offers_form_views($form,&$form_state,$operacion){
 	
 	    foreach ($entries as $entry) {
 	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
-        
+          $user_instrument = user_load($entry->uid);
 	      if(evaluaCondiciones($entry,$user,$oferta) || $booleanSuscripcion)$optout[$key] = TRUE;
 	      $options[$key] = array(
 
@@ -228,7 +232,8 @@ function offers_form_views($form,&$form_state,$operacion){
 						'Suscriptor' => array(
 									'data' => array(
 									'#type' => 'link',
-									'#title' => $entry->name,
+									'#title' => $user_instrument->field_nombre_y_apellido['und'][0]['family'].', '.$user_instrument->field_nombre_y_apellido['und'][0]['given'],
+									//'#title' => $entry->name,
 									'#href' => 'user/' . $entry->uid,
 									),
 						),
