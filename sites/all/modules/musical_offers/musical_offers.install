@@ -98,7 +98,6 @@ $schema['pym_ofertas'] = array(
                         'type' => 'varchar', 
                         'length' => 255,
                         'not null' => FALSE,
-                        'default' => 0,
                         'description' => 'Disponibilidad para tocar',),
                    
                   'Activo' => array(

@@ -111,13 +111,13 @@ function offers_form_views($form,&$form_state,$operacion){
 		'#type' => ($operacion=='view')?'item':'textfield',
 		'#title' => t('Music piece'),
 		($operacion=='view')?'#markup':'#default_value' => $oferta->getObra_musical(),
-		'#required' => TRUE,
+		'#required' => ($operacion=='view')?'':TRUE,
 	);
 	$form['personal_data']['autor_obra'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
 		'#title' => t('Author'),
 		($operacion=='view')?'#markup':'#default_value' => $oferta->getAutor_obra(),
-		'#required' => TRUE,
+		'#required' => ($operacion=='view')?'':TRUE,
 	);
 
 	if($operacion=='view'){
@@ -134,7 +134,7 @@ function offers_form_views($form,&$form_state,$operacion){
 		$form['personal_data']['autor_instrumet'] = array(
 				'#type' => 'select',
 				'#title' => t('Instrument to play by the author:'),
-				'#required' => TRUE,
+				'#required' => ($operacion=='view')?'':TRUE,
 				'#options' => $options,
 				'#value' => $oferta->getInstrumento_autor(),
 		        '#empty' => t('No content available.'),
@@ -147,12 +147,12 @@ function offers_form_views($form,&$form_state,$operacion){
 		$form['personal_data']['Salon'] = array(
 				'#type' => 'item',
 				'#title' => t('It takes Salon'),
-				'#markup' => ($oferta->getSalon()==0)?'No':'Si',
+				'#markup' => ($oferta->getSalon()==0)?t('No'):t('Si'),
 			);
 			$form['personal_data']['Piano'] = array(
 				'#type' => 'item',
 				'#title' => t('Piano needed'),
-				'#markup' => ($oferta->getPiano()==0)?'No':'Si',
+				'#markup' => ($oferta->getPiano()==0)?t('No'):t('Si'),
 			);
 	}else
 	{
@@ -180,7 +180,7 @@ function offers_form_views($form,&$form_state,$operacion){
 		'#type' => ($operacion=='view')?'item':'textfield',
 		'#title' => t('City to play'),
 		($operacion=='view')?'#markup':'#default_value' => $oferta->getCiudad(),
-		'#required' => TRUE,
+		'#required' => ($operacion=='view')?'':TRUE,
 	);
 	$form['personal_data']['Disponibilidad'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
@@ -232,12 +232,12 @@ function offers_form_views($form,&$form_state,$operacion){
 						'Suscriptor' => array(
 									'data' => array(
 									'#type' => 'link',
-									'#title' => $user_instrument->field_nombre_y_apellido['und'][0]['family'].', '.$user_instrument->field_nombre_y_apellido['und'][0]['given'],
+									'#title' =>(empty($user_instrument))? $user_instrument->field_nombre_y_apellido['und'][0]['family'].', '.$user_instrument->field_nombre_y_apellido['und'][0]['given']:'',
 									//'#title' => $entry->name,
 									'#href' => 'user/' . $entry->uid,
 									),
 						),
-						'Activo' => (empty($entry->name))?'Open':'Closed',
+						'Activo' => (empty($entry->name))?t('Open'):t('Closed'),
 						);
 	    }
 	 
