@@ -430,8 +430,9 @@ return $form;
 * Función de envío del formulario offers_form
 */
 function offers_form_submit($form, &$form_state){
+	
+	global $user;
 	// Función de inserción de datos
-
 	 $no_of_fields = 4;     // The number of fields you wish to have in the form
  	$transaction = db_transaction();
     $db = new DbOffer();
@@ -467,7 +468,9 @@ function offers_form_submit($form, &$form_state){
 
 				//Alta de la opción del propietario de la oferta
 			 	for ($i=1; $i<=$no_of_fields; $i++){
-			        if($form_state['values']['performers'.$i]!=0 && $form_state['values']['performers'.$i]!=3){
+			 		
+			        if($form_state['values']['performers'.$i]!=1 && $form_state['values']['performers'.$i]!=3){
+			 
 			        	$result = db_insert('pym_instrumentos_ofertas')
 							->fields(array(
 							'nid_instrument' => $form_state['values']['performers'.$i],
@@ -479,7 +482,6 @@ function offers_form_submit($form, &$form_state){
 							
 			        }
 			        if($form_state['values']['performers'.$i]==3){
-			        	
 			        	$id_new_instrument = $db->add($form_state['values']['other_permformers'.$i], 
                          								'Instrumento propio de oferta: '.$id_oferta,
                          								0);
@@ -505,7 +507,6 @@ function offers_form_submit($form, &$form_state){
 			    watchdog_exception('my_type', $e);
 			    drupal_set_message ('<strong>'.t("There was a problem registering your bid, please try again later.").'</br>'.$e->getMessage()."</strong> ");
 			}
-		
 		drupal_goto("listado/ofertas");
 }
 
@@ -813,13 +814,12 @@ function musical_offers_mail_alter(&$message) {
 //Encargado de visualizar la edición de la oferta
 function forms_ofertas_detalle_edit($form, &$form_state, $account, $category = 'account') {
 
-  	return offers_form_views($form,$form_state, 'edit');
+  	return offers_form_views($form_state, 'edit');
 
 }
 
 function forms_ofertas_detalle_edit_submit($form, &$form_state){
 		$edit = $_POST;
-	//dpm($edit);
 	$offer = new Offer();
 	$offer->setObra_musical($edit['obra_musical']);
     $offer->setAutor_obra($edit['autor_obra']);
@@ -829,7 +829,7 @@ function forms_ofertas_detalle_edit_submit($form, &$form_state){
     (!empty($edit['Piano']))?$offer->setPiano($edit['Piano']):$offer->setPiano(0);
     //($oferta->getSalon()==0)?'No':'Si',
     //$offer->setUser_name($edit->name);
-    $offer->setCiudad($edit['Ciudad']);
+    $offer->setCiudad($edit['ciudad']);
     $offer->setInstrumento_autor($edit['autor_instrumet']);
     $offer->setDisponibilidad($edit['Disponibilidad']);
     //$offer->setActivo($result->activo);
@@ -854,11 +854,12 @@ function forms_ofertas_detalle_edit_submit($form, &$form_state){
 /*  DETALLE DE LA OFERTA */
 function forms_ofertas_detalle($form,&$form_state) {
 	global $user;
+
 if(!isset($form_state['storage']['confirm'])) {	
 	
+  	return offers_form_views($form_state, 'view');
 
-  	return offers_form_views($form,$form_state, 'view');
-  	//return $form;
+  	
 }
 else {
 	$text_info = '';
@@ -916,12 +917,11 @@ function evaluaCondiciones($entry,$user,$record){
 * Implements hook_validate().
 */
 function forms_ofertas_detalle_validate($form, &$form_state){
-//dpm($form_state);
 	if(!isset($form_state['storage']['confirm']))
   	{
-		if(empty($form_state['values']['instruments']) && isset($form_state['values']['booleanSuscripcion'])){
+		if(empty($form_state['values']['instruments']) && !isset($form_state['values']['booleanSuscripcion'])){
 			
-				form_set_error('Instruments', t('You must select least one instrument.'));
+				form_set_error('Instruments', t('You must select least one instruments.'));
 			
 		}
 	}
@@ -930,7 +930,6 @@ function forms_ofertas_detalle_validate($form, &$form_state){
 
 function forms_ofertas_detalle_submit($form, &$form_state) {
 	
-
 	if(!isset($form_state['storage']['confirm']))
     {
     	
@@ -1001,7 +1000,6 @@ function fill_form($form_state){
 	global $user;
 	// Get the post values (what user entered)
   
-
   $form = array();
 
  $form['autor_obra'] = array(
@@ -1018,7 +1016,7 @@ function fill_form($form_state){
   );
   $form['city'] = array(
     '#type' => 'hidden',
-    '#value' => $form_state['values']['city'] 
+    '#value' => $form_state['values']['ciudad'] 
   );
    $form['mail'] = array(
     '#type' => 'hidden',

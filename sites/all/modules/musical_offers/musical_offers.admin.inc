@@ -6,7 +6,7 @@
 */
 
 
-function offers_form_views($form,&$form_state,$operacion){
+function offers_form_views(&$form_state,$operacion){
 	global $user;	
 	$id = $form_state['build_info']['args'][0];
 		
@@ -47,13 +47,18 @@ function offers_form_views($form,&$form_state,$operacion){
 		case 'view':
 			
 			if($booleanSuscripcion){
-		 	//botones
-			$form['actions'] = array('#type' => 'actions');
-			$form['actions']['submit'] = array(
-				'#type' => 'submit',
-				'#value' => t('Unsubscribe'),
-				//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
-			);
+				$form['booleanSuscripcion'] = array(
+					'#type' => 'hidden',
+					'#value' => 'TRUE',
+					//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
+				);
+			 	//botones
+				$form['actions'] = array('#type' => 'actions');
+				$form['actions']['submit'] = array(
+					'#type' => 'submit',
+					'#value' => t('Unsubscribe'),
+					//'#attributes' => array('onclick' => 'if(!confirm("Really want to subscribe?")){return false;}')
+				);
 
 			}
 			else{
@@ -69,9 +74,7 @@ function offers_form_views($form,&$form_state,$operacion){
 				
 			}
 			break;
-		default:
-			# code...
-			break;
+
 	}
 	
 
@@ -107,18 +110,21 @@ function offers_form_views($form,&$form_state,$operacion){
 		//'#markup' => t('!url', array('!url' => l(t($oferta->getUser_name()), "user/".$oferta->getUid()))),
 		'#markup' => t('!url', array('!url' => l($user_full_name, "user/".$oferta->getUid()))),
 	);	
+	
 	$form['personal_data']['obra_musical'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
 		'#title' => t('Music piece'),
 		($operacion=='view')?'#markup':'#default_value' => $oferta->getObra_musical(),
 		'#required' => ($operacion=='view')?'':TRUE,
 	);
+
 	$form['personal_data']['autor_obra'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
 		'#title' => t('Author'),
 		($operacion=='view')?'#markup':'#default_value' => $oferta->getAutor_obra(),
 		'#required' => ($operacion=='view')?'':TRUE,
 	);
+	
 
 	if($operacion=='view'){
 		$dbInstrument = new DbInstrument();
@@ -128,7 +134,23 @@ function offers_form_views($form,&$form_state,$operacion){
 		'#title' => t('Instrument to play by the author:'),
 		'#markup' => $inst->getName_instrument(),
 		
-	);
+		);
+		$form['ciudad'] = array(
+		'#type' => 'hidden',
+		'#default_value' => $oferta->getCiudad(),
+		);
+		$form['autor_obra'] = array(
+				'#type' => 'hidden',
+				'#default_value' => $oferta->getAutor_obra(),
+		);
+		$form['obra_musical'] = array(
+			'#type' => 'hidden',
+			'#default_value' => $oferta->getObra_musical(),
+		);	
+		$form['autor_oferta'] = array(
+		'#type' => 'hidden',
+		'#default_value' => $user_full_name,
+		);
 	}else{
 
 		$form['personal_data']['autor_instrumet'] = array(
@@ -175,13 +197,13 @@ function offers_form_views($form,&$form_state,$operacion){
 	
 
 
-	
-	$form['personal_data']['Ciudad'] = array(
+	$form['personal_data']['ciudad'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
 		'#title' => t('City to play'),
 		($operacion=='view')?'#markup':'#default_value' => $oferta->getCiudad(),
 		'#required' => ($operacion=='view')?'':TRUE,
 	);
+	
 	$form['personal_data']['Disponibilidad'] = array(
 		'#type' => ($operacion=='view')?'item':'textfield',
 		'#title'=> t('Availability'),
@@ -225,6 +247,7 @@ function offers_form_views($form,&$form_state,$operacion){
 	    foreach ($entries as $entry) {
 	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
           $user_instrument = user_load($entry->uid);
+          //dpm($user_instrument,'user_instrument');
 	      if(evaluaCondiciones($entry,$user,$oferta) || $booleanSuscripcion)$optout[$key] = TRUE;
 	      $options[$key] = array(
 
@@ -232,12 +255,12 @@ function offers_form_views($form,&$form_state,$operacion){
 						'Suscriptor' => array(
 									'data' => array(
 									'#type' => 'link',
-									'#title' =>(empty($user_instrument))? $user_instrument->field_nombre_y_apellido['und'][0]['family'].', '.$user_instrument->field_nombre_y_apellido['und'][0]['given']:'',
+									'#title' =>(!empty($user_instrument->uid))? $user_instrument->field_nombre_y_apellido['und'][0]['family'].', '.$user_instrument->field_nombre_y_apellido['und'][0]['given']:'',
 									//'#title' => $entry->name,
 									'#href' => 'user/' . $entry->uid,
 									),
 						),
-						'Activo' => (empty($entry->name))?t('Open'):t('Closed'),
+						'Activo' => (empty($entry->name))?t('Opened'):t('Closed'),
 						);
 	    }
 	 
@@ -258,7 +281,7 @@ function offers_form_views($form,&$form_state,$operacion){
  	
 	
 
-	
+	//dpm($form,'form');
 	return $form;
 }
 
