@@ -143,7 +143,8 @@ function musical_offers_permission(){
  * Menu item title callback - use the user name.
  */
 function list_page_title($account) {
-	$title = t('User name: ').format_username($account);
+	$user_full_name = get_full_name($account->uid);
+	$title = t('User name: ').$user_full_name;
   return is_object($account) ?  $title: '';
 }
 /**
@@ -433,23 +434,14 @@ function offers_form_submit($form, &$form_state){
 	
 	global $user;
 	// Función de inserción de datos
-	 $no_of_fields = 4;     // The number of fields you wish to have in the form
+	 $no_of_fields = 9;     // The number of fields you wish to have in the form
  	$transaction = db_transaction();
     $db = new DbOffer();
     
    	$id_new_instrument = 0;
  	 try {
- 	 	$id_oferta = $db->add($form_state['values']['uid_usuario'], 
- 	 				$form_state['values']['autor_obra'],
- 	 				$form_state['values']['obra_musical'],
- 	 				time(),
- 	 				$form_state['values']['salon'],
- 	 				$form_state['values']['piano'],
- 	 				$form_state['values']['autor_instrumet'],
- 	 				$form_state['values']['city'],
- 	 				$form_state['values']['time_availability'],
- 	 				1);
-			
+ 	 	
+			$id_autor_instrument = $form_state['values']['autor_instrumet'];
 			$dbInstrument = new DbInstrument();
 		if(isset($form_state['values']['autor_instrumet'])){
 			$dbOfferInstrument = new DbOfferInstrument();
@@ -457,19 +449,32 @@ function offers_form_submit($form, &$form_state){
 				$id_new_instrument_autor = $dbInstrument->add($form_state['values']['other_autor_instrument'], 
                          								'Instrumento propio de oferta: '.$id_oferta,
                          								0);
-				$dbOfferInstrument->add($user->uid,$id_oferta, $id_new_instrument_autor,0);
+				$id_autor_instrument = $id_new_instrument_autor;
+				//$dbOfferInstrument->add($user->uid,$id_oferta, $id_new_instrument_autor,0);
 
 			}
-			else{
+			/*else{
+				dpm('acá');
 				$dbOfferInstrument->add(0,$id_oferta, $form_state['values']['autor_instrumet'],0);
-			}
+			}*/
+
+			$id_oferta = $db->add($form_state['values']['uid_usuario'], 
+ 	 				$form_state['values']['autor_obra'],
+ 	 				$form_state['values']['obra_musical'],
+ 	 				time(),
+ 	 				$form_state['values']['salon'],
+ 	 				$form_state['values']['piano'],
+ 	 				$id_autor_instrument,
+ 	 				$form_state['values']['city'],
+ 	 				$form_state['values']['time_availability'],
+ 	 				1);
 
 		}
 
 				//Alta de la opción del propietario de la oferta
 			 	for ($i=1; $i<=$no_of_fields; $i++){
-			 		
-			        if($form_state['values']['performers'.$i]!=1 && $form_state['values']['performers'.$i]!=3){
+			 		if(isset($form_state['values']['performers'.$i])){
+			 			if($form_state['values']['performers'.$i]!=1 && $form_state['values']['performers'.$i]!=2){
 			 
 			        	$result = db_insert('pym_instrumentos_ofertas')
 							->fields(array(
@@ -480,8 +485,8 @@ function offers_form_submit($form, &$form_state){
 							))
 							->execute();
 							
-			        }
-			        if($form_state['values']['performers'.$i]==3){
+			        	}
+			        	if($form_state['values']['performers'.$i]==3){
 			        	$id_new_instrument = $db->add($form_state['values']['other_permformers'.$i], 
                          								'Instrumento propio de oferta: '.$id_oferta,
                          								0);
@@ -494,7 +499,10 @@ function offers_form_submit($form, &$form_state){
 							'position'=>$i,
 							))
 							->execute();
-			        }
+			        	}
+			 		}
+	
+			   
 
 		    
 		    	}
@@ -845,7 +853,7 @@ function forms_ofertas_detalle_edit_submit($form, &$form_state){
 			    watchdog_exception('registering offer', $e);
 			    drupal_set_message ("<strong>Hubo un problema en el registro de su oferta, por favor inténtelo más tarde.</br>".$e->getMessage()."</strong> ");
 			}
-	drupal_set_message(t('Update confirmed.'));	
+	drupal_set_message('<strong>'.t('Update confirmed.').'</strong>');	
 	drupal_goto($_SERVER['HTTP_REFERER']);
 
 	
@@ -867,21 +875,22 @@ else {
   	$text_owner='';
 	 if(!empty($form_state['values']['instruments'])){
 	  	 
-		  $text_info = 'Do you want to subscribe to this offer?';
+		  $text_info = t('Do you want to subscribe to this offer?');
 		//dpm($edit['instruments']);
-		  $text_button ='Subscribe';
-		  $text_owner = 'Only do this if you are sure!';
+		  $text_button =t('Subscribe');
+		  $text_owner = t('Only do this if you are sure!');
 	  }
 	  if(empty($form_state['values']['instruments'])){
-	  	$text_info = 'Do you wish to unsubscribe from this offer?';
-	  	$text_button ='Unsubscribe';
+	  	$text_info = t('Do you wish to unsubscribe from this offer?');
+	  	$text_button =t('Unsubscribe');
 	  	$form['values']['unsubscribe'] = array(
 	    	'#type' => 'hidden',
 	    	'#value' => 1 // Include the $_POST form values
 	  	);
 
-	  	if($form_state['values']['autor_oferta']==$user->uid){
-	  		$text_owner = 'You are the owner of this offer but if you want to unsubscribe it will keep open';
+
+	  	if($form_state['values']['autor_oferta']==get_full_name($user->uid)){
+	  		$text_owner = t('You are the owner of this offer but if you want to unsubscribe it will keep open');
 	  	}
 	  }
 
@@ -943,11 +952,11 @@ function forms_ofertas_detalle_submit($form, &$form_state) {
 	$transaction = db_transaction();
 	try{
 		$dbOfferInstrument = new DbOfferInstrument();
-		if($form_state['values']['op']=='Unsubscribe'){
+		if($form_state['values']['op']==t('Unsubscribe')){
 			$dbOfferInstrument->delete($user->uid,$form_state['values']['nid_oferta']);
 		
 			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'unsubscription');
-			drupal_set_message('You have successfully unsubscribed.');
+			drupal_set_message('<strong>'.t('You have successfully unsubscribed.').'</strong>');
 			//Comprobamos si la oferta está completa
 			if(!is_complete($form_state['values']['nid_oferta'])){
 				db_update('pym_ofertas')
@@ -968,7 +977,7 @@ function forms_ofertas_detalle_submit($form, &$form_state) {
 			$dbOfferInstrument->update($user->uid,$form_state['values']['nid_oferta'],$form_state['values']['instruments']);
 		
 			offers_form_mail_send($form_state['values']['nid_oferta'], $form_state['values'], 'subscription');
-			drupal_set_message('You have successfully subscribed.');
+			drupal_set_message('<strong>'.t('You have successfully subscribed.').'</strong>');
 		
 			//Comprobamos si la oferta está completa
 			if(is_complete($form_state['values']['nid_oferta'])){
@@ -1096,15 +1105,26 @@ function forms_ofertas_listado($form_state) {
  */
 function musical_offers_help($path, $arg) {
 global $user;
-
   switch ($path) {
-    case 'ofertas/listado':
-      return '<p>' . t('Offers list You can click on each one to acces to its details .') . '</p>';
-    case 'formulario/oferta':
-      return '<p>' . t('It will see the offers made by you. Fields with asterisks (*) are required .') . '</p>';
-   /* case 'actividades/%':
-    	return '<p>' . t('Ariel ') .$arg[1]. '</p>';*/
+    case 'listado':
+      return '<p>' . t('Offer\'s list. You can click on each name to access to its details.') . '</p>';
+    case 'actividades':
+      return '<p>' . t('It will shows the offers you made. Fields with asterisks (*) are required .') . '</p>';
+
     
   }
 }
 
+/**
+* Función que me dá el nombre completo
+*
+*/
+function get_full_name($uid){
+	$user_full_name = '';
+	if($uid!=0){
+		$user_data = user_load($uid);
+		$user_full_name = $user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given'];
+	}
+	
+	return $user_full_name;
+}

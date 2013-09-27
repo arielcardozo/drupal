@@ -22,8 +22,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2013-09-27 12:06+0200\n"
-"PO-Revision-Date: 2013-09-27 12:06+0200\n"
+"POT-Creation-Date: 2013-09-19 19:26+0200\n"
+"PO-Revision-Date: 2013-09-19 19:26+0200\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Spanish <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
@@ -31,109 +31,87 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: musical_offers.admin.inc:31
-msgid "You are already subscribed to this offer. You havent got permission to select another one"
-msgstr ""
-"Usted ya está suscrito a esta oferta. No tiene permiso para "
-"seleccionar otra opción más"
-
-#: musical_offers.admin.inc:43 musical_offers.module:260
+#: musical_offers.admin.inc:43 musical_offers.module:259
 msgid "Save"
 msgstr "Guardar"
 
-#: musical_offers.admin.inc:59 musical_offers.module:878
+#: musical_offers.admin.inc:54
 msgid "Unsubscribe"
 msgstr "Desuscribir"
 
-#: musical_offers.admin.inc:70 musical_offers.module:873
+#: musical_offers.admin.inc:65
 msgid "Subscribe"
 msgstr "Suscribirse"
 
-#: musical_offers.admin.inc:83
+#: musical_offers.admin.inc:80
 msgid "Offer"
 msgstr "Oferta"
 
-#: musical_offers.admin.inc:91
+#: musical_offers.admin.inc:88
 msgid "Offer details. Created:"
 msgstr "Detalle de la oferta. Creado:"
 
-#: musical_offers.admin.inc:108
+#: musical_offers.admin.inc:106
 msgid "Offer's author"
-msgstr "Autor de la oferta"
+msgstr ""
 
-#: musical_offers.admin.inc:110
+#: musical_offers.admin.inc:108
 msgid "!url"
 msgstr ""
 
-#: musical_offers.admin.inc:115 musical_offers.lists.inc:107;117
+#: musical_offers.admin.inc:112 musical_offers.lists.inc:107;117
 msgid "Music piece"
 msgstr "Pieza Musical"
 
-#: musical_offers.admin.inc:122 musical_offers.lists.inc:118 musical_offers.module:239
+#: musical_offers.admin.inc:118 musical_offers.lists.inc:118 musical_offers.module:238
 msgid "Author"
 msgstr "Autor"
 
-#: musical_offers.admin.inc:133;157
+#: musical_offers.admin.inc:128;136
 msgid "Instrument to play by the author:"
 msgstr "Instrumento a tocar por el autor"
 
-#: musical_offers.admin.inc:161 musical_offers.module:333;357;406
+#: musical_offers.admin.inc:140 musical_offers.module:332;356;405
 msgid "No content available."
 msgstr "No hay contenido disponible."
 
-#: musical_offers.admin.inc:170;182
+#: musical_offers.admin.inc:149;161
 msgid "It takes Salon"
 msgstr "Se necesita salón"
 
-#: musical_offers.admin.inc:171;176
-msgid "No"
-msgstr "No"
-
-#: musical_offers.admin.inc:171;176
-msgid "Yes"
-msgstr "Sí"
-
-#: musical_offers.admin.inc:175;187
+#: musical_offers.admin.inc:154;166
 msgid "Piano needed"
 msgstr "Se necesita piano"
 
-#: musical_offers.admin.inc:201
+#: musical_offers.admin.inc:181
 msgid "City to play"
 msgstr "Ciudad"
 
-#: musical_offers.admin.inc:208
+#: musical_offers.admin.inc:187
 msgid "Availability"
 msgstr "Disponibilidad horaria"
 
-#: musical_offers.admin.inc:215 modules/field_instruments/field_instruments.module:62
+#: musical_offers.admin.inc:194 modules/field_instruments/field_instruments.module:62
 msgid "Instruments"
 msgstr "Instrumentos"
 
-#: musical_offers.admin.inc:218
+#: musical_offers.admin.inc:197
 msgid "Select the instrument wich you want to suscribe to."
 msgstr "Seleccione el instrumento al que se quiere suscribir."
 
-#: musical_offers.admin.inc:223 musical_offers.module:314
+#: musical_offers.admin.inc:202 musical_offers.module:313
 msgid "Instrument"
 msgstr "Instrumento"
 
-#: musical_offers.admin.inc:224
+#: musical_offers.admin.inc:203
 msgid "Subscriber"
 msgstr "Suscriptor"
 
-#: musical_offers.admin.inc:225 musical_offers.lists.inc:111;120
+#: musical_offers.admin.inc:204 musical_offers.lists.inc:111;120
 msgid "State"
 msgstr "Estado"
 
-#: musical_offers.admin.inc:262 musical_offers.lists.inc:82;153
-msgid "Open"
-msgstr "Abierto"
-
-#: musical_offers.admin.inc:262 musical_offers.lists.inc:82;153
-msgid "Closed"
-msgstr "Cerrado"
-
-#: musical_offers.admin.inc:271
+#: musical_offers.admin.inc:249
 msgid "No content."
 msgstr "No hay contenido"
 
@@ -149,7 +127,7 @@ msgstr "Creado"
 msgid "Offer's Author"
 msgstr "Autor de la oferta"
 
-#: musical_offers.lists.inc:109;119 musical_offers.module:294
+#: musical_offers.lists.inc:109;119 musical_offers.module:293
 msgid "City"
 msgstr "Ciudad"
 
@@ -209,210 +187,184 @@ msgstr ""
 msgid "Update registered offers, only the owners."
 msgstr ""
 
-#: musical_offers.module:147
+#: musical_offers.module:146
 msgid "User name: "
 msgstr "Nombre de usuario:"
 
-#: musical_offers.module:220
+#: musical_offers.module:219
 msgid "Register your offer"
 msgstr "Registre su oferta"
 
-#: musical_offers.module:224
+#: musical_offers.module:223
 msgid "What do you want to play?"
 msgstr "¿Que es lo que quieres tocar?"
 
-#: musical_offers.module:230
+#: musical_offers.module:229
 msgid "Musical piece"
 msgstr "Obra musical"
 
-#: musical_offers.module:250
+#: musical_offers.module:249
 msgid "How many performers do you need?"
 msgstr "¿Cuantos integrantes necesitas?"
 
-#: musical_offers.module:267;896
+#: musical_offers.module:266;893
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: musical_offers.module:272
+#: musical_offers.module:271
 msgid "It takes Salon?"
 msgstr "¿Necesitas salón?"
 
-#: musical_offers.module:278
+#: musical_offers.module:277
 msgid "Piano needed?"
 msgstr "¿Necesitas piano?"
 
-#: musical_offers.module:305
+#: musical_offers.module:304
 msgid "Time availability"
 msgstr "Disponibilad horaria"
 
-#: musical_offers.module:315 modules/offers_instruments/offers_instruments.module:388
+#: musical_offers.module:314 modules/offers_instruments/offers_instruments.module:388
 msgid "Description"
 msgstr "Descripción"
 
-#: musical_offers.module:330
+#: musical_offers.module:329
 msgid "Instrument to play by the author"
 msgstr "Instrumento a tocar por el autor de la oferta"
 
-#: musical_offers.module:338;363;412
+#: musical_offers.module:337;362;411
 msgid "Please enter the instrument."
 msgstr "Por favor, ingrese el instrumento"
 
-#: musical_offers.module:354;402
+#: musical_offers.module:353;401
 msgid "Instrument no.@i "
 msgstr "Instrumento no.@i"
 
-#: musical_offers.module:377;385
+#: musical_offers.module:376;384
 msgid "More Instruments"
 msgstr "Más instrumentos"
 
-#: musical_offers.module:504
+#: musical_offers.module:501
 msgid "Your offer has been recorded correctly. "
 msgstr "Tu oferta ha sido registrada correctamente"
 
-#: musical_offers.module:509
+#: musical_offers.module:506
 msgid "There was a problem registering your bid, please try again later."
 msgstr ""
 
-#: musical_offers.module:550
+#: musical_offers.module:548
 msgid "Registro de oferta enviado por @site-name"
 msgstr ""
 
-#: musical_offers.module:552
+#: musical_offers.module:550
 msgid "@name Le envía a usted un mensaje de confirmación del alta de su oferta:"
 msgstr ""
 
-#: musical_offers.module:562
+#: musical_offers.module:560
 msgid "Registro de oferta enviado por @user-name"
 msgstr ""
 
-#: musical_offers.module:564
+#: musical_offers.module:562
 msgid "Se acaba de crear una nueva oferta con los siguientes datos:"
 msgstr ""
 
-#: musical_offers.module:576
+#: musical_offers.module:574
 msgid "Registro de suscripción enviado por @site-name"
 msgstr ""
 
-#: musical_offers.module:578
+#: musical_offers.module:576
 msgid "@name Le envía a usted un mensaje de confirmación del alta de su suscripción a la oferta:"
 msgstr ""
 
-#: musical_offers.module:591
+#: musical_offers.module:589
 msgid "Registro de desuscripción enviado por @site-name"
 msgstr ""
 
-#: musical_offers.module:592
+#: musical_offers.module:590
 msgid "@name Le envía a usted un mensaje de confirmación de baja de su suscripción a la oferta:"
 msgstr ""
 
-#: musical_offers.module:599
+#: musical_offers.module:597
 msgid "Registro de desuscripción enviado por @user-name"
 msgstr ""
 
-#: musical_offers.module:601
+#: musical_offers.module:599
 msgid "@user-name Se acaba de desuscribir a una de tus ofertas con los siguientes datos:"
 msgstr ""
 
-#: musical_offers.module:612
+#: musical_offers.module:610
 msgid "Registro de suscripción enviado por @user-name"
 msgstr ""
 
-#: musical_offers.module:614
+#: musical_offers.module:612
 msgid "@user-name Se acaba de suscribir a una de tus ofertas con los siguientes datos:"
 msgstr ""
 
-#: musical_offers.module:627
+#: musical_offers.module:625
 msgid "Registro de cierre de oferta enviado por @site-name"
 msgstr ""
 
-#: musical_offers.module:629
+#: musical_offers.module:627
 msgid "@name Le comunica que una de sus ofertas se ha cerrado con éxito, los de detalles de la misma a continuación:"
 msgstr ""
 
-#: musical_offers.module:641
+#: musical_offers.module:639
 msgid "Registro de apertura de oferta enviado por @site-name"
 msgstr ""
 
-#: musical_offers.module:643
+#: musical_offers.module:641
 msgid "@name Le comunica que una de sus ofertas se ha abierto por baja de un suscriptor, los de detalles de la misma a continuación:"
 msgstr ""
 
-#: musical_offers.module:654
+#: musical_offers.module:652
 msgid "Registro de cierre de oferta de @user-name"
 msgstr ""
 
-#: musical_offers.module:656
+#: musical_offers.module:654
 msgid "Se acaba de cerrar con éxito la siguiente oferta:"
 msgstr ""
 
-#: musical_offers.module:667
+#: musical_offers.module:665
 msgid "Registro de apertura de oferta de @user-name"
 msgstr ""
 
-#: musical_offers.module:669
+#: musical_offers.module:667
 msgid "Se acaba de abrir siguiente oferta:"
 msgstr ""
 
-#: musical_offers.module:714
+#: musical_offers.module:712
 msgid "[@site_name] : Alert from offer create"
 msgstr ""
 
-#: musical_offers.module:778
+#: musical_offers.module:776
 msgid "Your message has been sent."
 msgstr "Se ha enviado su mensaje."
 
-#: musical_offers.module:783
+#: musical_offers.module:781
 msgid "There was a problem sending your message and it was not sent."
 msgstr ""
 
-#: musical_offers.module:806
+#: musical_offers.module:804
 msgid "\n--\nCorreo enviado por el equipo de Piano y Mengano."
 msgstr ""
 
-#: musical_offers.module:849
+#: musical_offers.module:848
 msgid "Update confirmed."
-msgstr "Actualización confirmada"
+msgstr ""
 
-#: musical_offers.module:871
-msgid "Do you want to subscribe to this offer?"
-msgstr "¿Desea suscribirse a esta oferta?"
+#: musical_offers.module:924
+msgid "You must select least one instrument."
+msgstr ""
 
-#: musical_offers.module:874
-msgid "Only do this if you are sure!"
-msgstr "Solo haz esto si estás seguro"
-
-#: musical_offers.module:877
-msgid "Do you wish to unsubscribe from this offer?"
-msgstr "¿Desea desuscribirse de esta oferta?"
-
-#: musical_offers.module:886
-msgid "You are the owner of this offer but if you want to unsubscribe it will keep open"
-msgstr "Usted es el propietario de esta oferta, si quiere desuscribirse ésta continuará abierta"
-
-#: musical_offers.module:926
-msgid "You must select least one instruments."
-msgstr "Debe seleccionar almenos un instrumento"
-
-#: musical_offers.module:952
-msgid "You have successfully unsubscribed."
-msgstr "Estás correctamente desuscrito"
-
-#: musical_offers.module:973
-msgid "You have successfully subscribed."
-msgstr "Estás correctamente suscrito"
-
-#: musical_offers.module:994
+#: musical_offers.module:993
 msgid "Error: %message"
 msgstr ""
 
-#: musical_offers.module:1103
-msgid "Offer's list. You can click on each name to access to its details."
+#: musical_offers.module:1104
+msgid "Offers list You can click on each one to acces to its details ."
 msgstr ""
-"Listado de ofertas. Puede clicar en cualquiera de los nombres para ver "
-"su detalle."
 
-#: musical_offers.module:1105
-msgid "It will shows the offers you made. Fields with asterisks (*) are required ."
+#: musical_offers.module:1106
+msgid "It will see the offers made by you. Fields with asterisks (*) are required ."
 msgstr ""
 
 #: musical_offers.module:17
@@ -433,7 +385,7 @@ msgstr ""
 
 #: musical_offers.module:39 modules/offers_instruments/offers_instruments.module:26 modules/offers_instruments/offers_instruments.info:0
 msgid "Instruments Management"
-msgstr "Adminsitración de los instrumentos"
+msgstr ""
 
 #: musical_offers.module:40
 msgid "Settings the Instrument table content "
@@ -479,7 +431,7 @@ msgstr ""
 msgid "Tabla para almacenar las ofertas de los usuarios"
 msgstr ""
 
-#: musical_offers.install:126
+#: musical_offers.install:127
 msgid "Tabla para almacenar la relación entre las ofertas y sus instrumentos"
 msgstr ""
 

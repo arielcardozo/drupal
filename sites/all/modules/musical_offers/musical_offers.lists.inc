@@ -79,7 +79,7 @@ function offers_form_lists($id,$operacion){
 												),
 
 						'Ciudad' => $entry->ciudad,	
-						'Estado' => (empty($entry->activo))?'closed':'open',
+						'Estado' => (empty($entry->activo))?t('Closed'):t('Open'),
 
 					);
 			      $rows[] = $row;
@@ -150,7 +150,7 @@ function obtiene_rows($id,$offers,$operacion){
 				'Author Obra' => $entry->autor_obra,
 				'Ciudad' => $entry->ciudad,
 				//'Estado' => $entry->activo,
-				'Estado' => (empty($entry->activo))?'closed':'open',
+				'Estado' => (empty($entry->activo))?t('Closed'):t('Open'),
 
 			);
 	      $rows[] = $row;

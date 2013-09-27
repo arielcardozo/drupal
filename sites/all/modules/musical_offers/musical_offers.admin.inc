@@ -25,10 +25,15 @@ function offers_form_views(&$form_state,$operacion){
 	$instrumentos_usuario->addExpression('COUNT(uid)', 'uid_count');
 	
 	$ii = $instrumentos_usuario->execute()->fetchObject();
+	//dpm($form_state);
 	//Se activa con la primera aparición del nombre en la lista de suscriptos
 	if($ii->uid_count>0) {
 		$booleanSuscripcion = TRUE;
-		drupal_set_message('You are already subscribed to this offer. You havent got permission to select another one');
+		if(!isset($form_state['input']['op'])){
+			drupal_set_message(t('You are already subscribed to this offer. You havent got permission to select another one'));
+		}
+
+		
 	}
 	else
 	{
@@ -96,18 +101,11 @@ function offers_form_views(&$form_state,$operacion){
 		'#type' => 'hidden',
 		'#default_value' => $oferta->getUser_mail(),
 	);
-	/*$form['personal_data']['creador_oferta'] = array(
-		'#type' => 'textfield',
-		'#title' => t('Creador de la oferta'),
-		'#default_value' => $oferta->getUser_name(),
-		'#required' => TRUE,
-	);*/
-	$user_data = user_load($oferta->getUid());
-	$user_full_name = $user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given'];
+
+	$user_full_name = get_full_name($oferta->getUid());
 	$form['personal_data']['a_oferta'] = array(
 		'#type' => 'item',
 		'#title' => t('Offer\'s author'),
-		//'#markup' => t('!url', array('!url' => l(t($oferta->getUser_name()), "user/".$oferta->getUid()))),
 		'#markup' => t('!url', array('!url' => l($user_full_name, "user/".$oferta->getUid()))),
 	);	
 	
@@ -169,12 +167,12 @@ function offers_form_views(&$form_state,$operacion){
 		$form['personal_data']['Salon'] = array(
 				'#type' => 'item',
 				'#title' => t('It takes Salon'),
-				'#markup' => ($oferta->getSalon()==0)?t('No'):t('Si'),
+				'#markup' => ($oferta->getSalon()==0)?t('No'):t('Yes'),
 			);
 			$form['personal_data']['Piano'] = array(
 				'#type' => 'item',
 				'#title' => t('Piano needed'),
-				'#markup' => ($oferta->getPiano()==0)?t('No'):t('Si'),
+				'#markup' => ($oferta->getPiano()==0)?t('No'):t('Yes'),
 			);
 	}else
 	{
@@ -246,8 +244,7 @@ function offers_form_views(&$form_state,$operacion){
 	
 	    foreach ($entries as $entry) {
 	      $key = $entry->nid_instrument.'-'.$entry->nid_oferta.$entry->position;
-          $user_instrument = user_load($entry->uid);
-          //dpm($user_instrument,'user_instrument');
+          $user_instrument = get_full_name($entry->uid);
 	      if(evaluaCondiciones($entry,$user,$oferta) || $booleanSuscripcion)$optout[$key] = TRUE;
 	      $options[$key] = array(
 
@@ -255,12 +252,12 @@ function offers_form_views(&$form_state,$operacion){
 						'Suscriptor' => array(
 									'data' => array(
 									'#type' => 'link',
-									'#title' =>(!empty($user_instrument->uid))? $user_instrument->field_nombre_y_apellido['und'][0]['family'].', '.$user_instrument->field_nombre_y_apellido['und'][0]['given']:'',
+									'#title' =>(!empty($user_instrument))? $user_instrument:'',
 									//'#title' => $entry->name,
 									'#href' => 'user/' . $entry->uid,
 									),
 						),
-						'Activo' => (empty($entry->name))?t('Opened'):t('Closed'),
+						'Activo' => (empty($entry->name))?t('Open'):t('Closed'),
 						);
 	    }
 	 
