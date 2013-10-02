@@ -260,8 +260,15 @@ function offers_form_views(&$form_state,$operacion){
 						'Activo' => (empty($entry->name))?t('Open'):t('Closed'),
 						);
 	    }
-	 
-
+	 /*
+$form['review_overall_rating'] = array(
+    '#type' => 'fivestar',
+    '#title' => t('Ha estudiado la letra?'),
+    '#required' => TRUE,
+    '#stars' => 5,
+    '#weight' => -45,
+    '#description' => t('Click on the stars to set your rating.'),
+  );*/
 	$form['instruments']['instruments'] = array(
 		'#type' => 'tableselect',
 		'#header' => $header,
@@ -276,21 +283,57 @@ function offers_form_views(&$form_state,$operacion){
 	  $form['instruments']['instruments'][$key]['#disabled'] = true;
 	}
  	
-	
+ /*$path = drupal_get_path('module', 'fivestar');      
+  drupal_add_js($path . '/js/fivestar.js');
+  drupal_add_css($path . '/css/fivestar.css');
 
-	//dpm($form,'form');
+  $rating = votingapi_select_single_result_value(array(
+        'entity_id' => YOURENTITY_ID,
+        'entity_type' => 'YOURENTITY_TYPE',
+        'tag' => 'vote',
+        'function' => 'average',
+   ));
+   $form['votes'] = array(
+      '#markup' =>  theme('fivestar_static', array('rating' => $rating, 'stars' => 5, 'tag' => 'vote')),
+   );*/
+
+/*	$user_data = user_load($oferta->getUid());
+	//dpm($user_data->field_es_puntual['und'][0]['rating'],'rating');
+	dpm($user_data,'user_data');
+	 $values = array('user' => $user->uid, 'average'=>$user_data->field_es_puntual['und'][0]['rating'], 'count' => 100);
+
+   $settings = array(
+    'content_type' => 'user',
+    'content_id' => $user_data->uid,
+    'stars' => 5,
+    'microdata' =>array(),
+    'autosubmit' => TRUE,
+    'field_name' => 'field_es_puntual',
+    'langcode'=>'und',
+    'entity' => $user_data,
+    'labes_enable'=> FALSE,
+    'labels'=>array(),
+    'title'=>TRUE,
+    'allow_clear' => 0,
+    'text' => 'average', // options are none, average, smart, user, and dual
+    'tag' => 'vote',
+    'style' => 'average', // options are average, dual, smart, user
+    'widget' => array( 'name' => 'oxygen', 'css' => drupal_get_path('module', 'fivestar') . '/widgets/oxygen/oxygen.css' ),
+  );
+
+//print render(drupal_get_form('fivestar_custom_widget', $profileView->field_profile_rating['und'][0], $settings));
+
+   $form['custom_five_star'] = drupal_get_form('fivestar_custom_widget', $user_data->field_es_puntual['und'][0]['rating'], $settings);
+*/
+   
 	return $form;
 }
 
+
 function obtiene_instrumentos(){
-	$query = db_select('instruments', 'n');
-	// Obtiene los datos de la base de datos (tabla node).
-	$instruments = $query->
-		fields('n',array('nid_instrument','name_instrument'))
-		->condition('general_list', 1,'=')->execute();
-	$options = array();
-	foreach ($instruments as $result) {
-    	$options[$result->nid_instrument] = $result->name_instrument;
-	}
-	return $options;
+	
+	$dbInstrument = new DbInstrument();
+	$opts = $dbInstrument->getInstruments();
+	
+	return $opts;
 }

@@ -248,6 +248,7 @@ function fivestar_get_votes($entity_type, $id, $tag = 'vote', $uid = NULL) {
     $votes['user'] = array('value' => 0);
   }
 
+  //dpm($votes,'obtiene votos');
   return $votes;
 }
 
@@ -519,6 +520,7 @@ function fivestar_expand($element) {
     $element['vote']['#parents'] = $element['#parents'];
   }
 
+  //dpm($settings,'setting');
   switch ($settings['text']) {
     case 'user':
       $element['vote']['#description'] = theme('fivestar_summary', array(
@@ -539,6 +541,7 @@ function fivestar_expand($element) {
       $class[] = 'fivestar-average-text';
       break;
     case 'smart':
+
       $element['vote']['#description'] = ($settings['style'] == 'dual' && !$values['user']) ? NULL : theme('fivestar_summary', array(
         'user_rating' => $values['user'],
         'average_rating' => $values['user'] ? NULL : $values['average'],
@@ -548,6 +551,7 @@ function fivestar_expand($element) {
       ));
       $class[] = 'fivestar-smart-text';
       $class[] = $values['user'] ? 'fivestar-user-text' : 'fivestar-average-text';
+      //dpm($values['user'] ? 'fivestar-user-text' : 'fivestar-average-text','smart');
       break;
     case 'dual':
       $element['vote']['#description'] = theme('fivestar_summary', array(
@@ -709,6 +713,7 @@ function fivestar_votingapi_metadata_alter(&$data) {
 
 function fivestar_get_tags() {
   $tags_txt = variable_get('fivestar_tags', 'vote');
+  dpm($tags_txt,'tagas¡¡');
   $tags_exploded = explode(',', $tags_txt);
 
   $tags = array();

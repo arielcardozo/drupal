@@ -138,6 +138,7 @@ class DbInstrument {
  
       $result = db_select(Instrument::INSTRUMENTS_TABLE_NAME, 'n')
                       ->fields('n', $fields)
+                      //->orderBy(Instrument::NAME_INSTRUMENT, 'DESC')//ORDER BY created
                       ->condition(Instrument::ID, $id)->execute()->fetch();
       $instrument = new Instrument();
       $instrument->setKey($result->nid_instrument);
@@ -152,6 +153,40 @@ class DbInstrument {
     return $instrument;
   }
  
+ //Obtiene un instrumento
+  function getInstruments() {
+    try {
+        $fields = array(Instrument::ID,
+          Instrument::NAME_INSTRUMENT,
+          Instrument::GENERAL_LIST,
+          );
+ 
+      $otros = 'Otros';
+      $ninguno = 'Ninguno';
+      $query = db_select(Instrument::INSTRUMENTS_TABLE_NAME, 'n')
+                      ->fields('n', $fields)
+                      ->condition(Instrument::GENERAL_LIST, 1)
+                      ->condition(Instrument::NAME_INSTRUMENT, $otros,'!=')
+                      ->condition(Instrument::NAME_INSTRUMENT, $ninguno,'!=')
+                      ->orderBy(Instrument::NAME_INSTRUMENT, 'ASC');
+      
+      //defino una línea de instrumento 
+      $results = $query->execute()->fetchAll();
+
+      $offerInstruments = array();
+      $offerInstruments[1] = $ninguno;
+       foreach ($results as $result) {             
+              $offerInstruments[$result->nid_instrument] = $result->name_instrument;
+       }
+       $offerInstruments[3] = $otros;
+     
+    } catch (Exception $e) {
+      $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
+                      t('Index ID: @index', array('@index' => $id)), TRUE);
+      $databaseException->handle();
+    }
+    return $offerInstruments;
+  }
   //Añade un instrumento
   function add($name_instrument, $description_instrument, $general_list) {
     $new_id_instrument = 0;

@@ -432,6 +432,39 @@ class DbOffer {
     }
     return $result;
   }
+
+  //Obtiene un instrumento
+  function getPlayerList($id) {
+    try {
+        $fields = array(OfferInstrument::UID,
+          OfferInstrument::NID_OFERTAS,
+          OfferInstrument::NID_INSTRUMENTS,
+          OfferInstrument::POSITION,
+          );
+ 
+      $instrumentos = db_select(OfferInstrument::OFFERS_INSTRUMENTS_TABLE_NAME, 'io')
+                    ->fields('io', array('nid_oferta', 'nid_instrument', 'uid','position'))
+                    ->condition('nid_oferta', $id,'=');
+                    //->condition('activo', 1,'=');
+      //defino una línea de instrumento 
+      $results = $instrumentos->execute()->fetchAll();
+
+      $playerList = array();
+       foreach ($results as $result) {
+            $key = $result->uid;
+            $usuario = user_load($result->uid);
+            $user_full_name = $usuario->field_nombre_y_apellido['und'][0]['family'].', '.$usuario->field_nombre_y_apellido['und'][0]['given'];
+            $usu = array('name'=>$user_full_name,'mail'=>$usuario->mail);              
+            $playerList[$key] = $usu;
+       }
+     
+    } catch (Exception $e) {
+      $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
+                      t('Index ID: @index', array('@index' => $id)), TRUE);
+      $databaseException->handle();
+    }
+    return $playerList;
+  }
   //Añade una oferta
   function add($uid,$autor_obra, $obra_musical,$fecha_creacion,$salon,$piano,$instrumento_autor,$ciudad,$disponibilidad,$activo) {
     $id_oferta = 0;
