@@ -443,8 +443,9 @@ function offers_form_submit($form, &$form_state){
  	 	
 			$id_autor_instrument = $form_state['values']['autor_instrumet'];
 			$dbInstrument = new DbInstrument();
-		if(isset($form_state['values']['autor_instrumet'])){
 			$dbOfferInstrument = new DbOfferInstrument();
+		if(isset($form_state['values']['autor_instrumet'])){
+			
 			if($form_state['values']['autor_instrumet']==3){
 				$id_new_instrument_autor = $dbInstrument->add($form_state['values']['other_autor_instrument'], 
                          								'Instrumento propio de oferta: '.$id_oferta,
@@ -470,31 +471,19 @@ function offers_form_submit($form, &$form_state){
 				//Alta de la opción del propietario de la oferta
 			 	for ($i=1; $i<=$no_of_fields; $i++){
 			 		if(isset($form_state['values']['performers'.$i])){
-			 			if($form_state['values']['performers'.$i]!=1 && $form_state['values']['performers'.$i]!=2){
-			 
-			        	$result = db_insert('pym_instrumentos_ofertas')
-							->fields(array(
-							'nid_instrument' => $form_state['values']['performers'.$i],
-							'nid_oferta' => $id_oferta,
-							'uid'=>0,
-							'position'=>$i,
-							))
-							->execute();
+			 			if($form_state['values']['performers'.$i]!=1 && $form_state['values']['performers'.$i]!=2 && $form_state['values']['performers'.$i]!=3){
+			        		
+								$result = $dbOfferInstrument->add(0,$id_oferta, $form_state['values']['performers'.$i],$i);
 							
 			        	}
 			        	if($form_state['values']['performers'.$i]==3){
-			        	$id_new_instrument = $db->add($form_state['values']['other_permformers'.$i], 
+			        		$id_new_instrument = $dbInstrument->add($form_state['values']['other_permformers'.$i], 
                          								'Instrumento propio de oferta: '.$id_oferta,
                          								0);
 
-			        	$result = db_insert('pym_instrumentos_ofertas')
-							->fields(array(
-							'nid_instrument' => $id_new_instrument,
-							'nid_oferta' => $id_oferta,
-							'uid'=>0,
-							'position'=>$i,
-							))
-							->execute();
+			        		$result = $dbOfferInstrument->add(0,$id_oferta, $id_new_instrument,$i);
+			        	
+			        	
 			        	}
 			 		}
 	

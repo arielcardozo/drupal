@@ -103,17 +103,17 @@ function obtiene_cabecera($tipo_listado){
 	switch ($tipo_listado) {
 		case 'offers_list':
 			$header = array(
-			'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'asc'),
+			'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'desc'),
 			'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
 			'Author Oferta' => array('data' => t('Offer\'s Author'), 'field' => 'name','sort' => 'asc'),
-			'Ciudad' => array('data' => t('City'), 'field' => 'ciudad'),
+			'Ciudad' => array('data' => t('City'), 'field' => 'ciudad','sort' => 'asc'),
 
 			'Activo' => array('data' => t('State'), 'field' => 'activo','sort' => 'asc'),
 			);
 			break;
 		default:
 			$header = array(
-			'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'asc'),
+			'created' => array('data' => t('Created'), 'field' => 'fecha_creacion','sort' => 'desc'),
 			'Music piece' => array('data' => t('Music piece'), 'field' => 'obra_musical'),
 			'Author Obra' => array('data' => t('Author'), 'field' => 'name','sort' => 'asc'),
 			'Ciudad' => array('data' => t('City'), 'field' => 'ciudad','sort' => 'asc'),
