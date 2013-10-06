@@ -17,7 +17,7 @@ function offers_form_lists($id,$operacion){
 			$query = db_select('pym_ofertas', 'pym');
 			//$query->range(0, 10);
 			// Obtiene los datos de la base de datos (tabla node).
-			$query->fields('pym',array('nid_oferta','fecha_creacion','autor_obra','obra_musical','ciudad','activo'))
+			$query->fields('pym',array('nid_oferta','uid','fecha_creacion','autor_obra','obra_musical','ciudad','activo'))
 						->condition('u.uid', $id,'=');
 			$query->join('users', 'u', 'u.uid = pym.uid');
 			      
@@ -29,9 +29,10 @@ function offers_form_lists($id,$operacion){
 			break;
 		case 'subscriptions_made':
 			$suscripciones = db_select('pym_instrumentos_ofertas', 'pym_io');
-			$suscripciones->fields('pym_io',array('nid_oferta', 'uid'))
+			$suscripciones->fields('pym_io',array('nid_oferta'))
 							->condition('pym_io.uid', $id,'=');
 		    $suscripciones->addField('pym', 'nid_oferta');
+		    $suscripciones->addField('pym', 'uid');
 		    $suscripciones->addField('pym', 'fecha_creacion');
 		    $suscripciones->addField('pym', 'autor_obra');
 		    $suscripciones->addField('pym', 'obra_musical');
@@ -134,14 +135,13 @@ function obtiene_rows($id,$offers,$operacion){
 	    
 	    foreach ($offers as $entry) {
 	      // Sanitize the data before handing it off to the theme layer.
-
 	    	$row = array(
 				'created' => date('d-M-Y', $entry->fecha_creacion),
 				'Music piece' => array(
 								'data' => array(
 											'#type' => 'link',
 											'#title' => $entry->obra_musical,
-											'#href' => 'ofertas/'.$entry->nid_oferta.'/user/'.$id.'/detalle/view' ,
+											'#href' => 'ofertas/'.$entry->nid_oferta.'/user/'.$entry->uid.'/detalle/view' ,
 											'#options' => $options,
 											),
 										),

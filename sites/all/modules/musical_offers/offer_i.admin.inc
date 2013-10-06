@@ -230,25 +230,7 @@ class DbOfferInstrument {
   //Añade un instrumento
   function add($uid,$nid_oferta, $nid_instrument,$position) {
 
-    /*$i=1;
-
-    for ($i=1; $i<=$no_of_fields; $i++)
-          {
-              if($form_state['values']['performers'.$i]!=0){
-                    $result = db_insert('pym_instrumentos_ofertas')
-                ->fields(array(
-                'nid_instrument' => $form_state['values']['performers'.$i],
-                'nid_oferta' => $id_oferta,
-                'uid'=>0,
-                'position'=>$i,
-                ))
-                ->execute();
-              
-              }
-        
-          }*/
-
-      try {
+    try {
         $fields = array(OfferInstrument::UID,
             OfferInstrument::NID_OFERTAS,
             OfferInstrument::NID_INSTRUMENTS,

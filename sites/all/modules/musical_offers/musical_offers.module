@@ -136,6 +136,10 @@ function musical_offers_permission(){
 		'title' => t('Update registered offers'),
 		'description' => t('Update registered offers, only the owners.'),
 		),
+		'edit own offers' => array(
+		'title' => t('Edit own offers'),
+		'description' => t('Let to the users to edit their own offer.'),
+		),
 	);
 }
 
@@ -1093,7 +1097,7 @@ function get_full_name($uid){
 	$user_full_name = '';
 	if($uid!=0){
 		$user_data = user_load($uid);
-		$user_full_name = $user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given'];
+		$user_full_name = $user_data->field_nombre_y_apellido['und'][0]['given'].', '.$user_data->field_nombre_y_apellido['und'][0]['family'];
 	}
 	
 	return $user_full_name;
@@ -1103,7 +1107,7 @@ function get_full_name($uid){
 * Función que me dá el nombre completo
 * @param $id identificador de la oferta
 */
-function get_players_data($id){
+function get_players_data($uid){
 	$user_full_name = '';
 	if($uid!=0){
 		$user_data = user_load($uid);
@@ -1112,3 +1116,26 @@ function get_players_data($id){
 	
 	return $user_full_name;
 }
+
+/**
+* Implements hook_menu_alter
+*/
+function musical_offers_menu_alter(&$items) {
+  $items['ofertas/%/user/%user/detalle/edit']['access callback'] = 'offers_edit_access';
+  $items['ofertas/%/user/%user/detalle/edit']['access arguments'] = array(3);
+
+  
+}
+
+function offers_edit_access($account) {
+	$request_parts = explode('/', $_GET['q']);
+	//$employee_id = intval(array_pop($request_parts));
+	$dbOffer = new DbOffer();
+	$offer = $dbOffer->get($request_parts[1]);
+
+  return (($GLOBALS['user']->uid == $account->uid) || user_access('administer users')) && $account->uid > 0
+	  && $offer->getUid()== $account->uid;
+
+  // The argument is the user object for the user profile being edited.
+}
+

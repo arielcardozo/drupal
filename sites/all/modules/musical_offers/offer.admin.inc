@@ -375,24 +375,30 @@ class DbOffer {
       $oferta->leftJoin('users', 'u', 'u.uid = n.uid ');               
       $result = $oferta->execute()->fetch();
       $offer = new Offer();
-      $offer->setKey($result->nid_oferta);
-      $offer->setObra_musical($result->obra_musical);
-      $offer->setAutor_obra($result->autor_obra);
-      $offer->setUid($result->uid);
-      $offer->setFecha_creacion($result->fecha_creacion);
-      $offer->setSalon($result->salon);
-      $offer->setPiano($result->piano);
-      $offer->setInstrumento_autor($result->instrumento_autor);
-      $offer->setUser_name($result->name);
-      $offer->setCiudad($result->ciudad);
-      $offer->setUser_mail($result->mail);
-      $offer->setDisponibilidad($result->disponibilidad);
-      $offer->setActivo($result->activo);
+      if(!empty($result)){
+        $offer->setKey($result->nid_oferta);
+        $offer->setObra_musical($result->obra_musical);
+        $offer->setAutor_obra($result->autor_obra);
+        $offer->setUid($result->uid);
+        $offer->setFecha_creacion($result->fecha_creacion);
+        $offer->setSalon($result->salon);
+        $offer->setPiano($result->piano);
+        $offer->setInstrumento_autor($result->instrumento_autor);
+        $offer->setUser_name($result->name);
+        $offer->setCiudad($result->ciudad);
+        $offer->setUser_mail($result->mail);
+        $offer->setDisponibilidad($result->disponibilidad);
+        $offer->setActivo($result->activo);
+      }
+
+
+
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);
       $databaseException->handle();
     }
+    
     return $offer;
   }
  

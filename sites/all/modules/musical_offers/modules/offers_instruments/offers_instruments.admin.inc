@@ -141,10 +141,13 @@ class DbInstrument {
                       //->orderBy(Instrument::NAME_INSTRUMENT, 'DESC')//ORDER BY created
                       ->condition(Instrument::ID, $id)->execute()->fetch();
       $instrument = new Instrument();
-      $instrument->setKey($result->nid_instrument);
-      $instrument->setName_instrument($result->name_instrument);
-      $instrument->setDescription_instrument($result->description_instrument);
-      $instrument->setGeneral_list($result->general_list);
+      if(!isset($result)){
+        $instrument->setKey($result->nid_instrument);
+        $instrument->setName_instrument($result->name_instrument);
+        $instrument->setDescription_instrument($result->description_instrument);
+        $instrument->setGeneral_list($result->general_list); 
+      }
+
     } catch (Exception $e) {
       $databaseException = new InstrumentDatabaseException($e->getMessage(), 'Get Folk Record',
                       t('Index ID: @index', array('@index' => $id)), TRUE);
