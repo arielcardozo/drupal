@@ -222,6 +222,7 @@ function field_instruments_field_widget_form(&$form, &$form_state, $field, $inst
 
   $instruments = db_select('instruments', 'i')
                  ->fields('i', array('nid_instrument', 'name_instrument'));
+                 //->orderBy('name_instrument', 'ASC');
     
   $result = $instruments->execute()->fetchAll();
 
@@ -254,17 +255,22 @@ function field_instruments_field_widget_form(&$form, &$form_state, $field, $inst
  */
 function field_instruments_options_list($field) {
 
-  $list = array();
+  /*$list = array();
   //$list[0] = "-- Select an instrument--";
+   $otros = 'Otros';
+  $ninguno = 'Ninguno';
   $instruments = db_select('instruments', 'i')
                  ->fields('i', array('nid_instrument', 'name_instrument'))
-                 ->condition('general_list', 1,'=');
+                 ->condition('general_list', 1,'=')
+                 ->orderBy('name_instrument', 'ASC');
     
   $result = $instruments->execute()->fetchAll();
   foreach ($result as $record) {
         $list[$record->nid_instrument] = $record->name_instrument;
-      } 
-  return $list;
+      } */
+  $dbInstrument = new DbInstrument();
+  $opts = $dbInstrument->getInstruments();
+  return $opts;
 }
 
 

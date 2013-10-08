@@ -452,7 +452,7 @@ function offers_form_submit($form, &$form_state){
 			
 			if($form_state['values']['autor_instrumet']==3){
 				$id_new_instrument_autor = $dbInstrument->add($form_state['values']['other_autor_instrument'], 
-                         								'Instrumento propio de oferta: '.$id_oferta,
+                         								'Instrumento',
                          								0);
 				$id_autor_instrument = $id_new_instrument_autor;
 				
@@ -753,16 +753,19 @@ function offers_form_mail_send($id_oferta, $form_values, $operation) {
   		$to =  $form_values['mail'];
   }
 
-  $result = drupal_mail($module, $key, $to, $language, $params, $from, $send);
-  if ($result['result'] == TRUE ) {
-	if( $operation != 'close_offer'){
- 		drupal_set_message(t('Your message has been sent.'));
-	}
+  if($operation !='new_offer'){
+	  $result = drupal_mail($module, $key, $to, $language, $params, $from, $send);
+	  if ($result['result'] == TRUE ) {
+		if( $operation != 'close_offer'){
+	 		drupal_set_message(t('Your message has been sent.'));
+		}
+	  
+	  }
+	  else {
+	    drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
+	  }
+  }
   
-  }
-  else {
-    drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
-  }
 
   drupal_mail($module, $key_admin, $site_mail, $language, $params, $from, $send);
 
@@ -1097,7 +1100,7 @@ function get_full_name($uid){
 	$user_full_name = '';
 	if($uid!=0){
 		$user_data = user_load($uid);
-		$user_full_name = $user_data->field_nombre_y_apellido['und'][0]['given'].', '.$user_data->field_nombre_y_apellido['und'][0]['family'];
+		$user_full_name = $user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given'];
 	}
 	
 	return $user_full_name;

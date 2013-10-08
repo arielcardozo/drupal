@@ -73,7 +73,7 @@ function offers_form_lists($id,$operacion){
 										'data' => array(
 													'#type' => 'link',
 													//'#title' => $entry->name,
-													'#title' => $user_data->field_nombre_y_apellido['und'][0]['given'].', '.$user_data->field_nombre_y_apellido['und'][0]['family'],
+													'#title' => $user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given'],
 													'#href' => 'user/' . $entry->uid,
 													'#options' => $options,
 													),

@@ -414,9 +414,9 @@ function instruments_db_report() {
         'name_instrument' => get_html('span', $instrument->name_instrument),
         'description_instrument' => get_html('span', $instrument->description_instrument),
         'general_list' => get_html('span', $instrument->general_list),
-        'modify' => l(t('Modify'), 'admin/config/development/instruments/modify/' . $instrument->nid_instrument, array('html' => TRUE)),
+        'modify' => l(t('Modify'), 'admin/structure/instruments/modify/' . $instrument->nid_instrument, array('html' => TRUE)),
                      
-        'delete' => l(t('Delete'), 'admin/config/development/instruments/delete/' . $instrument->nid_instrument, array('html' => TRUE)),
+        'delete' => l(t('Delete'), 'admin/structure/instruments/delete/' . $instrument->nid_instrument, array('html' => TRUE)),
      
     );
   }

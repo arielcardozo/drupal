@@ -126,6 +126,7 @@ function offers_form_views(&$form_state,$operacion){
 
 	if($operacion=='view'){
 		$dbInstrument = new DbInstrument();
+
 		$inst = $dbInstrument->get($oferta->getInstrumento_autor());
 		$form['personal_data']['a_instrumet'] = array(
 		'#type' => 'item',
@@ -150,7 +151,7 @@ function offers_form_views(&$form_state,$operacion){
 		'#default_value' => $user_full_name,
 		);
 	}else{
-
+	
 		$form['personal_data']['autor_instrumet'] = array(
 				'#type' => 'select',
 				'#title' => t('Instrument to play by the author:'),
@@ -333,7 +334,7 @@ $form['review_overall_rating'] = array(
 function obtiene_instrumentos(){
 	
 	$dbInstrument = new DbInstrument();
-	$opts = $dbInstrument->getInstruments();
+	$opts = $dbInstrument->getInstrumentsParticular();
 	
 	return $opts;
 }
