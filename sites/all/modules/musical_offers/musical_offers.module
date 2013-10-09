@@ -35,7 +35,7 @@ function musical_offers_menu() {
 		'file' => 'musical_offers.admin.inc',
 	);
 
-	$items['admin/structure/type/instrumentos'] = array(
+	/*$items['admin/structure/type/instrumentos'] = array(
 		'title' => 'Instruments Management',
 		'description' => 'Settings the Instrument table content ',
 		'page callback' => 'drupal_get_form',
@@ -43,7 +43,7 @@ function musical_offers_menu() {
 		'access arguments' => array('administer content types'),
 		'type' => MENU_NORMAL_ITEM,
 		'file' => 'musical_offers_instrumentos.admin.inc',
-	);
+	);*/
 
 	$items['ofertas/%/user/%user/detalle'] = array(
 		'title' => 'Offer\'s detail',
