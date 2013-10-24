@@ -3330,7 +3330,8 @@ function theme_tableselect($variables) {
       array_unshift($header, '');
     }
   }
-  return theme('table', array('header' => $header, 'rows' => $rows, 'empty' => $element['#empty'], 'attributes' => $element['#attributes']));
+  //return theme('table', array('header' => $header, 'rows' => $rows, 'empty' => $element['#empty'], 'attributes' => $element['#attributes']));
+  return theme('table', array('header' => $header, 'rows' => $rows, 'empty' => $element['#empty'], 'attributes' => !empty($element['#attributes']) ? $element['#attributes'] : array()));
 }
 
 /**

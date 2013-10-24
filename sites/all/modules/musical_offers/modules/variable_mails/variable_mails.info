@@ -1,0 +1,14 @@
+name = Variable mails
+description = Permite configurar los valores por defecto de los correos en el ciclo de vida de la oferta.
+dependencies[] = variable
+dependencies[] = variable_store
+package = Formulario de Ofertas
+core = 7.x
+files[] = variable_mails.variable.inc
+
+; Information added by drupal.org packaging script on 2013-10-24
+version = "7.x-2.3"
+core = "7.x"
+project = "variable"
+datestamp = "1376034993"
+

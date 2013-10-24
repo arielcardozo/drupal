@@ -716,6 +716,12 @@ function ctools_ajax_sample_show_raptor($object) {
  * Helper function to provide a sample jump menu form
  */
 function ctools_ajax_sample_jump_menu_form() {
+  /*$url = url('user-list');
+  $url2 = url('haz-tu-oferta');
+  $form_state = array();
+  $form = ctools_jump_menu(array(), $form_state, array($url => t('Menú de usuarios!'),$url2 => t('Haz tu oferta!')), array());
+  dpm($form,'formulario');
+  return $form;*/
   $url = url('ctools_ajax_sample/jumped');
   $form_state = array();
   $form = ctools_jump_menu(array(), $form_state, array($url => t('Jump!')), array());

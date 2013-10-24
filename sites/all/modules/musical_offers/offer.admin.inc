@@ -418,8 +418,8 @@ class DbOffer {
           Offer::ACTIVO);
  
       $oferta = db_select(Offer::OFFERS_TABLE_NAME, 'n')
-                      ->fields('n', $fields)
-                      ->condition('n.uid', 1,'!=');
+                      ->fields('n', $fields);
+                      //->condition('n.uid', 1,'!='); // para filtrar los del administrador
       $oferta->addField('u', 'name','name');
       //$oferta->addField('u', 'nombre_y_apellido','name_surname');
       $oferta->addField('u', 'mail','mail');
@@ -428,8 +428,6 @@ class DbOffer {
       $oferta = $oferta->extend('TableSort');
       $result = $oferta->orderByHeader($header)->execute()->fetchAll();            
       //$result = $oferta->execute()->fetchAll();
-      
-
 
     } catch (Exception $e) {
       $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
@@ -439,6 +437,42 @@ class DbOffer {
     return $result;
   }
 
+//Obtiene listado de ofertas
+  function getOfferListWithAInstrument($id,$header) {
+    try {
+        $fields = array(Offer::ID,
+          Offer::UID,
+          Offer::AUTOR_OBRA,
+          Offer::OBRA_MUSICAL,
+          Offer::FECHA_CREACION,
+          Offer::SALON,
+          Offer::PIANO,
+          Offer::INSTRUMENTO_AUTOR,
+          Offer::CIUDAD,
+          Offer::DISPONIBILIDAD,
+          Offer::ACTIVO);
+ 
+      $oferta = db_select(Offer::OFFERS_TABLE_NAME, 'n')
+                      ->fields('n', $fields)
+                      ->condition('i.nid_instrument', $id,'=');
+                      //->condition('n.uid', 1,'!='); // para filtrar los del administrador
+      $oferta->addField('u', 'name','name');
+      //$oferta->addField('u', 'nombre_y_apellido','name_surname');
+      $oferta->addField('u', 'mail','mail');
+      $oferta->leftJoin('users', 'u', 'u.uid = n.uid ');
+      $oferta->leftJoin('pym_instrumentos_ofertas', 'i', 'i.nid_oferta = n.nid_oferta ');
+      $oferta = $oferta->extend('PagerDefault')->limit(20); // line1
+      $oferta = $oferta->extend('TableSort');
+      $result = $oferta->orderByHeader($header)->execute()->fetchAll();            
+      //$result = $oferta->execute()->fetchAll();
+
+    } catch (Exception $e) {
+      $databaseException = new OfferDatabaseException($e->getMessage(), 'Get Folk Record',
+                      t('Index ID: @index', array('@index' => $id)), TRUE);
+      $databaseException->handle();
+    }
+    return $result;
+  }
   //Obtiene un instrumento
   function getPlayerList($id) {
     try {

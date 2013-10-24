@@ -6,7 +6,7 @@
 /**
  * Implements hook_variable_realm_info()
  */
-function variable_example_variable_realm_info() {
+function variable_mails_variable_realm_info() {
   $realm['example'] = array(
     'title' => t('Example'),
     'weight' => 10,
@@ -22,27 +22,15 @@ function variable_example_variable_realm_info() {
 /**
  * Implements hook_menu().
  */
-function variable_example_menu() {
-  $items['admin/config/system/variable_example'] = array(
-    'title' => 'Variable example',
-    'description' => 'Example of auto generated settings form.',
+function variable_mails_menu() {
+  $items['admin/config/system/variable_mails'] = array(
+    'title' => 'Ofertas: Variables mails',
+    'description' => 'Formulario de configuración de mails.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('variable_group_form', 'variable_example'),
+    'page arguments' => array('variable_group_form', 'variable_mails'),
     'access arguments' => array('administer site configuration'),
   );
-  $items['variable/Example'] = array(
-    'title' => 'Variable example',
-    'description' => 'List some variables.',
-    'page callback' => 'variable_example_page_list',
-    'access arguments' => array('administer site configuration'),
-  );
-  $items['variable/realm/%/%'] = array(
-    'title' => 'Variable example realm',
-    'description' => 'Example of variable realms.',
-    'page callback' => 'variable_example_page_realm',
-    'page arguments' => array(2, 3),
-    'access arguments' => array('administer site configuration'),
-  );
+  
   return $items;
 }
 
@@ -51,9 +39,9 @@ function variable_example_menu() {
  *
  * Will switch to given realm and display variables.
  */
-function variable_example_page_list() {
+function variable_mails_page_list() {
   variable_include();
-  $list = variable_list_group('site_information') + variable_list_group('variable_mails');
+  $list = variable_list_group('site_information') + variable_list_group('variable_mails_creacion');
   foreach ($list as $name => $variable) {
     $build[$name] = array(
       '#type' => 'item',
@@ -69,13 +57,13 @@ function variable_example_page_list() {
  *
  * Will switch to given realm and display variables.
  */
-function variable_example_page_realm($realm, $key) {
+function variable_mails_page_realm($realm, $key) {
   // Initialize realm from variable store.
   $variables = variable_store($realm, $key);
   // Set at least one variable for the realm
   $variables += array('site_name' => 'Variable example realm');
   variable_realm_add($realm, $key, $variables);
   variable_realm_switch($realm, $key);
-  return variable_example_page_list();
+  return variable_mails_page_list();
 }
 

@@ -330,11 +330,3 @@ $form['review_overall_rating'] = array(
 	return $form;
 }
 
-
-function obtiene_instrumentos(){
-	
-	$dbInstrument = new DbInstrument();
-	$opts = $dbInstrument->getInstrumentsParticular();
-	
-	return $opts;
-}

@@ -9,6 +9,10 @@
 function offers_form_lists($id,$operacion){
 	global $user;	
 	$output = '';
+	$opt = obtiene_instrumentos();
+	
+	//$output .= theme('field',$lista);
+	//$output .=offers_form_lists(0,'offers_list');
 	$header = obtiene_cabecera($operacion);
 	$rows = array();
 
@@ -26,6 +30,9 @@ function offers_form_lists($id,$operacion){
 			$query = $query->extend('TableSort');
 			$offers = $query->orderByHeader($header)->execute()->fetchAll();
 			$rows = obtiene_rows($id,$offers,$operacion);
+
+			$output .= theme('table', array('header' => $header, 'rows' => $rows));
+			$output .= theme('pager');
 			break;
 		case 'subscriptions_made':
 			$suscripciones = db_select('pym_instrumentos_ofertas', 'pym_io');
@@ -45,37 +52,75 @@ function offers_form_lists($id,$operacion){
 			$suscripciones = $suscripciones->extend('TableSort');
 			$offers = $suscripciones->orderByHeader($header)->execute()->fetchAll();
 			$rows = obtiene_rows($id,$offers,$operacion);
+
+			$output .= theme('table', array('header' => $header, 'rows' => $rows));
+			$output .= theme('pager');
 			break;
-		default:
-			$dbOffer = new DbOffer();
-			$offers = $dbOffer->getOfferList($header);
+		case 'offers_list':
+		
+			$form= array();
+			$rows = obtiene_rows_listado($id,$header);
+			    // Create a jump menu
+				  ctools_include('jump-menu');
+				  $form = drupal_get_form('ctools_ajax_filtro');
+				  $output .= '<h3><strong>'. t('Elije un instrumento para filtrar las ofertas:') .'</strong></h3>';
+				  $output .= drupal_render($form);
+			    
+			break;
+		case 'offers_list_filtro':
+		$form= array();
+			$rows = obtiene_rows_listado($id,$header);
+			    // Create a jump menu
+				  ctools_include('jump-menu');
+				  $form = drupal_get_form('ctools_ajax_filtro',$id);
+				  $output .= '<h3><strong>'. t('Elije un instrumento para filtrar las ofertas:') .'</strong></h3>';
+				  $output .= drupal_render($form);
+			    
+			break;
+	}
+
+	$output .= theme('table', array('header' => $header, 'rows' => $rows));
+	$output .= theme('pager');
+
+  return $output;
+}
+
+function obtiene_rows_listado($id,$header){
+	$rows = array();
+	$dbOffer = new DbOffer();
+	$offers = 0;
+	if ($id==0) {
+		$offers = $dbOffer->getOfferList($header);
+	}
+	else{
+		$offers = $dbOffer->getOfferListWithAInstrument($id,$header);
+	}
+			
 			$options = array();
 			  if (!empty($offers)) {
-			    $rows = array();
+			    
 			    foreach ($offers as $entry) {
 
 			    	$user_data = user_load($entry->uid);
-			    	//dpm($user_data,'user_data');
-			 		//dpm($user_data->field_nombre_y_apellido['und'][0]['given'],'given');
+			    	
 			    	$row = array(
 						'created' => date('d-M-Y', $entry->fecha_creacion),
 						'Music piece' => array(
 										'data' => array(
-													'#type' => 'link',
-													'#title' => $entry->obra_musical,
-													
-													'#href' => 'ofertas/'.$entry->nid_oferta.'/user/'.$entry->uid.'/detalle/view' ,
-													'#options' => $options,
+											'#type' => 'link',
+											'#title' => $entry->obra_musical,
+											'#href' => 'ofertas/'.$entry->nid_oferta.'/user/'.$entry->uid.'/detalle/view' ,
+											'#options' => $options,
 													),
 												),
 						
 						'Author Oferta' => array(
 										'data' => array(
-													'#type' => 'link',
-													//'#title' => $entry->name,
-													'#title' => $user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given'],
-													'#href' => 'user/' . $entry->uid,
-													'#options' => $options,
+											'#type' => 'link',
+													
+											'#title' => (!empty($user_data->field_nombre_y_apellido['und'][0]['family']))?$user_data->field_nombre_y_apellido['und'][0]['family'].', '.$user_data->field_nombre_y_apellido['und'][0]['given']:'',
+											'#href' => 'user/' . $entry->uid,
+											'#options' => $options,
 													),
 												),
 
@@ -86,19 +131,15 @@ function offers_form_lists($id,$operacion){
 			      $rows[] = $row;
 			    }
 			    // Make a table for them.
-			    //$header = array(t('created'), t('Music piece'), t('Offer Author'),t('Estado'));
-			    
+			   
 			  }
 			  else {
 			    drupal_set_message(t('No records found'));
 			  }
-			break;
-	}
-	$output .= theme('table', array('header' => $header, 'rows' => $rows));
-	$output .= theme('pager');
-  return $output;
-}
 
+			  return $rows;
+			  
+}
 function obtiene_cabecera($tipo_listado){
 	$header = '';
 	switch ($tipo_listado) {
@@ -157,4 +198,28 @@ function obtiene_rows($id,$offers,$operacion){
 	    }
 	}
     return $rows;
+}
+
+/**
+ * Helper function to provide a sample jump menu form
+ */
+function ctools_ajax_filtro() {
+	//obtengo el valor por defecto
+	 $arg2 = arg(2);
+	$opts = obtiene_instrumentos();
+	$list = array();
+	$default_value ='';
+	foreach ($opts as $key => $value) {
+		if ($key!=1 && $key!=2 && $key!=3 ) {
+			$url = url('listado/filtro/'.$key);
+			$list[$url]= $value;
+			if ($key==$arg2) {
+				$default_value = $url;
+			}
+		}
+		
+	}
+  $form_state = array();
+  $form = ctools_jump_menu(array(), $form_state, $list, array('default_value'=>$default_value));
+  return $form;
 }
