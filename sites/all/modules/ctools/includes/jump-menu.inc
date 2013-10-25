@@ -47,7 +47,7 @@ function ctools_jump_menu($form, &$form_state, $select, $options = array()) {
   $options += array(
     'button' => t('Go'),
     //'choose' => t('- Choose -'),
-    'choose' => t('- Elija -'),
+    'choose' => t('- Elija un instrumento -'),
     'inline' => TRUE,
     'hide' => TRUE,
   );

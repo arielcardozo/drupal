@@ -63,8 +63,8 @@ function offers_form_lists($id,$operacion){
 			    // Create a jump menu
 				  ctools_include('jump-menu');
 				  $form = drupal_get_form('ctools_ajax_filtro');
-				  $output .= '<h3><strong>'. t('Elije un instrumento para filtrar las ofertas:') .'</strong></h3>';
 				  $output .= drupal_render($form);
+				  
 			    
 			break;
 		case 'offers_list_filtro':
@@ -73,7 +73,6 @@ function offers_form_lists($id,$operacion){
 			    // Create a jump menu
 				  ctools_include('jump-menu');
 				  $form = drupal_get_form('ctools_ajax_filtro',$id);
-				  $output .= '<h3><strong>'. t('Elije un instrumento para filtrar las ofertas:') .'</strong></h3>';
 				  $output .= drupal_render($form);
 			    
 			break;
@@ -220,6 +219,7 @@ function ctools_ajax_filtro() {
 		
 	}
   $form_state = array();
-  $form = ctools_jump_menu(array(), $form_state, $list, array('default_value'=>$default_value));
+  $url_listado= url('listado');
+  $form = ctools_jump_menu(array(), $form_state, $list, array('default_value'=>$default_value,'title'=>'Filtrar por: ','description'=>'<a href="'.$url_listado.'">Quitar filtros</a>'));
   return $form;
 }
